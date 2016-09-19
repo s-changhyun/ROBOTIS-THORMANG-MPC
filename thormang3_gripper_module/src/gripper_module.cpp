@@ -186,7 +186,7 @@ void GripperModule::setTorqueLimit()
   robotis_controller_msgs::SyncWriteItem sync_write_msg;
   sync_write_msg.item_name = "goal_torque";
 
-  for (int dim=0; dim<NUM_GRIPPER_JOINTS; dim++)
+  for (int dim=0; dim<goal_joint_pose_msg_.name.size(); dim++)
   {
     std::string joint_name = goal_joint_pose_msg_.name[dim];
     int torque_limit = (int) goal_joint_pose_msg_.effort[dim];
