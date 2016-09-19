@@ -267,7 +267,7 @@ void WalkingMotionModule::publishRobotPose(void)
 
   pose_msg.pose.position.x = g_to_pelvis.coeff(0, 3);
   pose_msg.pose.position.y = g_to_pelvis.coeff(1, 3);
-  pose_msg.pose.position.z = g_to_pelvis.coeff(2, 3);
+  pose_msg.pose.position.z = g_to_pelvis.coeff(2, 3) - 0.093;
   tf::quaternionEigenToMsg(pelvis_rotation, pose_msg.pose.orientation);
 
   publish_mutex_.unlock();
