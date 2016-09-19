@@ -241,13 +241,13 @@ void RobotisBalanceControl::process(int *balance_error, Eigen::MatrixXd *robot_t
   Eigen::MatrixXd mat_orientation_adjustment_by_imu = robotis_framework::getRotation4d(foot_roll_adjustment_by_gyro_roll_ + foot_roll_adjustment_by_orientation_roll_, foot_pitch_adjustment_by_gyro_pitch_ + foot_pitch_adjustment_by_orientation_pitch_, 0.0);
   Eigen::MatrixXd mat_r_xy, mat_l_xy;
   mat_r_xy.resize(4,1); mat_l_xy.resize(4,1);
-  mat_r_xy.coeffRef(0,0) = desired_robot_to_right_foot_.coeff(0,3);
-  mat_r_xy.coeffRef(1,0) = desired_robot_to_right_foot_.coeff(1,3);
+  mat_r_xy.coeffRef(0,0) = desired_robot_to_right_foot_.coeff(0,3) - 0.5*(desired_robot_to_right_foot_.coeff(0,3) + desired_robot_to_left_foot_.coeff(0,3));
+  mat_r_xy.coeffRef(1,0) = desired_robot_to_right_foot_.coeff(1,3) - 0.5*(desired_robot_to_right_foot_.coeff(1,3) + desired_robot_to_left_foot_.coeff(1,3));
   mat_r_xy.coeffRef(2,0) = 0.0;
   mat_r_xy.coeffRef(3,0) = 1;
 
-  mat_l_xy.coeffRef(0,0) = desired_robot_to_left_foot_.coeff(0,3);
-  mat_l_xy.coeffRef(1,0) = desired_robot_to_left_foot_.coeff(1,3);
+  mat_l_xy.coeffRef(0,0) = desired_robot_to_left_foot_.coeff(0,3) - 0.5*(desired_robot_to_right_foot_.coeff(0,3) + desired_robot_to_left_foot_.coeff(0,3));
+  mat_l_xy.coeffRef(1,0) = desired_robot_to_left_foot_.coeff(1,3) - 0.5*(desired_robot_to_right_foot_.coeff(1,3) + desired_robot_to_left_foot_.coeff(1,3));
   mat_l_xy.coeffRef(2,0) = 0.0;
   mat_l_xy.coeffRef(3,0) = 1;
 
