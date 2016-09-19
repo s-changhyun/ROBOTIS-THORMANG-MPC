@@ -43,6 +43,7 @@
 #include <ros/callback_queue.h>
 #include <std_msgs/String.h>
 #include <sensor_msgs/Imu.h>
+#include <geometry_msgs/PoseStamped.h>
 #include <boost/thread.hpp>
 
 #include "robotis_framework_common/motion_module.h"
@@ -130,6 +131,7 @@ private:
   int l_foot_ft_publish_checker_;
   ros::Publisher robot_pose_pub_;
   ros::Publisher status_msg_pub_;
+  ros::Publisher pelvis_base_msg_pub_;
 
   thormang3_walking_module_msgs::RobotPose  robot_pose_msg_;
   bool balance_update_with_loop_;
