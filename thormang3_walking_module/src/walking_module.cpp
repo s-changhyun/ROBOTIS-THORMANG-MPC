@@ -205,7 +205,7 @@ void    WalkingMotionModule::queueThread()
   /* publish topics */
   robot_pose_pub_ = ros_node.advertise<thormang3_walking_module_msgs::RobotPose>("/robotis/walking/robot_pose", 1);
   status_msg_pub_ = ros_node.advertise<robotis_controller_msgs::StatusMsg>("robotis/status", 1);
-  pelvis_base_msg_pub_ = ros_node.advertise<geometry_msgs::PoseStamped>("/robotis/pelvis_pose_base", 1);
+  pelvis_base_msg_pub_ = ros_node.advertise<geometry_msgs::PoseStamped>("/robotis/pelvis_pose_base_walking", 1);
 
 
   /* ROS Service Callback Functions */
