@@ -112,6 +112,7 @@ private:
   int convertStepDataToStepDataMsg(robotis_framework::StepData& src, thormang3_walking_module_msgs::StepData& des);
 
   void setBalanceParam(thormang3_walking_module_msgs::BalanceParam& balance_param_msg);
+  bool checkBalanceOnOff();
 
   void queueThread();
 

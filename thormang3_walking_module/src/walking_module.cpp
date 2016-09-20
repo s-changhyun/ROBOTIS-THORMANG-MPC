@@ -50,6 +50,7 @@ public:
   static const std::string BALANCE_PARAM_SETTING_FINISH_MSG;
   static const std::string WALKING_MODULE_IS_ENABLED_MSG;
   static const std::string WALKING_MODULE_IS_DISABLED_MSG;
+  static const std::string BALANCE_HAS_BEEN_TURNED_OFF;
   static const std::string WALKING_START_MSG;
   static const std::string WALKING_FINISH_MSG;
 };
@@ -59,6 +60,7 @@ const std::string WalkingStatusMSG::BALANCE_PARAM_SETTING_START_MSG = "Balance_P
 const std::string WalkingStatusMSG::BALANCE_PARAM_SETTING_FINISH_MSG = "Balance_Param_Setting_Finished";
 const std::string WalkingStatusMSG::WALKING_MODULE_IS_ENABLED_MSG = "Walking_Module_is_enabled";
 const std::string WalkingStatusMSG::WALKING_MODULE_IS_DISABLED_MSG = "Walking_Module_is_disabled";
+const std::string WalkingStatusMSG::BALANCE_HAS_BEEN_TURNED_OFF = "Balance_has_been_turned_off";
 const std::string WalkingStatusMSG::WALKING_START_MSG = "Walking_Started";
 const std::string WalkingStatusMSG::WALKING_FINISH_MSG = "Walking_Finished";
 
@@ -506,6 +508,13 @@ bool WalkingMotionModule::addStepDataServiceCallback(thormang3_walking_module_ms
     }
   }
 
+  if(checkBalanceOnOff() == false)
+  {
+    std::string status_msg  = WalkingStatusMSG::BALANCE_HAS_BEEN_TURNED_OFF;
+    publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_ERROR, status_msg);
+    return true;
+  }
+
   for(unsigned int i = 0; i < req_step_data_array.size() ; i++)
     online_walking->addStepData(req_step_data_array[i]);
 
@@ -526,16 +535,26 @@ bool WalkingMotionModule::startWalkingServiceCallback(thormang3_walking_module_m
   if(enable_ == false)
   {
     res.result |= thormang3_walking_module_msgs::StartWalking::Response::NOT_ENABLED_WALKING_MODULE;
+    return true;
   }
 
   if(prev_walking->isRunning() == true)
   {
     res.result |= thormang3_walking_module_msgs::StartWalking::Response::ROBOT_IS_WALKING_NOW;
+    return true;
+  }
+
+  if(checkBalanceOnOff() == false)
+  {
+    std::string status_msg  = WalkingStatusMSG::BALANCE_HAS_BEEN_TURNED_OFF;
+    publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_ERROR, status_msg);
+    return true;
   }
 
   if(prev_walking->getNumofRemainingUnreservedStepData() == 0)
   {
     res.result |= thormang3_walking_module_msgs::StartWalking::Response::NO_STEP_DATA;
+    return true;
   }
 
   if(res.result == thormang3_walking_module_msgs::StartWalking::Response::NO_ERROR)
@@ -691,6 +710,29 @@ void WalkingMotionModule::setBalanceParam(thormang3_walking_module_msgs::Balance
   online_walking->balance_ctrl_.right_foot_torque_pitch_ctrl_.time_constant_sec_ = balance_param_msg.foot_pitch_torque_time_constant;
   online_walking->balance_ctrl_.left_foot_torque_roll_ctrl_.time_constant_sec_   = balance_param_msg.foot_roll_torque_time_constant;
   online_walking->balance_ctrl_.left_foot_torque_pitch_ctrl_.time_constant_sec_  = balance_param_msg.foot_pitch_torque_time_constant;
+}
+
+bool WalkingMotionModule::WalkingMotionModule::checkBalanceOnOff()
+{
+  RobotisOnlineWalking *online_walking = RobotisOnlineWalking::getInstance();
+
+  if ((fabs(online_walking->balance_ctrl_.getGyroBalanceGainRatio())           < 1e-6) &&
+      (fabs(online_walking->balance_ctrl_.foot_roll_angle_ctrl_.gain_)         < 1e-6) &&
+      (fabs(online_walking->balance_ctrl_.foot_pitch_angle_ctrl_.gain_)        < 1e-6) &&
+      (fabs(online_walking->balance_ctrl_.right_foot_force_x_ctrl_.gain_)      < 1e-6) &&
+      (fabs(online_walking->balance_ctrl_.right_foot_force_y_ctrl_.gain_)      < 1e-6) &&
+      (fabs(online_walking->balance_ctrl_.left_foot_force_x_ctrl_.gain_)       < 1e-6) &&
+      (fabs(online_walking->balance_ctrl_.left_foot_force_y_ctrl_.gain_)       < 1e-6) &&
+      (fabs(online_walking->balance_ctrl_.foot_force_z_diff_ctrl_.gain_)       < 1e-6) &&
+      (fabs(online_walking->balance_ctrl_.right_foot_torque_roll_ctrl_.gain_)  < 1e-6) &&
+      (fabs(online_walking->balance_ctrl_.right_foot_torque_pitch_ctrl_.gain_) < 1e-6) &&
+      (fabs(online_walking->balance_ctrl_.left_foot_torque_roll_ctrl_.gain_)   < 1e-6) &&
+      (fabs(online_walking->balance_ctrl_.left_foot_torque_pitch_ctrl_.gain_)  < 1e-6))
+  {
+    return false;
+  }
+  else
+    return true;
 }
 
 bool WalkingMotionModule::removeExistingStepDataServiceCallback(thormang3_walking_module_msgs::RemoveExistingStepData::Request  &req,
