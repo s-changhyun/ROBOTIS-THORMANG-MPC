@@ -84,6 +84,7 @@ void GripperModule::queueThread()
   status_msg_pub_ = ros_node.advertise<robotis_controller_msgs::StatusMsg>("/robotis/status", 1);
   set_ctrl_module_pub_ = ros_node.advertise<std_msgs::String>("/robotis/enable_ctrl_module", 1);
   goal_torque_limit_pub_ = ros_node.advertise<robotis_controller_msgs::SyncWriteItem>("/robotis/sync_write_item", 1);
+  movement_done_pub_ = ros_node.advertise<std_msgs::String>("/robotis/movement_done", 1);
 
   /* subscribe topics */
   ros::Subscriber set_mode_msg_sub = ros_node.subscribe("/robotis/gripper/set_mode_msg", 5,
@@ -132,6 +133,8 @@ void GripperModule::setJointPoseMsgCallback(const sensor_msgs::JointState::Const
   }
   else
     ROS_INFO("previous task is alive");
+
+  movement_done_msg_.data = "gripper";
 
   return;
 }
@@ -210,6 +213,9 @@ void GripperModule::setEndTrajectory()
 
       is_moving_ = false;
       cnt_ = 0;
+
+      movement_done_pub_.publish(movement_done_msg_);
+
     }
   }
 }
