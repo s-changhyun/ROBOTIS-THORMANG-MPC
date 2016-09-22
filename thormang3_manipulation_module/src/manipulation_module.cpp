@@ -106,6 +106,7 @@ void ManipulationModule::initialize(const int control_cycle_msec, robotis_framew
 
   // for gui
   status_msg_pub_ = ros_node.advertise<robotis_controller_msgs::StatusMsg>("/robotis/status", 1);
+  movement_done_pub_ = ros_node.advertise<std_msgs::String>("/robotis/movement_done", 1);
 
   std::string _path = ros::package::getPath("thormang3_manipulation_module") + "/config/ik_weight.yaml";
   parseData(_path);
@@ -226,6 +227,8 @@ void ManipulationModule::initPoseMsgCallback(const std_msgs::String::ConstPtr& m
     ROS_INFO("previous task is alive");
   }
 
+  movement_done_msg_.data == "manipulation_init";
+
   return;
 }
 
@@ -318,6 +321,8 @@ void ManipulationModule::kinematicsPoseMsgCallback(const thormang3_manipulation_
     ROS_INFO("previous task is alive");
   }
 
+  movement_done_msg_.data == "manipulation";
+
   return;
 }
 
@@ -335,6 +340,8 @@ void ManipulationModule::jointPoseMsgCallback(const thormang3_manipulation_modul
   }
   else
     ROS_INFO("previous task is alive");
+
+  movement_done_msg_.data == "manipulation_joint";
 
   return;
 }
@@ -414,6 +421,9 @@ void ManipulationModule::setJointorqueLimitMsgCallback(const std_msgs::String::C
   }
 
   goal_torque_limit_pub_.publish(sync_write_msg);
+
+  movement_done_msg_.data == "manipulation_torque";
+  movement_done_pub_.publish(movement_done_msg_);
 }
 
 void ManipulationModule::jointGroupPoseMsgCallback(const thormang3_manipulation_module_msgs::JointGroupPose::ConstPtr& msg)
@@ -721,6 +731,8 @@ void ManipulationModule::process(std::map<std::string, robotis_framework::Dynami
       manipulation_module_state_->is_moving_  = false;
       manipulation_module_state_->ik_solve_   = false;
       manipulation_module_state_->cnt_        = 0;
+
+      movement_done_pub_.publish(movement_done_msg_);
     }
   }
 }

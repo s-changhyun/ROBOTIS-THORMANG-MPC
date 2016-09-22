@@ -137,7 +137,10 @@ private:
   boost::thread   queue_thread_;
   boost::thread  *traj_generate_tread_;
 
+  std_msgs::String movement_done_msg_;
+
   ros::Publisher  status_msg_pub_;
+  ros::Publisher  movement_done_pub_;
   ros::Publisher  goal_torque_limit_pub_;
 
   std::map<std::string, int> joint_name_to_id_;
