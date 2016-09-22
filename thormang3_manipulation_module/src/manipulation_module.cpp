@@ -508,7 +508,7 @@ void ManipulationModule::jointTrajGenerateProc()
 
 void ManipulationModule::taskTrajGenerateProc()
 {
-  if (manipulation_module_state_->goal_joint_pose_msg_.time <= 0.0)
+  if (manipulation_module_state_->goal_kinematics_pose_msg_.time <= 0.0)
   {
     /* set movement time */
     double tol      = 0.1; // m per sec
@@ -532,7 +532,7 @@ void ManipulationModule::taskTrajGenerateProc()
   }
   else
   {
-    manipulation_module_state_->mov_time_ = manipulation_module_state_->goal_joint_pose_msg_.time;
+    manipulation_module_state_->mov_time_ = manipulation_module_state_->goal_kinematics_pose_msg_.time;
   }
 
   manipulation_module_state_->all_time_steps_ = int(manipulation_module_state_->mov_time_ / manipulation_module_state_->smp_time_) + 1;
