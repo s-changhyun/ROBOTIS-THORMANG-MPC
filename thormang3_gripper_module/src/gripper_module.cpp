@@ -95,7 +95,7 @@ void GripperModule::queueThread()
 //  ros::ServiceServer get_joint_pose_server = ros_node.advertiseService("/robotis/wholebody/get_joint_pose",
 //                                                                       &GripperModule::getJointPoseCallback, this);
 
-  ros::WallDuration duration(control_cycle_msec_ / 1000.0);
+  ros::WallDuration duration(control_cycle_sec_);
   while(ros_node.ok())
     callback_queue.callAvailable(duration);
 
