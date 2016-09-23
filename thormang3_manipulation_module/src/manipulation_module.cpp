@@ -424,6 +424,7 @@ void ManipulationModule::setJointorqueLimitMsgCallback(const std_msgs::String::C
 
   movement_done_msg_.data == "manipulation_torque";
   movement_done_pub_.publish(movement_done_msg_);
+  movement_done_msg_.data == "";
 }
 
 void ManipulationModule::jointGroupPoseMsgCallback(const thormang3_manipulation_module_msgs::JointGroupPose::ConstPtr& msg)
@@ -733,6 +734,7 @@ void ManipulationModule::process(std::map<std::string, robotis_framework::Dynami
       manipulation_module_state_->cnt_        = 0;
 
       movement_done_pub_.publish(movement_done_msg_);
+      movement_done_msg_.data = "";
     }
   }
 }

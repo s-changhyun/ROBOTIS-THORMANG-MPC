@@ -215,7 +215,7 @@ void GripperModule::setEndTrajectory()
       cnt_ = 0;
 
       movement_done_pub_.publish(movement_done_msg_);
-
+      movement_done_msg_.data == "";
     }
   }
 }
