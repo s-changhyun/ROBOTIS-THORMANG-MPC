@@ -88,6 +88,8 @@ void HeadControlModule::initialize(const int control_cycle_msec, robotis_framewo
   /* publish topics */
   moving_head_pub_ = ros_node.advertise<std_msgs::String>("/robotis/sensor/move_lidar", 0);  // todo : change topic name
   status_msg_pub_ = ros_node.advertise<robotis_controller_msgs::StatusMsg>("/robotis/status", 0);
+
+  movement_done_pub_ = ros_node.advertise<std_msgs::String>("/robotis/movement_done", 1);
 }
 
 void HeadControlModule::queueThread()
@@ -546,6 +548,13 @@ void HeadControlModule::publishLidarMoveMsg(std::string msg_data)
   msg.data = msg_data;
 
   moving_head_pub_.publish(msg);
+
+  if(msg_data == "end")
+  {
+    std_msgs::String movement_msg;
+    movement_msg.data == "scan";
+    movement_done_pub_.publish(movement_msg);
+  }
 }
 
 /*
