@@ -354,6 +354,7 @@ void ManipulationModule::setJointorqueLimitMsgCallback(const std_msgs::String::C
   if (msg->data == "right_arm_torque_down")
   {
     ROS_INFO("r_arm_torque_down");
+    publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, "Right Arm Torque Limit Down");
 
     joint_state_->goal_joint_state[joint_name_to_id_["r_arm_sh_p1"]].position_ =
         joint_state_->curr_joint_state[joint_name_to_id_["r_arm_sh_p1"]].position_;
@@ -388,6 +389,7 @@ void ManipulationModule::setJointorqueLimitMsgCallback(const std_msgs::String::C
   else if (msg->data == "right_arm_torque_up")
   {
     ROS_INFO("r_arm_torque_up");
+    publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, "Right Arm Torque Limit Up");
 
     joint_state_->goal_joint_state[joint_name_to_id_["r_arm_sh_p1"]].position_ =
         joint_state_->curr_joint_state[joint_name_to_id_["r_arm_sh_p1"]].position_;
@@ -701,6 +703,10 @@ void ManipulationModule::process(std::map<std::string, robotis_framework::Dynami
         manipulation_module_state_->is_moving_  = false;
         manipulation_module_state_->ik_solve_   = false;
         manipulation_module_state_->cnt_        = 0;
+
+        movement_done_msg_.data = "wholebody_fail";
+        movement_done_pub_.publish(movement_done_msg_);
+        movement_done_msg_.data = "";
       }
     }
     else
