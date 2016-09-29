@@ -436,6 +436,11 @@ void HeadControlModule::finishMoving()
 
     default:
       publishStatusMsg(robotis_controller_msgs::StatusMsg::STATUS_INFO, "Head movement is finished.");
+
+      std_msgs::String movement_msg;
+      movement_msg.data == "head_control";
+      movement_done_pub_.publish(movement_msg);
+
       is_moving_ = false;
       break;
   }
