@@ -557,7 +557,7 @@ void HeadControlModule::publishLidarMoveMsg(std::string msg_data)
   if(msg_data == "end")
   {
     std_msgs::String movement_msg;
-    movement_msg.data == "scan";
+    movement_msg.data = "scan";
     movement_done_pub_.publish(movement_msg);
   }
 }
