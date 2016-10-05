@@ -18,6 +18,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   std_msgs
   cmake_modules
+  thormang3_head_control_module_msgs
 )
 
 find_package(Eigen REQUIRED)
