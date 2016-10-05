@@ -331,7 +331,7 @@ void ManipulationModule::jointPoseMsgCallback(const thormang3_manipulation_modul
   if (enable_ == false)
     return;
 
-  movement_done_msg_.data = "manipulation_joint";
+//  movement_done_msg_.data = "manipulation_joint";
 
   manipulation_module_state_->goal_joint_pose_msg_ = *msg;
 
@@ -433,6 +433,8 @@ void ManipulationModule::jointGroupPoseMsgCallback(const thormang3_manipulation_
 {
   if(enable_ == false)
     return;
+
+  movement_done_msg_.data = "manipulation_joint";
 
   manipulation_module_state_->goal_joint_group_pose_msg_ = *msg;
 
