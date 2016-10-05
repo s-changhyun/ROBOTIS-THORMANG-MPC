@@ -288,6 +288,8 @@ void ManipulationModule::kinematicsPoseMsgCallback(const thormang3_manipulation_
   if (enable_ == false)
     return;
 
+  movement_done_msg_.data = "manipulation";
+
   manipulation_module_state_->goal_kinematics_pose_msg_ = *msg;
 
   if (manipulation_module_state_->goal_kinematics_pose_msg_.name == "left_arm")
@@ -321,8 +323,6 @@ void ManipulationModule::kinematicsPoseMsgCallback(const thormang3_manipulation_
     ROS_INFO("previous task is alive");
   }
 
-  movement_done_msg_.data = "manipulation";
-
   return;
 }
 
@@ -330,6 +330,8 @@ void ManipulationModule::jointPoseMsgCallback(const thormang3_manipulation_modul
 {
   if (enable_ == false)
     return;
+
+  movement_done_msg_.data = "manipulation_joint";
 
   manipulation_module_state_->goal_joint_pose_msg_ = *msg;
 
@@ -340,8 +342,6 @@ void ManipulationModule::jointPoseMsgCallback(const thormang3_manipulation_modul
   }
   else
     ROS_INFO("previous task is alive");
-
-  movement_done_msg_.data = "manipulation_joint";
 
   return;
 }
