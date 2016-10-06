@@ -40,7 +40,8 @@
 using namespace thormang3;
 
 ManipulationModule::ManipulationModule()
-  : control_cycle_msec_(0)
+  : control_cycle_msec_(0),
+    arm_angle_display_(true)
 {
   enable_       = false;
   module_name_  = "manipulation_module";
@@ -743,6 +744,26 @@ void ManipulationModule::process(std::map<std::string, robotis_framework::Dynami
 
       movement_done_pub_.publish(movement_done_msg_);
       movement_done_msg_.data = "";
+
+      if (arm_angle_display_ == true)
+      {
+        ROS_INFO("l_arm_sh_p1 : %f", joint_state_->goal_joint_state[joint_name_to_id_["l_arm_sh_p1"]].position_ * RADIAN2DEGREE );
+        ROS_INFO("l_arm_sh_r  : %f", joint_state_->goal_joint_state[joint_name_to_id_["l_arm_sh_r"]].position_  * RADIAN2DEGREE );
+        ROS_INFO("l_arm_sh_p2 : %f", joint_state_->goal_joint_state[joint_name_to_id_["l_arm_sh_p2"]].position_ * RADIAN2DEGREE );
+        ROS_INFO("l_arm_el_y  : %f", joint_state_->goal_joint_state[joint_name_to_id_["l_arm_el_y"]].position_  * RADIAN2DEGREE );
+        ROS_INFO("l_arm_wr_r  : %f", joint_state_->goal_joint_state[joint_name_to_id_["l_arm_wr_r"]].position_  * RADIAN2DEGREE );
+        ROS_INFO("l_arm_wr_y  : %f", joint_state_->goal_joint_state[joint_name_to_id_["l_arm_wr_y"]].position_  * RADIAN2DEGREE );
+        ROS_INFO("l_arm_wr_p  : %f", joint_state_->goal_joint_state[joint_name_to_id_["l_arm_wr_p"]].position_  * RADIAN2DEGREE );
+
+        ROS_INFO("r_arm_sh_p1 : %f", joint_state_->goal_joint_state[joint_name_to_id_["r_arm_sh_p1"]].position_ * RADIAN2DEGREE );
+        ROS_INFO("r_arm_sh_r  : %f", joint_state_->goal_joint_state[joint_name_to_id_["r_arm_sh_r"]].position_  * RADIAN2DEGREE );
+        ROS_INFO("r_arm_sh_p2 : %f", joint_state_->goal_joint_state[joint_name_to_id_["r_arm_sh_p2"]].position_ * RADIAN2DEGREE );
+        ROS_INFO("r_arm_el_y  : %f", joint_state_->goal_joint_state[joint_name_to_id_["r_arm_el_y"]].position_  * RADIAN2DEGREE );
+        ROS_INFO("r_arm_wr_r  : %f", joint_state_->goal_joint_state[joint_name_to_id_["r_arm_wr_r"]].position_  * RADIAN2DEGREE );
+        ROS_INFO("r_arm_wr_y  : %f", joint_state_->goal_joint_state[joint_name_to_id_["r_arm_wr_y"]].position_  * RADIAN2DEGREE );
+        ROS_INFO("r_arm_wr_p  : %f", joint_state_->goal_joint_state[joint_name_to_id_["r_arm_wr_p"]].position_  * RADIAN2DEGREE );
+      }
+
     }
   }
 }

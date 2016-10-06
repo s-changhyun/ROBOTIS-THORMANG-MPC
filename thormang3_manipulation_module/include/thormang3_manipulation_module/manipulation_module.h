@@ -133,6 +133,8 @@ private:
   void parseData(const std::string &path);
   void parseIniPoseData(const std::string &path);
 
+  bool arm_angle_display_;
+
   int             control_cycle_msec_;
   boost::thread   queue_thread_;
   boost::thread  *traj_generate_tread_;
