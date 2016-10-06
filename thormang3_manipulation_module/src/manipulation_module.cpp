@@ -41,7 +41,7 @@ using namespace thormang3;
 
 ManipulationModule::ManipulationModule()
   : control_cycle_msec_(0),
-    arm_angle_display_(true)
+    arm_angle_display_(false)
 {
   enable_       = false;
   module_name_  = "manipulation_module";
