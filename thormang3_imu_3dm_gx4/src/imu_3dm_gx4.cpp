@@ -313,19 +313,22 @@ int main(int argc, char **argv) {
 	catch (Imu::io_error &e) {
 	  ROS_ERROR("IO error: %s\n", e.what());
 	  std_msgs::String msg;
-	  msg.data = e.what();
+    msg.data = "IO error : ";
+    msg.data += e.what();
 	  imu_status_pub.publish(msg);
 	}
 	catch (Imu::timeout_error &e) {
 	  ROS_ERROR("Timeout: %s\n", e.what());
 	  std_msgs::String msg;
-	  msg.data = e.what();
+	  msg.data = "timeout_error : ";
+	  msg.data += e.what();
 	  imu_status_pub.publish(msg);
 	}
 	catch (std::exception &e) {
 	  ROS_ERROR("Exception: %s\n", e.what());
 	  std_msgs::String msg;
-	  msg.data = e.what();
+    msg.data = "Exception : ";
+    msg.data += e.what();
 	  imu_status_pub.publish(msg);
 	}
 
