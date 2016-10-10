@@ -1,7 +1,10 @@
+#include <fstream>
 #include <ros/ros.h>
 #include <ros/node_handle.h>
 #include <diagnostic_updater/diagnostic_updater.h>
 #include <diagnostic_updater/publisher.h>
+
+#include <std_msgs/String.h>
 
 #include <sensor_msgs/Imu.h>
 #include <sensor_msgs/MagneticField.h>
@@ -21,6 +24,8 @@ ros::Publisher pubMag;
 ros::Publisher pubPressure;
 ros::Publisher pubFilter;
 std::string frameId;
+
+ros::Publisher imu_status_pub;
 sensor_msgs::Imu imuFilterData;
 
 Imu::Info info;
@@ -31,11 +36,11 @@ std::shared_ptr<diagnostic_updater::Updater> updater;
 std::shared_ptr<diagnostic_updater::TopicDiagnostic> imuDiag;
 std::shared_ptr<diagnostic_updater::TopicDiagnostic> filterDiag;
 
-void publishData(const Imu::IMUData &data) {
-	sensor_msgs::Imu imu;
-	sensor_msgs::MagneticField field;
-	sensor_msgs::FluidPressure pressure;
+sensor_msgs::Imu imu_msg;
+sensor_msgs::MagneticField field_msg;
+sensor_msgs::FluidPressure pressure_msg;
 
+void publishData(const Imu::IMUData &data) {
 	//  assume we have all of these since they were requested
 	/// @todo: Replace this with a mode graceful failure...
 	assert(data.fields & Imu::IMUData::Accelerometer);
@@ -44,36 +49,35 @@ void publishData(const Imu::IMUData &data) {
 	assert(data.fields & Imu::IMUData::Gyroscope);
 
 	//  timestamp identically
-	imu.header.stamp = ros::Time::now();
-	imu.header.frame_id = frameId;
-	field.header.stamp = imu.header.stamp;
-	field.header.frame_id = frameId;
-	pressure.header.stamp = imu.header.stamp;
-	pressure.header.frame_id = frameId;
+	imu_msg.header.stamp = ros::Time::now();
+	imu_msg.header.frame_id = frameId;
+	field_msg.header.stamp = imu_msg.header.stamp;
+	field_msg.header.frame_id = frameId;
+	pressure_msg.header.stamp = imu_msg.header.stamp;
+	pressure_msg.header.frame_id = frameId;
 
-	imu.orientation_covariance[0] =
-			-1; //  orientation data is on a separate topic
+	imu_msg.orientation_covariance[0] = -1; //  orientation data is on a separate topic
 
-	imu.orientation = imuFilterData.orientation;
-	imu.linear_acceleration.x = data.accel[0] * kEarthGravity;
-	imu.linear_acceleration.y = data.accel[1] * kEarthGravity;
-	imu.linear_acceleration.z = data.accel[2] * kEarthGravity;
-	imu.angular_velocity.x = data.gyro[0];
-	imu.angular_velocity.y = data.gyro[1];
-	imu.angular_velocity.z = data.gyro[2];
+	imu_msg.orientation = imuFilterData.orientation;
+	imu_msg.linear_acceleration.x = data.accel[0] * kEarthGravity;
+	imu_msg.linear_acceleration.y = data.accel[1] * kEarthGravity;
+	imu_msg.linear_acceleration.z = data.accel[2] * kEarthGravity;
+	imu_msg.angular_velocity.x = data.gyro[0];
+	imu_msg.angular_velocity.y = data.gyro[1];
+	imu_msg.angular_velocity.z = data.gyro[2];
 
-	field.magnetic_field.x = data.mag[0];
-	field.magnetic_field.y = data.mag[1];
-	field.magnetic_field.z = data.mag[2];
+	field_msg.magnetic_field.x = data.mag[0];
+	field_msg.magnetic_field.y = data.mag[1];
+	field_msg.magnetic_field.z = data.mag[2];
 
-	pressure.fluid_pressure = data.pressure;
+	pressure_msg.fluid_pressure = data.pressure;
 
 	//  publish
-	pubIMU.publish(imu);
-	pubMag.publish(field);
-	pubPressure.publish(pressure);
+	pubIMU.publish(imu_msg);
+	pubMag.publish(field_msg);
+	pubPressure.publish(pressure_msg);
 	if (imuDiag) {
-		imuDiag->tick(imu.header.stamp);
+		imuDiag->tick(imu_msg.header.stamp);
 	}
 }
 
@@ -114,7 +118,7 @@ void publishFilter(const Imu::FilterData &data) {
 	output.orientation_covariance_status = data.angleUncertaintyStatus;
 	output.bias_covariance_status = data.biasUncertaintyStatus;
 
-	pubFilter.publish(output);
+  pubFilter.publish(output);
 	if (filterDiag) {
 		filterDiag->tick(output.header.stamp);
 	}
@@ -188,10 +192,16 @@ int main(int argc, char **argv) {
 	pubIMU = nh.advertise<sensor_msgs::Imu>("imu", 1);
 	pubMag = nh.advertise<sensor_msgs::MagneticField>("magnetic_field", 1);
 	pubPressure = nh.advertise<sensor_msgs::FluidPressure>("pressure", 1);
+	imu_status_pub = nh.advertise<std_msgs::String>("/robotis/sensor/imu/status", 1);
 
 	if (enableFilter) {
 		pubFilter = nh.advertise<thormang3_imu_3dm_gx4::FilterOutput>("filter", 1);
 	}
+
+  std::string home_path(getenv("HOME"));
+  std::string file_name = home_path + "/Documents/imu_mpc_record.txt";
+  std::ofstream outFile(file_name.c_str());
+  outFile << "time " << "gyro_x " << "gyro_y " << "gyro_z " << "quat_x " << "quat_y " << "quat_z " << "quat_w "<<"\n";
 
 	//  new instance of the IMU
 	Imu imu(device, verbose);
@@ -289,17 +299,34 @@ int main(int argc, char **argv) {
 		while (ros::ok()) {
 			imu.runOnce();
 			updater->update();
+			outFile << imu_msg.header.stamp.toSec() << " "
+			    << imu_msg.angular_velocity.x << " "
+			    << imu_msg.angular_velocity.y << " "
+			    << imu_msg.angular_velocity.z << " "
+			    << imu_msg.orientation.x << " "
+          << imu_msg.orientation.y << " "
+          << imu_msg.orientation.z << " "
+          << imu_msg.orientation.w << "\n";
 		}
 		imu.disconnect();
 	}
 	catch (Imu::io_error &e) {
-		ROS_ERROR("IO error: %s\n", e.what());
+	  ROS_ERROR("IO error: %s\n", e.what());
+	  std_msgs::String msg;
+	  msg.data = e.what();
+	  imu_status_pub.publish(msg);
 	}
 	catch (Imu::timeout_error &e) {
-		ROS_ERROR("Timeout: %s\n", e.what());
+	  ROS_ERROR("Timeout: %s\n", e.what());
+	  std_msgs::String msg;
+	  msg.data = e.what();
+	  imu_status_pub.publish(msg);
 	}
 	catch (std::exception &e) {
-		ROS_ERROR("Exception: %s\n", e.what());
+	  ROS_ERROR("Exception: %s\n", e.what());
+	  std_msgs::String msg;
+	  msg.data = e.what();
+	  imu_status_pub.publish(msg);
 	}
 
 	return 0;

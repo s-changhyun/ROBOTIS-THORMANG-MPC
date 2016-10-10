@@ -119,6 +119,8 @@ RobotisBalanceControl::RobotisBalanceControl()
   foot_pitch_adjustment_by_orientation_pitch_ = 0;
 
   foot_z_adjustment_by_force_z_difference_ = 0;
+  r_foot_z_adjustment_by_force_z_ = 0;
+  l_foot_z_adjustment_by_force_z_ = 0;
 
   r_foot_x_adjustment_by_force_x_ = 0;
   r_foot_y_adjustment_by_force_y_ = 0;
@@ -183,6 +185,8 @@ void RobotisBalanceControl::initialize(const int control_cycle_msec)
   foot_pitch_angle_ctrl_.control_cycle_sec_ = control_cycle_sec_;
 
   foot_force_z_diff_ctrl_.control_cycle_sec_ = control_cycle_sec_;
+  right_foot_force_z_ctrl_.control_cycle_sec_ = control_cycle_sec_;
+  left_foot_force_z_ctrl_.control_cycle_sec_ = control_cycle_sec_;
 
   right_foot_force_x_ctrl_.control_cycle_sec_ = control_cycle_sec_;
   right_foot_force_y_ctrl_.control_cycle_sec_ = control_cycle_sec_;
@@ -256,6 +260,8 @@ void RobotisBalanceControl::process(int *balance_error, Eigen::MatrixXd *robot_t
 
   // ft sensor
   foot_z_adjustment_by_force_z_difference_ = ft_enable_*0.001*foot_force_z_diff_ctrl_.getDampingControllerOutput(current_left_fz_N_ - current_right_fz_N_);
+  r_foot_z_adjustment_by_force_z_ = ft_enable_*0.001*right_foot_force_z_ctrl_.getDampingControllerOutput(current_right_fz_N_);
+  l_foot_z_adjustment_by_force_z_ = ft_enable_*0.001*left_foot_force_z_ctrl_.getDampingControllerOutput(current_left_fz_N_);
 
   r_foot_x_adjustment_by_force_x_ = ft_enable_*0.001*right_foot_force_x_ctrl_.getDampingControllerOutput(current_right_fx_N_);
   r_foot_y_adjustment_by_force_y_ = ft_enable_*0.001*right_foot_force_y_ctrl_.getDampingControllerOutput(current_right_fy_N_);
@@ -274,13 +280,13 @@ void RobotisBalanceControl::process(int *balance_error, Eigen::MatrixXd *robot_t
 
   pose_right_foot_adjustment_.coeffRef(0) = r_foot_x_adjustment_by_force_x_;
   pose_right_foot_adjustment_.coeffRef(1) = r_foot_y_adjustment_by_force_y_;
-  pose_right_foot_adjustment_.coeffRef(2) = 0.5*foot_z_adjustment_by_force_z_difference_ + mat_r_xy.coeff(2, 0);
+  pose_right_foot_adjustment_.coeffRef(2) = 0.5*0.0*foot_z_adjustment_by_force_z_difference_ + mat_r_xy.coeff(2, 0) + r_foot_z_adjustment_by_force_z_;
   pose_right_foot_adjustment_.coeffRef(3) = (foot_roll_adjustment_by_gyro_roll_ + foot_roll_adjustment_by_orientation_roll_ + r_foot_roll_adjustment_by_torque_roll_);
   pose_right_foot_adjustment_.coeffRef(4) = (foot_pitch_adjustment_by_gyro_pitch_ + foot_pitch_adjustment_by_orientation_pitch_ + r_foot_pitch_adjustment_by_torque_pitch_);
 
   pose_left_foot_adjustment_.coeffRef(0) = l_foot_x_adjustment_by_force_x_;
   pose_left_foot_adjustment_.coeffRef(1) = l_foot_y_adjustment_by_force_y_;
-  pose_left_foot_adjustment_.coeffRef(2) = -0.5*foot_z_adjustment_by_force_z_difference_ + mat_l_xy.coeff(2, 0);
+  pose_left_foot_adjustment_.coeffRef(2) = -0.5*0.0*foot_z_adjustment_by_force_z_difference_ + mat_l_xy.coeff(2, 0) + l_foot_z_adjustment_by_force_z_;
   pose_left_foot_adjustment_.coeffRef(3) = (foot_roll_adjustment_by_gyro_roll_ + foot_roll_adjustment_by_orientation_roll_ + l_foot_roll_adjustment_by_torque_roll_);
   pose_left_foot_adjustment_.coeffRef(4) = (foot_pitch_adjustment_by_gyro_pitch_ + foot_pitch_adjustment_by_orientation_pitch_ + l_foot_pitch_adjustment_by_torque_pitch_);
 

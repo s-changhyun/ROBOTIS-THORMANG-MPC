@@ -126,6 +126,8 @@ public:
   DampingController foot_pitch_angle_ctrl_;
 
   DampingController foot_force_z_diff_ctrl_;
+  DampingController right_foot_force_z_ctrl_;
+  DampingController left_foot_force_z_ctrl_;
 
   DampingController right_foot_force_x_ctrl_;
   DampingController right_foot_force_y_ctrl_;
@@ -184,6 +186,8 @@ private:
   double foot_pitch_adjustment_by_orientation_pitch_;
 
   double foot_z_adjustment_by_force_z_difference_;
+  double r_foot_z_adjustment_by_force_z_;
+  double l_foot_z_adjustment_by_force_z_;
 
   double r_foot_x_adjustment_by_force_x_;
   double r_foot_y_adjustment_by_force_y_;
