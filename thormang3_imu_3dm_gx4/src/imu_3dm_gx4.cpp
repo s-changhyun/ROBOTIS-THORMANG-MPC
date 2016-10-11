@@ -40,6 +40,10 @@ sensor_msgs::Imu imu_msg;
 sensor_msgs::MagneticField field_msg;
 sensor_msgs::FluidPressure pressure_msg;
 
+std::ofstream out_file;
+int record_ref_num = 100;
+int publish_count  = 0;
+
 void publishData(const Imu::IMUData &data) {
 	//  assume we have all of these since they were requested
 	/// @todo: Replace this with a mode graceful failure...
@@ -79,6 +83,21 @@ void publishData(const Imu::IMUData &data) {
 	if (imuDiag) {
 		imuDiag->tick(imu_msg.header.stamp);
 	}
+
+	publish_count++;
+	if(publish_count == record_ref_num)
+	{
+	  out_file << imu_msg.header.stamp.toSec() << " "
+	           << imu_msg.angular_velocity.x << " "
+	           << imu_msg.angular_velocity.y << " "
+	           << imu_msg.angular_velocity.z << " "
+	           << imu_msg.orientation.x << " "
+	           << imu_msg.orientation.y << " "
+	           << imu_msg.orientation.z << " "
+	           << imu_msg.orientation.w << "\n";
+	  publish_count = 0;
+	}
+
 }
 
 void publishFilter(const Imu::FilterData &data) {
@@ -200,8 +219,9 @@ int main(int argc, char **argv) {
 
   std::string home_path(getenv("HOME"));
   std::string file_name = home_path + "/Documents/imu_mpc_record.txt";
-  std::ofstream outFile(file_name.c_str());
-  outFile << "time " << "gyro_x " << "gyro_y " << "gyro_z " << "quat_x " << "quat_y " << "quat_z " << "quat_w "<<"\n";
+  out_file.open(file_name.c_str());
+  out_file << "time " << "gyro_x " << "gyro_y " << "gyro_z " << "quat_x " << "quat_y " << "quat_z " << "quat_w "<<"\n";
+  record_ref_num = requestedImuRate;
 
 	//  new instance of the IMU
 	Imu imu(device, verbose);
@@ -299,14 +319,6 @@ int main(int argc, char **argv) {
 		while (ros::ok()) {
 			imu.runOnce();
 			updater->update();
-			outFile << imu_msg.header.stamp.toSec() << " "
-			    << imu_msg.angular_velocity.x << " "
-			    << imu_msg.angular_velocity.y << " "
-			    << imu_msg.angular_velocity.z << " "
-			    << imu_msg.orientation.x << " "
-          << imu_msg.orientation.y << " "
-          << imu_msg.orientation.z << " "
-          << imu_msg.orientation.w << "\n";
 		}
 		imu.disconnect();
 	}
