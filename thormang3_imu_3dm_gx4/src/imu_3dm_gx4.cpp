@@ -328,6 +328,7 @@ int main(int argc, char **argv) {
     msg.data = "IO error : ";
     msg.data += e.what();
 	  imu_status_pub.publish(msg);
+	  out_file << msg.data << "\n";
 	}
 	catch (Imu::timeout_error &e) {
 	  ROS_ERROR("Timeout: %s\n", e.what());
@@ -335,6 +336,7 @@ int main(int argc, char **argv) {
 	  msg.data = "timeout_error : ";
 	  msg.data += e.what();
 	  imu_status_pub.publish(msg);
+	  out_file << msg.data << "\n";
 	}
 	catch (std::exception &e) {
 	  ROS_ERROR("Exception: %s\n", e.what());
@@ -342,6 +344,7 @@ int main(int argc, char **argv) {
     msg.data = "Exception : ";
     msg.data += e.what();
 	  imu_status_pub.publish(msg);
+	  out_file << msg.data << "\n";
 	}
 
 	return 0;
