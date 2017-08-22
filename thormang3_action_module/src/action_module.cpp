@@ -132,6 +132,7 @@ void ActionModule::queueThread()
 
   /* publisher */
   status_msg_pub_ = ros_node.advertise<robotis_controller_msgs::StatusMsg>("/robotis/status", 0);
+  pelvis_pub_ = ros_node.advertise<geometry_msgs::PoseStamped>("/robotis/pelvis_pose_action_module", 0);
 
   /* subscriber */
   ros::Subscriber action_page_sub = ros_node.subscribe("/robotis/action/page_num", 0, &ActionModule::pageNumberCallback, this);
@@ -284,6 +285,11 @@ void ActionModule::process(std::map<std::string, robotis_framework::Dynamixel *>
     if(action_enable_it->second == true)
       result_[action_enable_it->first]->goal_position_ = action_result_[action_enable_it->first]->goal_position_;
   }
+
+  geometry_msgs::PoseStamped pelvis_msg;
+  pelvis_msg.header.stamp = ros::Time::now();
+
+  pelvis_pub_.publish(pelvis_msg);
 
   previous_running_ = present_running_;
   present_running_  = isRunning();
@@ -632,7 +638,21 @@ void ActionModule::actionPlayProcess(std::map<std::string, robotis_framework::Dy
    ***************************************/
 
   if( playing_ == false )
-    return;
+  {
+	  for (std::map<std::string, robotis_framework::Dynamixel *>::iterator dxls_it = dxls.begin(); dxls_it != dxls.end(); dxls_it++)
+	  {
+		  std::string joint_name = dxls_it->first;
+
+		  std::map<std::string, robotis_framework::DynamixelState*>::iterator result_it = action_result_.find(joint_name);
+		  if (result_it == result_.end())
+			  continue;
+		  else
+		  {
+			  result_it->second->goal_position_ = dxls_it->second->dxl_state_->goal_position_;
+		  }
+	  }
+	  return;
+  }
 
   if( first_driving_start_ == true ) // First of Start Process
   {
@@ -673,8 +693,7 @@ void ActionModule::actionPlayProcess(std::map<std::string, robotis_framework::Dy
       }
     }
   }
-
-
+  
   if( unit_time_count < unit_time_num ) // If state is ongoing
   {
     unit_time_count++;

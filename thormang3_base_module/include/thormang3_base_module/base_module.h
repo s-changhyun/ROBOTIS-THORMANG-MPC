@@ -46,6 +46,7 @@
 #include <std_msgs/Float64.h>
 #include <std_msgs/String.h>
 #include <geometry_msgs/Pose.h>
+#include <geometry_msgs/PoseStamped.h>
 #include <boost/thread.hpp>
 
 #include <Eigen/Dense>
@@ -125,6 +126,7 @@ private:
   // ros::Publisher      send_tra_pub_;
   ros::Publisher status_msg_pub_;
   ros::Publisher set_ctrl_module_pub_;
+  ros::Publisher pelvis_pub_;
 
   std::map<std::string, int> joint_name_to_id_;
 

@@ -156,6 +156,8 @@ void BaseModule::initialize(const int control_cycle_msec, robotis_framework::Rob
   /* publish topics */
   status_msg_pub_       = ros_node.advertise<robotis_controller_msgs::StatusMsg>("/robotis/status", 1);
   set_ctrl_module_pub_  = ros_node.advertise<std_msgs::String>("/robotis/enable_ctrl_module", 1);
+
+  pelvis_pub_ = ros_node.advertise<geometry_msgs::PoseStamped>("/robotis/pelvis_pose_base_module", 1);
 }
 
 void BaseModule::parseIniPoseData(const std::string &path)
@@ -448,6 +450,11 @@ void BaseModule::process(std::map<std::string, robotis_framework::Dynamixel *> d
 
     result_[joint_name]->goal_position_ = joint_state_->goal_joint_state_[joint_name_to_id_[joint_name]].position_;
   }
+
+  geometry_msgs::PoseStamped pelvis_msg;
+  pelvis_msg.header.stamp = ros::Time::now();
+
+  pelvis_pub_.publish(pelvis_msg);
 
   /*---------- initialize count number ----------*/
 
