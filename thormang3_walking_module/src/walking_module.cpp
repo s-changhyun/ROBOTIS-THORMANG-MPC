@@ -251,7 +251,9 @@ void OnlineWalkingModule::queueThread()
   ros::ServiceServer remove_existing_step_data = ros_node.advertiseService("/robotis/walking/remove_existing_step_data", &OnlineWalkingModule::removeExistingStepDataServiceCallback, this);
 
   /* sensor topic subscribe */
-  ros::Subscriber imu_data_sub      = ros_node.subscribe("/robotis/sensor/imu/imu",              3, &OnlineWalkingModule::imuDataOutputCallback,        this);
+  ros::Subscriber imu_data_sub  = ros_node.subscribe("/robotis/sensor/imu/imu", 3, &OnlineWalkingModule::imuDataOutputCallback, this);
+  ros::Subscriber l_foot_ft_sub = ros_node.subscribe("/robotis/sensor/l_foot_ft", 3, &OnlineWalkingModule::leftFootForceTorqueOutputCallback, this);
+  ros::Subscriber r_foot_ft_sub = ros_node.subscribe("/robotis/sensor/r_foot_ft", 3, &OnlineWalkingModule::rightFootForceTorqueOutputCallback, this);
 
   ros::WallDuration duration(control_cycle_msec_ / 1000.0);
   if(ros::param::get("gazebo", gazebo_) == false)
@@ -1088,6 +1090,26 @@ void OnlineWalkingModule::imuDataOutputCallback(const sensor_msgs::Imu::ConstPtr
                                             msg->orientation.w);
 }
 
+void OnlineWalkingModule::leftFootForceTorqueOutputCallback(const geometry_msgs::WrenchStamped::ConstPtr &msg)
+{
+  l_foot_fx_N_  =  1.0 * msg->wrench.force.x;
+  l_foot_fy_N_  =  1.0 * msg->wrench.force.y;
+  l_foot_fz_N_  = -1.0 * msg->wrench.force.z;
+  l_foot_Tx_Nm_ =  1.0 * msg->wrench.torque.x;
+  l_foot_Ty_Nm_ =  1.0 * msg->wrench.torque.y;
+  l_foot_Tz_Nm_ =  1.0 * msg->wrench.torque.z;
+}
+
+void OnlineWalkingModule::rightFootForceTorqueOutputCallback(const geometry_msgs::WrenchStamped::ConstPtr &msg)
+{
+  r_foot_fx_N_  =  1.0 * msg->wrench.force.x;
+  r_foot_fy_N_  =  1.0 * msg->wrench.force.y;
+  r_foot_fz_N_  = -1.0 * msg->wrench.force.z;
+  r_foot_Tx_Nm_ =  1.0 * msg->wrench.torque.x;
+  r_foot_Ty_Nm_ =  1.0 * msg->wrench.torque.y;
+  r_foot_Tz_Nm_ =  1.0 * msg->wrench.torque.z;
+}
+
 
 void OnlineWalkingModule::onModuleEnable()
 {
@@ -1170,19 +1192,19 @@ void OnlineWalkingModule::process(std::map<std::string, robotis_framework::Dynam
 
   THORMANG3OnlineWalking *online_walking = THORMANG3OnlineWalking::getInstance();
 
-  r_foot_fx_N_  = sensors["r_foot_fx_scaled_N"];
-  r_foot_fy_N_  = sensors["r_foot_fy_scaled_N"];
-  r_foot_fz_N_  = sensors["r_foot_fz_scaled_N"];
-  r_foot_Tx_Nm_ = sensors["r_foot_tx_scaled_Nm"];
-  r_foot_Ty_Nm_ = sensors["r_foot_ty_scaled_Nm"];
-  r_foot_Tz_Nm_ = sensors["r_foot_tz_scaled_Nm"];
+//  r_foot_fx_N_  = sensors["r_foot_fx_scaled_N"];
+//  r_foot_fy_N_  = sensors["r_foot_fy_scaled_N"];
+//  r_foot_fz_N_  = sensors["r_foot_fz_scaled_N"];
+//  r_foot_Tx_Nm_ = sensors["r_foot_tx_scaled_Nm"];
+//  r_foot_Ty_Nm_ = sensors["r_foot_ty_scaled_Nm"];
+//  r_foot_Tz_Nm_ = sensors["r_foot_tz_scaled_Nm"];
 
-  l_foot_fx_N_  = sensors["l_foot_fx_scaled_N"];
-  l_foot_fy_N_  = sensors["l_foot_fy_scaled_N"];
-  l_foot_fz_N_  = sensors["l_foot_fz_scaled_N"];
-  l_foot_Tx_Nm_ = sensors["l_foot_tx_scaled_Nm"];
-  l_foot_Ty_Nm_ = sensors["l_foot_ty_scaled_Nm"];
-  l_foot_Tz_Nm_ = sensors["l_foot_tz_scaled_Nm"];
+//  l_foot_fx_N_  = sensors["l_foot_fx_scaled_N"];
+//  l_foot_fy_N_  = sensors["l_foot_fy_scaled_N"];
+//  l_foot_fz_N_  = sensors["l_foot_fz_scaled_N"];
+//  l_foot_Tx_Nm_ = sensors["l_foot_tx_scaled_Nm"];
+//  l_foot_Ty_Nm_ = sensors["l_foot_ty_scaled_Nm"];
+//  l_foot_Tz_Nm_ = sensors["l_foot_tz_scaled_Nm"];
 
 
   r_foot_fx_N_ = robotis_framework::sign(r_foot_fx_N_) * fmin( fabs(r_foot_fx_N_), 2000.0);

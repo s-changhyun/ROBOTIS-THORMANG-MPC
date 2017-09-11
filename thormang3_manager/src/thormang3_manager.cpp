@@ -38,7 +38,6 @@
 #include "robotis_controller/robotis_controller.h"
 
 /* Sensor Module Header */
-#include "thormang3_feet_ft_module/feet_force_torque_sensor_module.h"
 
 /* Motion Module Header */
 #include "thormang3_base_module/base_module.h"
@@ -93,7 +92,6 @@ int main(int argc, char **argv)
     sleep(1);
 
     /* Add Sensor Module */
-    controller->addSensorModule((robotis_framework::SensorModule*)FeetForceTorqueSensor::getInstance());
 
     /* Add Motion Module */
     controller->addMotionModule((robotis_framework::MotionModule*)BaseModule::getInstance());

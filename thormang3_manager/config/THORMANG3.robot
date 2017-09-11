@@ -32,10 +32,10 @@ dynamixel | /dev/ttyUSB2 | 19  | H54-200-B500-R | 2.0      | r_leg_hip_p  | pres
 dynamixel | /dev/ttyUSB3 | 20  | H54-200-B500-R | 2.0      | l_leg_hip_p  | present_position, present_voltage
 dynamixel | /dev/ttyUSB2 | 21  | H54-200-S500-R | 2.0      | r_leg_kn_p   | present_position, present_voltage
 dynamixel | /dev/ttyUSB3 | 22  | H54-200-S500-R | 2.0      | l_leg_kn_p   | present_position, present_voltage
-dynamixel | /dev/ttyUSB2 | 23  | H54-200-B500-R | 2.0      | r_leg_an_p   | present_position, present_voltage, external_port_data_1, external_port_data_2
-dynamixel | /dev/ttyUSB3 | 24  | H54-200-B500-R | 2.0      | l_leg_an_p   | present_position, present_voltage, external_port_data_1, external_port_data_2
-dynamixel | /dev/ttyUSB2 | 25  | H54-200-S500-R | 2.0      | r_leg_an_r   | present_position, present_voltage, external_port_data_1, external_port_data_2, external_port_data_3, external_port_data_4
-dynamixel | /dev/ttyUSB3 | 26  | H54-200-S500-R | 2.0      | l_leg_an_r   | present_position, present_voltage, external_port_data_1, external_port_data_2, external_port_data_3, external_port_data_4
+dynamixel | /dev/ttyUSB2 | 23  | H54-200-B500-R | 2.0      | r_leg_an_p   | present_position, present_voltage
+dynamixel | /dev/ttyUSB3 | 24  | H54-200-B500-R | 2.0      | l_leg_an_p   | present_position, present_voltage
+dynamixel | /dev/ttyUSB2 | 25  | H54-200-S500-R | 2.0      | r_leg_an_r   | present_position, present_voltage
+dynamixel | /dev/ttyUSB3 | 26  | H54-200-S500-R | 2.0      | l_leg_an_r   | present_position, present_voltage
 dynamixel | /dev/ttyUSB0 | 27  | H54-100-S500-R | 2.0      | torso_y      | present_position, present_voltage
 dynamixel | /dev/ttyUSB1 | 28  | H42-20-S300-R  | 2.0      | head_y       | present_position, present_voltage
 dynamixel | /dev/ttyUSB1 | 29  | H42-20-S300-R  | 2.0      | head_p       | present_position, present_voltage

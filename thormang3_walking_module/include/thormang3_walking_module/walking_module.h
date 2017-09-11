@@ -43,6 +43,7 @@
 #include <std_msgs/String.h>
 #include <sensor_msgs/Imu.h>
 #include <geometry_msgs/PoseStamped.h>
+#include <geometry_msgs/WrenchStamped.h>
 #include <boost/thread.hpp>
 
 #include "thormang3_walking_module/thormang3_online_walking.h"
@@ -101,6 +102,8 @@ private:
 
   /* ROS Topic Callback Functions */
   void imuDataOutputCallback(const sensor_msgs::Imu::ConstPtr &msg);
+  void leftFootForceTorqueOutputCallback(const geometry_msgs::WrenchStamped::ConstPtr &msg);
+  void rightFootForceTorqueOutputCallback(const geometry_msgs::WrenchStamped::ConstPtr &msg);
 
   /* ROS Service Callback Functions */
   bool setBalanceParamServiceCallback(thormang3_walking_module_msgs::SetBalanceParam::Request  &req,
