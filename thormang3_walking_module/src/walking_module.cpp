@@ -1092,22 +1092,50 @@ void OnlineWalkingModule::imuDataOutputCallback(const sensor_msgs::Imu::ConstPtr
 
 void OnlineWalkingModule::leftFootForceTorqueOutputCallback(const geometry_msgs::WrenchStamped::ConstPtr &msg)
 {
-  l_foot_fx_N_  =  1.0 * msg->wrench.force.x;
-  l_foot_fy_N_  =  1.0 * msg->wrench.force.y;
-  l_foot_fz_N_  = -1.0 * msg->wrench.force.z;
-  l_foot_Tx_Nm_ =  1.0 * msg->wrench.torque.x;
-  l_foot_Ty_Nm_ =  1.0 * msg->wrench.torque.y;
-  l_foot_Tz_Nm_ =  1.0 * msg->wrench.torque.z;
+  Eigen::MatrixXd force = Eigen::MatrixXd::Zero(3,1);
+  force.coeffRef(0,0) = msg->wrench.force.x;
+  force.coeffRef(1,0) = msg->wrench.force.y;
+  force.coeffRef(2,0) = msg->wrench.force.z;
+
+  Eigen::MatrixXd torque = Eigen::MatrixXd::Zero(3,1);
+  torque.coeffRef(0,0) = msg->wrench.torque.x;
+  torque.coeffRef(1,0) = msg->wrench.torque.y;
+  torque.coeffRef(2,0) = msg->wrench.torque.z;
+
+  Eigen::MatrixXd force_new = robotis_framework::getRotationZ(-0.5*M_PI)*robotis_framework::getRotationX(M_PI)*force;
+  Eigen::MatrixXd torque_new = robotis_framework::getRotationZ(-0.5*M_PI)*robotis_framework::getRotationX(M_PI)*torque;
+
+  l_foot_fx_N_  = force_new.coeff(0,0);
+  l_foot_fy_N_  = force_new.coeff(1,0);
+  l_foot_fz_N_  = force_new.coeff(2,0);
+  l_foot_Tx_Nm_ = torque_new.coeff(0,0);
+  l_foot_Ty_Nm_ = torque_new.coeff(1,0);
+  l_foot_Tz_Nm_ = torque_new.coeff(2,0);
+
+  ROS_INFO("force x: %f, y: %f, z: %f", l_foot_fx_N_, l_foot_fy_N_, l_foot_fz_N_);
 }
 
 void OnlineWalkingModule::rightFootForceTorqueOutputCallback(const geometry_msgs::WrenchStamped::ConstPtr &msg)
 {
-  r_foot_fx_N_  =  1.0 * msg->wrench.force.x;
-  r_foot_fy_N_  =  1.0 * msg->wrench.force.y;
-  r_foot_fz_N_  = -1.0 * msg->wrench.force.z;
-  r_foot_Tx_Nm_ =  1.0 * msg->wrench.torque.x;
-  r_foot_Ty_Nm_ =  1.0 * msg->wrench.torque.y;
-  r_foot_Tz_Nm_ =  1.0 * msg->wrench.torque.z;
+  Eigen::MatrixXd force = Eigen::MatrixXd::Zero(3,1);
+  force.coeffRef(0,0) = msg->wrench.force.x;
+  force.coeffRef(1,0) = msg->wrench.force.y;
+  force.coeffRef(2,0) = msg->wrench.force.z;
+
+  Eigen::MatrixXd torque = Eigen::MatrixXd::Zero(3,1);
+  torque.coeffRef(0,0) = msg->wrench.torque.x;
+  torque.coeffRef(1,0) = msg->wrench.torque.y;
+  torque.coeffRef(2,0) = msg->wrench.torque.z;
+
+  Eigen::MatrixXd force_new = robotis_framework::getRotationZ(-0.5*M_PI)*robotis_framework::getRotationX(M_PI)*force;
+  Eigen::MatrixXd torque_new = robotis_framework::getRotationZ(-0.5*M_PI)*robotis_framework::getRotationX(M_PI)*torque;
+
+  r_foot_fx_N_  = force_new.coeff(0,0);
+  r_foot_fy_N_  = force_new.coeff(1,0);
+  r_foot_fz_N_  = force_new.coeff(2,0);
+  r_foot_Tx_Nm_ = torque_new.coeff(0,0);
+  r_foot_Ty_Nm_ = torque_new.coeff(1,0);
+  r_foot_Tz_Nm_ = torque_new.coeff(2,0);
 }
 
 
