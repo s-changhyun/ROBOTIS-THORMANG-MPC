@@ -1111,8 +1111,6 @@ void OnlineWalkingModule::leftFootForceTorqueOutputCallback(const geometry_msgs:
   l_foot_Tx_Nm_ = torque_new.coeff(0,0);
   l_foot_Ty_Nm_ = torque_new.coeff(1,0);
   l_foot_Tz_Nm_ = torque_new.coeff(2,0);
-
-  ROS_INFO("force x: %f, y: %f, z: %f", l_foot_fx_N_, l_foot_fy_N_, l_foot_fz_N_);
 }
 
 void OnlineWalkingModule::rightFootForceTorqueOutputCallback(const geometry_msgs::WrenchStamped::ConstPtr &msg)
