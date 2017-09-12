@@ -1102,8 +1102,8 @@ void OnlineWalkingModule::leftFootForceTorqueOutputCallback(const geometry_msgs:
   torque.coeffRef(1,0) = msg->wrench.torque.y;
   torque.coeffRef(2,0) = msg->wrench.torque.z;
 
-  Eigen::MatrixXd force_new = robotis_framework::getRotationZ(-0.5*M_PI)*robotis_framework::getRotationX(M_PI)*force;
-  Eigen::MatrixXd torque_new = robotis_framework::getRotationZ(-0.5*M_PI)*robotis_framework::getRotationX(M_PI)*torque;
+  Eigen::MatrixXd force_new = robotis_framework::getRotationX(M_PI)*robotis_framework::getRotationZ(-0.5*M_PI)*force;
+  Eigen::MatrixXd torque_new = robotis_framework::getRotationX(M_PI)*robotis_framework::getRotationZ(-0.5*M_PI)*torque;
 
   l_foot_fx_N_  = force_new.coeff(0,0);
   l_foot_fy_N_  = force_new.coeff(1,0);
@@ -1127,8 +1127,8 @@ void OnlineWalkingModule::rightFootForceTorqueOutputCallback(const geometry_msgs
   torque.coeffRef(1,0) = msg->wrench.torque.y;
   torque.coeffRef(2,0) = msg->wrench.torque.z;
 
-  Eigen::MatrixXd force_new = robotis_framework::getRotationZ(-0.5*M_PI)*robotis_framework::getRotationX(M_PI)*force;
-  Eigen::MatrixXd torque_new = robotis_framework::getRotationZ(-0.5*M_PI)*robotis_framework::getRotationX(M_PI)*torque;
+  Eigen::MatrixXd force_new = robotis_framework::getRotationX(M_PI)*robotis_framework::getRotationZ(-0.5*M_PI)*force;
+  Eigen::MatrixXd torque_new = robotis_framework::getRotationX(M_PI)*robotis_framework::getRotationZ(-0.5*M_PI)*torque;
 
   r_foot_fx_N_  = force_new.coeff(0,0);
   r_foot_fy_N_  = force_new.coeff(1,0);
