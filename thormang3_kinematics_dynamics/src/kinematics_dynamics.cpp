@@ -94,7 +94,7 @@ KinematicsDynamics::KinematicsDynamics(TreeSelect tree)
     thormang3_link_data_[40]->sibling_            =  -1;
     thormang3_link_data_[40]->child_              =  43;
     thormang3_link_data_[40]->mass_               =  0.0;
-    thormang3_link_data_[40]->relative_position_  =  robotis_framework::getTransitionXYZ( 0.0 , 0.0 , 0.723 ); // 0.0 , 0.0 , 0.801
+    thormang3_link_data_[40]->relative_position_  =  robotis_framework::getTransitionXYZ( 0.0 , 0.0 , 0.727 ); // 0.0 , 0.0 , 0.801
     thormang3_link_data_[40]->joint_axis_         =  robotis_framework::getTransitionXYZ( 0.0 , 0.0 , 0.0 );
     thormang3_link_data_[40]->center_of_mass_     =  robotis_framework::getTransitionXYZ( 0.0 , 0.0 , 0.0 );
     thormang3_link_data_[40]->joint_limit_max_    =  100.0;
@@ -544,6 +544,7 @@ KinematicsDynamics::KinematicsDynamics(TreeSelect tree)
     thormang3_link_data_[37]->child_              =  45;
     thormang3_link_data_[37]->mass_               =  1.689;
     thormang3_link_data_[37]->relative_position_  =  robotis_framework::getTransitionXYZ( -0.057 , 0.000 , -0.087 );
+//    thormang3_link_data_[37]->relative_position_  =  robotis_framework::getTransitionXYZ( -0.057 , 0.000 , -0.092 );
     thormang3_link_data_[37]->joint_axis_         =  robotis_framework::getTransitionXYZ( 0.0 , 0.0 , 0.0 );
     thormang3_link_data_[37]->center_of_mass_     =  robotis_framework::getTransitionXYZ( 0.000 , -0.009 , -0.013 );
     thormang3_link_data_[37]->joint_limit_max_    =  100.0;
@@ -557,6 +558,7 @@ KinematicsDynamics::KinematicsDynamics(TreeSelect tree)
     thormang3_link_data_[45]->child_              =  -1;
     thormang3_link_data_[45]->mass_               =  0.0;
     thormang3_link_data_[45]->relative_position_  =  robotis_framework::getTransitionXYZ( 0.0 , 0.0 , -0.0275 );
+//    thormang3_link_data_[45]->relative_position_  =  robotis_framework::getTransitionXYZ( 0.0 , 0.0 , -0.0294 );
     thormang3_link_data_[45]->joint_axis_         =  robotis_framework::getTransitionXYZ( 0.0 , 0.0 , 0.0 );
     thormang3_link_data_[45]->center_of_mass_     =  robotis_framework::getTransitionXYZ( 0.0 , 0.0 , 0.0 );
     thormang3_link_data_[45]->joint_limit_max_    =  100.0;
@@ -650,6 +652,7 @@ KinematicsDynamics::KinematicsDynamics(TreeSelect tree)
     thormang3_link_data_[36]->child_              =  46;
     thormang3_link_data_[36]->mass_               =  1.689;
     thormang3_link_data_[36]->relative_position_  =  robotis_framework::getTransitionXYZ( -0.057 , 0.000 , -0.087 );
+//    thormang3_link_data_[36]->relative_position_  =  robotis_framework::getTransitionXYZ( -0.057 , 0.000 , -0.092 );
     thormang3_link_data_[36]->joint_axis_         =  robotis_framework::getTransitionXYZ( 0.0 , 0.0 , 0.0 );
     thormang3_link_data_[36]->center_of_mass_     =  robotis_framework::getTransitionXYZ( 0.000 , 0.009 , -0.013 );
     thormang3_link_data_[36]->joint_limit_max_    =  100.0;
@@ -663,6 +666,7 @@ KinematicsDynamics::KinematicsDynamics(TreeSelect tree)
     thormang3_link_data_[46]->child_              =  -1;
     thormang3_link_data_[46]->mass_               =  0.0;
     thormang3_link_data_[46]->relative_position_  =  robotis_framework::getTransitionXYZ( 0.0 , 0.0 , -0.0275 );
+//    thormang3_link_data_[46]->relative_position_  =  robotis_framework::getTransitionXYZ( 0.0 , 0.0 , -0.0294 );
     thormang3_link_data_[46]->joint_axis_         =  robotis_framework::getTransitionXYZ( 0.0 , 0.0 , 0.0 );
     thormang3_link_data_[46]->center_of_mass_     =  robotis_framework::getTransitionXYZ( 0.0 , 0.0 , 0.0 );
     thormang3_link_data_[46]->joint_limit_max_    =  100.0;
@@ -926,12 +930,13 @@ bool KinematicsDynamics::calcInverseKinematics(int to, Eigen::MatrixXd tar_posit
     return false;
 }
 
-bool KinematicsDynamics::calcInverseKinematics(int from, int to, Eigen::MatrixXd tar_position, Eigen::MatrixXd tar_orientation, int max_iter, double ik_err)
+bool KinematicsDynamics::calcInverseKinematics
+(int from, int to, Eigen::MatrixXd tar_position, Eigen::MatrixXd tar_orientation, int max_iter, double ik_err)
 {
   bool ik_success = false;
   bool limit_success = false;
 
-  //  calcForwardKinematics(0);
+  calcForwardKinematics(0);
 
   std::vector<int> idx = findRoute(from, to);
 
@@ -990,7 +995,8 @@ bool KinematicsDynamics::calcInverseKinematics(int from, int to, Eigen::MatrixXd
     return false;
 }
 
-bool KinematicsDynamics::calcInverseKinematics(int to, Eigen::MatrixXd tar_position, Eigen::MatrixXd tar_orientation, int max_iter, double ik_err , Eigen::MatrixXd weight)
+bool KinematicsDynamics::calcInverseKinematics
+(int to, Eigen::MatrixXd tar_position, Eigen::MatrixXd tar_orientation, int max_iter, double ik_err , Eigen::MatrixXd weight)
 {
   bool ik_success = false;
   bool limit_success = false;
@@ -1074,7 +1080,8 @@ bool KinematicsDynamics::calcInverseKinematics(int to, Eigen::MatrixXd tar_posit
     return false;
 }
 
-bool KinematicsDynamics::calcInverseKinematics(int from, int to, Eigen::MatrixXd tar_position, Eigen::MatrixXd tar_orientation, int max_iter, double ik_err, Eigen::MatrixXd weight)
+bool KinematicsDynamics::calcInverseKinematics
+(int from, int to, Eigen::MatrixXd tar_position, Eigen::MatrixXd tar_orientation, int max_iter, double ik_err, Eigen::MatrixXd weight)
 {
   bool ik_success = false;
   bool limit_success = false;
@@ -1269,6 +1276,140 @@ bool KinematicsDynamics::calcInverseKinematicsForLeftLeg(double *out, double x, 
   }
   else
     return false;
+}
+
+bool KinematicsDynamics::calcInverseKinematicsWOFK
+(int from, int to, Eigen::MatrixXd tar_position, Eigen::MatrixXd tar_orientation, int max_iter, double ik_err)
+{
+  bool ik_success = false;
+  bool limit_success = false;
+
+//  calcForwardKinematics(0);
+
+  std::vector<int> idx = findRoute(from, to);
+
+  for (int iter=0; iter<max_iter; iter++)
+  {
+    Eigen::MatrixXd jacobian = calcJacobian(idx);
+
+    Eigen::MatrixXd curr_position = thormang3_link_data_[to]->position_;
+    Eigen::MatrixXd curr_orientation = thormang3_link_data_[to]->orientation_;
+
+    Eigen::MatrixXd err = calcVWerr(tar_position, curr_position, tar_orientation, curr_orientation);
+
+    if (err.norm()<ik_err)
+    {
+      ik_success = true;
+      break;
+    }
+    else
+      ik_success = false;
+
+    Eigen::MatrixXd jacobian_trans = jacobian * jacobian.transpose();
+    Eigen::MatrixXd jacobian_inv = jacobian.transpose() * jacobian_trans.inverse();
+
+    Eigen::MatrixXd delta_angle = jacobian_inv * err ;
+
+    for (int id=0; id<idx.size(); id++)
+    {
+      int joint_num = idx[id];
+      thormang3_link_data_[joint_num]->joint_angle_ +=delta_angle.coeff(id);
+    }
+
+    calcForwardKinematics(0);
+  }
+
+  for ( int id = 0; id < idx.size(); id++ )
+  {
+    int joint_num      =   idx[ id ];
+
+    if ( thormang3_link_data_[ joint_num ]->joint_angle_ >= thormang3_link_data_[ joint_num ]->joint_limit_max_ )
+    {
+      limit_success = false;
+      break;
+    }
+    else if ( thormang3_link_data_[ joint_num ]->joint_angle_ <= thormang3_link_data_[ joint_num ]->joint_limit_min_ )
+    {
+      limit_success = false;
+      break;
+    }
+    else
+      limit_success = true;
+  }
+
+  if (ik_success == true && limit_success == true)
+    return true;
+  else
+    return false;
+}
+
+Eigen::MatrixXd KinematicsDynamics::calcPreviewParam(double preview_time, double control_cycle,
+                                                     double lipm_height,
+                                                     Eigen::MatrixXd K, Eigen::MatrixXd P)
+{
+  double t = control_cycle;
+  double preview_size_ = round(preview_time/control_cycle);
+
+  Eigen::MatrixXd A_;
+  A_.resize(3,3);
+  A_ << 1,  t,  t*t/2.0,
+        0,  1,  t,
+        0,  0,  1;
+
+  Eigen::MatrixXd b_;
+  b_.resize(3,1);
+  b_ << t*t*t/6.0,
+        t*t/2.0,
+        t;
+
+  Eigen::MatrixXd c_;
+  c_.resize(1,3);
+  c_ << 1, 0, -lipm_height/9.81;
+
+  Eigen::MatrixXd tempA = Eigen::MatrixXd::Zero(4,4);
+  Eigen::MatrixXd tempb = Eigen::MatrixXd::Zero(4,1);
+  Eigen::MatrixXd tempc = Eigen::MatrixXd::Zero(1,4);
+
+  tempA.coeffRef(0,0) = 1;
+  tempA.block<1,3>(0,1) = c_*A_;
+  tempA.block<3,3>(1,1) = A_;
+
+  tempb.coeffRef(0,0) = (c_*b_).coeff(0,0);
+  tempb.block<3,1>(1,0) = b_;
+
+  tempc.coeffRef(0,0) = 1;
+
+  double R = 1e-6;
+  double Q_e = 1;
+  double Q_x = 0;
+
+  Eigen::MatrixXd Q = Eigen::MatrixXd::Zero(4,4);
+  Q.coeffRef(0,0) = Q_e;
+  Q.coeffRef(1,1) = Q_e;
+  Q.coeffRef(2,2) = Q_e;
+  Q.coeffRef(3,3) = Q_x;
+
+  Eigen::MatrixXd f_;
+  f_.resize(1, preview_size_);
+
+  Eigen::MatrixXd mat_R = Eigen::MatrixXd::Zero(1,1);
+  mat_R.coeffRef(0,0) = R;
+
+  Eigen::MatrixXd tempCoeff1 = mat_R + ((tempb.transpose() * P) * tempb);
+  Eigen::MatrixXd tempCoeff1_inv = tempCoeff1.inverse();
+  Eigen::MatrixXd tempCoeff2 = tempb.transpose();
+  Eigen::MatrixXd tempCoeff3 = Eigen::MatrixXd::Identity(4,4);
+  Eigen::MatrixXd tempCoeff4 = P*tempc.transpose();
+
+  f_.block<1,1>(0,0) = ((tempCoeff1_inv*tempCoeff2)* tempCoeff3) * tempCoeff4;
+
+  for(int i = 1; i < preview_size_; i++)
+  {
+    tempCoeff3 = tempCoeff3*((tempA - tempb*K).transpose());
+    f_.block<1,1>(0,i) = ((tempCoeff1_inv*tempCoeff2)* tempCoeff3) * tempCoeff4;
+  }
+
+  return f_;
 }
 
 }

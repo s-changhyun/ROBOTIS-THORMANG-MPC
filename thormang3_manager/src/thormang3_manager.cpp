@@ -47,6 +47,8 @@
 #include "thormang3_walking_module/walking_module.h"
 #include "thormang3_gripper_module/gripper_module.h"
 
+#include "thormang3_wholebody_module/wholebody_module.h"
+
 
 using namespace thormang3;
 
@@ -100,6 +102,7 @@ int main(int argc, char **argv)
     controller->addMotionModule((robotis_framework::MotionModule*)GripperModule::getInstance());
     controller->addMotionModule((robotis_framework::MotionModule*)HeadControlModule::getInstance());
     controller->addMotionModule((robotis_framework::MotionModule*)OnlineWalkingModule::getInstance());
+    controller->addMotionModule((robotis_framework::MotionModule*)WholebodyModule::getInstance());
 
     controller->startTimer();
 
