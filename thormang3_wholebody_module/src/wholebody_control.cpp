@@ -159,13 +159,14 @@ bool WholebodyControl::set(double time)
   int     max_iter    = 30;
   double  ik_tol      = 1e-5;
 
-  bool ik_success = false;
+//  bool ik_success = false;
+  bool ik_success = true;
 
   if (control_group_ == "left_leg" || control_group_ == "right_leg")
   {
-    ik_success = robot_->calcInverseKinematics(ID_PELVIS, end_link_,
-                                               ik_pos, ik_rot,
-                                               max_iter, ik_tol);
+//    ik_success = robot_->calcInverseKinematics(ID_PELVIS, end_link_,
+//                                               ik_pos, ik_rot,
+//                                               max_iter, ik_tol);
   }
   else if (control_group_ == "body")
   {
@@ -179,18 +180,18 @@ bool WholebodyControl::set(double time)
     robot_->thormang3_link_data_[ID_PELVIS_ROT_Y]->joint_angle_ = ik_rpy.coeff(1,0);
     robot_->thormang3_link_data_[ID_PELVIS_ROT_Z]->joint_angle_ = ik_rpy.coeff(2,0);
 
-    bool ik_rleg_success = robot_->calcInverseKinematics(ID_PELVIS, ID_R_LEG_END,
-                                                         init_rleg_pos_, init_rleg_rot_,
-                                                         max_iter, ik_tol);
+//    bool ik_rleg_success = robot_->calcInverseKinematics(ID_PELVIS, ID_R_LEG_END,
+//                                                         init_rleg_pos_, init_rleg_rot_,
+//                                                         max_iter, ik_tol);
 
-    bool ik_lleg_success = robot_->calcInverseKinematics(ID_PELVIS, ID_L_LEG_END,
-                                                         init_lleg_pos_, init_lleg_rot_,
-                                                         max_iter, ik_tol);
+//    bool ik_lleg_success = robot_->calcInverseKinematics(ID_PELVIS, ID_L_LEG_END,
+//                                                         init_lleg_pos_, init_lleg_rot_,
+//                                                         max_iter, ik_tol);
 
-    if (ik_rleg_success == true && ik_lleg_success == true)
-      ik_success = true;
-    else
-      ik_success = false;
+//    if (ik_rleg_success == true && ik_lleg_success == true)
+//      ik_success = true;
+//    else
+//      ik_success = false;
   }
 
   return ik_success;

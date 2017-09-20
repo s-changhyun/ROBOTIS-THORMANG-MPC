@@ -39,7 +39,9 @@
 #include <std_msgs/Int16.h>
 #include <std_msgs/Float64.h>
 #include <std_msgs/String.h>
+#include <sensor_msgs/Imu.h>
 #include <geometry_msgs/Pose.h>
+#include <geometry_msgs/WrenchStamped.h>
 #include <boost/thread.hpp>
 #include <yaml-cpp/yaml.h>
 
@@ -54,6 +56,7 @@
 #include "robotis_controller_msgs/StatusMsg.h"
 
 #include "thormang3_kinematics_dynamics/kinematics_dynamics.h"
+#include "thormang3_wholebody_balance_control/thormang3_wholebody_balance_control.h"
 
 #include "thormang3_wholebody_module_msgs/JointPose.h"
 #include "thormang3_wholebody_module_msgs/KinematicsPose.h"
@@ -71,10 +74,22 @@ namespace thormang3
 
 enum CONTROL_TYPE {
   JOINT_CONTROL,
+  TASK_CONTROL,
   WHOLEBODY_CONTROL,
   WALKING_CONTROL,
+  BALANCE_CONTROL,
   NONE
 };
+
+enum BALANCE {
+  ON,
+  OFF
+};
+
+//enum TASK_CONTROL {
+//  WHOLEBODY_CONTROL,
+//  WALKING_CONTROL
+//};
 
 class WholebodyModule: public robotis_framework::MotionModule,
                        public robotis_framework::Singleton<WholebodyModule>
@@ -101,6 +116,13 @@ public:
 
   void reset();
 
+  void parseBalanceGainData(const std::string &path);
+  void setWholebodyBalanceMsgCallback(const std_msgs::String::ConstPtr& msg);
+
+  void imuDataCallback(const sensor_msgs::Imu::ConstPtr& msg);
+  void leftFootForceTorqueOutputCallback(const geometry_msgs::WrenchStamped::ConstPtr &msg);
+  void rightFootForceTorqueOutputCallback(const geometry_msgs::WrenchStamped::ConstPtr &msg);
+
   bool getJointPoseCallback(thormang3_wholebody_module_msgs::GetJointPose::Request &req,
                             thormang3_wholebody_module_msgs::GetJointPose::Response &res);
   bool getKinematicsPoseCallback(thormang3_wholebody_module_msgs::GetKinematicsPose::Request &req,
@@ -110,8 +132,7 @@ public:
   void publishStatusMsg(unsigned int type, std::string msg);
 
   /* Parameter */
-//  KinematicsDynamics *robotis_;
-//  RobotisDevice     *robotis_;
+  KinematicsDynamics *robotis_;
   WholebodyControl  *wholebody_control_;
   WalkingControl    *walking_control_;
 
@@ -124,6 +145,11 @@ private:
   void calcWholebodyControl();
   void initWalkingControl();
   void calcWalkingControl();
+
+  bool calcTaskControl();
+
+  void initBalanceControl();
+  void calcBalanceControl();
 
   double          control_cycle_sec_;
   boost::thread   queue_thread_;
@@ -144,11 +170,13 @@ private:
   bool joint_control_initialize_;
   bool wholebody_initialize_;
   bool walking_initialize_;
+  bool balance_control_initialize_;
 
   int walking_leg_, walking_phase_;
   int walking_size_, walking_step_;
 
   robotis_framework::MinimumJerk *joint_trajectory_;
+  robotis_framework::MinimumJerk *balance_trajectory_;
 
   std::map<std::string, int> joint_name_to_id_;
 
@@ -160,8 +188,7 @@ private:
 
   std::vector<std::string> joint_name_;
 
-  std::vector<double_t> ff_p_gain_, ff_d_gain_, fb_p_gain_, fb_d_gain_;
-
+  // Joint Command
   std::vector<double_t> present_joint_torque_, present_joint_acceleration_, present_joint_velocity_, present_joint_position_;
   std::vector<double_t> desired_joint_torque_, desired_joint_acceleration_, desired_joint_velocity_, desired_joint_position_;
   std::vector<double_t> goal_joint_torque_, goal_joint_acceleration_, goal_joint_velocity_, goal_joint_position_;
@@ -173,12 +200,71 @@ private:
   std::vector<double_t> desired_right_foot_position_, desired_right_foot_velocity_, desired_right_foot_acceleration_, desired_right_foot_orientation_;
   std::vector<double_t> desired_body_position_, desired_body_velocity_, desired_body_acceleration_, desired_body_orientation_;
 
+  // Walking Control
   std::vector<double_t> x_lipm_, y_lipm_;
 
   thormang3_wholebody_module_msgs::FootStepCommand foot_step_command_;
   thormang3_wholebody_module_msgs::PreviewRequest preview_request_;
   thormang3_wholebody_module_msgs::PreviewResponse preview_response_;
   thormang3_wholebody_module_msgs::WalkingParam walking_param_;
+
+  // Balance Control
+  BALANCE balance_type_;
+
+  bool is_balancing_;
+  int balance_step_, balance_size_;
+  Eigen::MatrixXd on_balance_gain_tra_, off_balance_gain_tra_;
+  RobotisBalanceControl balance_control_;
+
+  std::vector<double_t> desired_balance_gain_;
+  std::vector<double_t> goal_balance_gain_;
+
+  double gyro_gain_;
+  double foot_roll_angle_gain_;
+  double foot_pitch_angle_gain_;
+  double foot_roll_angle_time_constant_;
+  double foot_pitch_angle_time_constant_;
+
+  double left_foot_force_x_gain_;
+  double left_foot_force_y_gain_;
+  double left_foot_force_x_time_constant_;
+  double left_foot_force_y_time_constant_;
+
+  double right_foot_force_x_gain_;
+  double right_foot_force_y_gain_;
+  double right_foot_force_x_time_constant_;
+  double right_foot_force_y_time_constant_;
+
+  double foot_force_z_gain_;
+  double foot_force_z_time_constant_;
+
+  double left_foot_torque_roll_gain_;
+  double left_foot_torque_pitch_gain_;
+  double left_foot_torque_roll_time_constant_;
+  double left_foot_torque_pitch_time_constant_;
+
+  double right_foot_torque_roll_gain_;
+  double right_foot_torque_pitch_gain_;
+  double right_foot_torque_roll_time_constant_;
+  double right_foot_torque_pitch_time_constant_;
+
+  double wb_pelvis_diff_x_constant_;
+  double wb_pelvis_diff_y_constant_;
+  double wb_pelvis_diff_z_constant_;
+
+  double wb_pelvis_x_max_;
+  double wb_pelvis_x_min_;
+  double wb_pelvis_y_max_;
+  double wb_pelvis_y_min_;
+  double wb_pelvis_z_max_;
+  double wb_pelvis_z_min_;
+
+  double balance_goal_l_foot_ft_;
+  double balance_goal_r_foot_ft_;
+
+  sensor_msgs::Imu imu_data_msg_;
+  geometry_msgs::Wrench l_foot_ft_data_msg_;
+  geometry_msgs::Wrench r_foot_ft_data_msg_;
 };
 
 }

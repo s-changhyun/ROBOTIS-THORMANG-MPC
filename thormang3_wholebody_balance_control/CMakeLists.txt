@@ -1,20 +1,16 @@
+################################################################################
+# CMake
+################################################################################
 cmake_minimum_required(VERSION 2.8.3)
-project(thormang3_wholebody_module)
+project(thormang3_wholebody_balance_control)
 
 ################################################################################
 # Packages
 ################################################################################
 find_package(catkin REQUIRED COMPONENTS
   roscpp
-  std_msgs
-  geometry_msgs
   cmake_modules
   robotis_math
-  robotis_controller_msgs
-  robotis_framework_common
-  thormang3_kinematics_dynamics
-  thormang3_wholebody_balance_control
-  thormang3_wholebody_module_msgs
 )
 
 find_package(Eigen REQUIRED)
@@ -32,8 +28,7 @@ find_package(Eigen REQUIRED)
 ################################################################################
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES thormang3_wholebody_module
-  CATKIN_DEPENDS roscpp robotis_math robotis_framework_common
+  LIBRARIES thormang3_wholebody_balance_control
 )
 
 ################################################################################
@@ -45,24 +40,20 @@ include_directories(
   ${Eigen_INCLUDE_DIRS}
 )
 
-add_library(thormang3_wholebody_module
-  src/wholebody_module.cpp
-  src/joint_control.cpp
-  src/walking_control.cpp
-  src/wholebody_control.cpp
+add_library(thormang3_wholebody_balance_control
+  src/thormang3_wholebody_balance_control.cpp
 )
 
-add_dependencies(thormang3_wholebody_module ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(thormang3_wholebody_balance_control ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
-target_link_libraries(thormang3_wholebody_module
-  yaml-cpp
+target_link_libraries(thormang3_wholebody_balance_control
   ${catkin_LIBRARIES}
 )
 
 ################################################################################
 # Install
 ################################################################################
-install(TARGETS thormang3_wholebody_module
+install(TARGETS thormang3_wholebody_balance_control
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -70,10 +61,6 @@ install(TARGETS thormang3_wholebody_module
 
 install(DIRECTORY include/${PROJECT_NAME}/
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-)
-
-install(DIRECTORY config/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )
 
 ################################################################################

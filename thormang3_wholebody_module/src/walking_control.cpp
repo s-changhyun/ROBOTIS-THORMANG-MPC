@@ -22,17 +22,17 @@ WalkingControl::WalkingControl(double control_cycle,
   foot_origin_shift_y_ = 0.186;
 
   // Foot Trajectory Parameter
-  dsp_ratio_ = dsp_ratio; // default: 0.2;
-  foot_trajectory_max_z_ = foot_height_max; // default: 0.03;
+  dsp_ratio_ = dsp_ratio; // default:
+  foot_trajectory_max_z_ = foot_height_max; // default:
 
   // Preview Control Parameter
   preview_time_ = 1.6;
-  lipm_height_ = lipm_height; // default: 0.1;
+  lipm_height_ = lipm_height; // default:
   preview_size_ = round(preview_time_/control_cycle_);
 
   // ZMP Offset Parameter
-  offset_zmp_x_ = zmp_offset_x; // default : 0.0;
-  offset_zmp_y_ = zmp_offset_y; // default : 0.01;
+  offset_zmp_x_ = zmp_offset_x; // default :
+  offset_zmp_y_ = zmp_offset_y; // default :
 
   // Joint Initial Pose
   init_joint_pos_ = init_joint_pos;
@@ -1026,29 +1026,29 @@ void WalkingControl::getWalkingOrientation(std::vector<double_t> &left_foot_quat
                                            std::vector<double_t> &right_foot_quat,
                                            std::vector<double_t> &body_quat)
 {
-  Eigen::Quaterniond left_foot_quaternion =
-      robotis_framework::convertRotationToQuaternion(robot_->thormang3_link_data_[ID_L_LEG_END]->orientation_);
+//  Eigen::Quaterniond left_foot_quaternion =
+//      robotis_framework::convertRotationToQuaternion(robot_->thormang3_link_data_[ID_L_LEG_END]->orientation_);
 
-  left_foot_quat[0] = left_foot_quaternion.x();
-  left_foot_quat[1] = left_foot_quaternion.y();
-  left_foot_quat[2] = left_foot_quaternion.z();
-  left_foot_quat[3] = left_foot_quaternion.w();
+  left_foot_quat[0] = desired_left_foot_quaternion_.x();
+  left_foot_quat[1] = desired_left_foot_quaternion_.y();
+  left_foot_quat[2] = desired_left_foot_quaternion_.z();
+  left_foot_quat[3] = desired_left_foot_quaternion_.w();
 
-  Eigen::Quaterniond right_foot_quaternion =
-      robotis_framework::convertRotationToQuaternion(robot_->thormang3_link_data_[ID_R_LEG_END]->orientation_);
+//  Eigen::Quaterniond right_foot_quaternion =
+//      robotis_framework::convertRotationToQuaternion(robot_->thormang3_link_data_[ID_R_LEG_END]->orientation_);
 
-  right_foot_quat[0] = right_foot_quaternion.x();
-  right_foot_quat[1] = right_foot_quaternion.y();
-  right_foot_quat[2] = right_foot_quaternion.z();
-  right_foot_quat[3] = right_foot_quaternion.w();
+  right_foot_quat[0] = desired_right_foot_quaternion_.x();
+  right_foot_quat[1] = desired_right_foot_quaternion_.y();
+  right_foot_quat[2] = desired_right_foot_quaternion_.z();
+  right_foot_quat[3] = desired_right_foot_quaternion_.w();
 
-  Eigen::Quaterniond body_quaternion =
-      robotis_framework::convertRotationToQuaternion(robot_->thormang3_link_data_[ID_PELVIS]->orientation_);
+//  Eigen::Quaterniond body_quaternion =
+//      robotis_framework::convertRotationToQuaternion(robot_->thormang3_link_data_[ID_PELVIS]->orientation_);
 
-  body_quat[0] = body_quaternion.x();
-  body_quat[1] = body_quaternion.y();
-  body_quat[2] = body_quaternion.z();
-  body_quat[3] = body_quaternion.w();
+  body_quat[0] = desired_body_quaternion_.x(); //body_quaternion.x();
+  body_quat[1] = desired_body_quaternion_.y(); //body_quaternion.y();
+  body_quat[2] = desired_body_quaternion_.z(); //body_quaternion.z();
+  body_quat[3] = desired_body_quaternion_.w(); //body_quaternion.w();
 }
 
 void WalkingControl::getLIPM(std::vector<double_t> &x_lipm, std::vector<double_t> &y_lipm)

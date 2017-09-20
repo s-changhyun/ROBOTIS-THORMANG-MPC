@@ -95,6 +95,10 @@ public:
                                    double lipm_height,
                                    Eigen::MatrixXd K, Eigen::MatrixXd P);
 
+  bool calcInverseKinematicsDual(int from_1, int to_1, Eigen::MatrixXd tar_position_1, Eigen::MatrixXd tar_orientation_1,
+                                 int from_2, int to_2, Eigen::MatrixXd tar_position_2, Eigen::MatrixXd tar_orientation_2,
+                                 int max_iter, double ik_err);
+
   LinkData *thormang3_link_data_ [ ALL_JOINT_ID + 1 ];
 
   double thigh_length_m_;

@@ -15,11 +15,11 @@
   <build_depend>robotis_framework_common</build_depend>
   <build_depend>thormang3_wholebody_module_msgs</build_depend>
   <build_depend>thormang3_kinematics_dynamics</build_depend>
+  <build_depend>thormang3_wholebody_balance_control</build_depend>
   <run_depend>roscpp</run_depend>
   <run_depend>std_msgs</run_depend>
   <run_depend>geometry_msgs</run_depend>
   <run_depend>cmake_modules</run_depend>
   <run_depend>robotis_math</run_depend>
   <run_depend>robotis_framework_common</run_depend>
-  <run_depend>thormang3_kinematics_dynamics</run_depend>
 </package>

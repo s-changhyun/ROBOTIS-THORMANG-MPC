@@ -44,7 +44,7 @@
 #include "thormang3_action_module/action_module.h"
 #include "thormang3_head_control_module/head_control_module.h"
 #include "thormang3_manipulation_module/manipulation_module.h"
-#include "thormang3_walking_module/walking_module.h"
+//#include "thormang3_walking_module/walking_module.h"
 #include "thormang3_gripper_module/gripper_module.h"
 
 #include "thormang3_wholebody_module/wholebody_module.h"
@@ -101,7 +101,7 @@ int main(int argc, char **argv)
     controller->addMotionModule((robotis_framework::MotionModule*)ManipulationModule::getInstance());
     controller->addMotionModule((robotis_framework::MotionModule*)GripperModule::getInstance());
     controller->addMotionModule((robotis_framework::MotionModule*)HeadControlModule::getInstance());
-    controller->addMotionModule((robotis_framework::MotionModule*)OnlineWalkingModule::getInstance());
+//    controller->addMotionModule((robotis_framework::MotionModule*)OnlineWalkingModule::getInstance());
     controller->addMotionModule((robotis_framework::MotionModule*)WholebodyModule::getInstance());
 
     controller->startTimer();

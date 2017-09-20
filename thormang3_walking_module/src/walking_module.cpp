@@ -1136,7 +1136,6 @@ void OnlineWalkingModule::rightFootForceTorqueOutputCallback(const geometry_msgs
   r_foot_Tz_Nm_ = torque_new.coeff(2,0);
 }
 
-
 void OnlineWalkingModule::onModuleEnable()
 {
   std::string status_msg = WalkingStatusMSG::WALKING_MODULE_IS_ENABLED_MSG;

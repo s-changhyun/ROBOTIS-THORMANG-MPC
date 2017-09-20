@@ -18,15 +18,16 @@ find_package(catkin REQUIRED COMPONENTS
   cmake_modules
   ati_ft_sensor
   thormang3_kinematics_dynamics
-  thormang3_balance_control
+#  thormang3_balance_control
   thormang3_action_module
   thormang3_head_control_module
   thormang3_manipulation_module
   thormang3_gripper_module
-  thormang3_walking_module
+#  thormang3_walking_module
   thormang3_base_module
   thormang3_wholebody_module
   thormang3_optimization
+  thormang3_wholebody_balance_control
 )
 
 find_package(Eigen REQUIRED)

@@ -936,7 +936,7 @@ bool KinematicsDynamics::calcInverseKinematics
   bool ik_success = false;
   bool limit_success = false;
 
-  calcForwardKinematics(0);
+//  calcForwardKinematics(0);
 
   std::vector<int> idx = findRoute(from, to);
 
@@ -1410,6 +1410,92 @@ Eigen::MatrixXd KinematicsDynamics::calcPreviewParam(double preview_time, double
   }
 
   return f_;
+}
+
+bool KinematicsDynamics::calcInverseKinematicsDual
+(int from_1, int to_1, Eigen::MatrixXd tar_position_1, Eigen::MatrixXd tar_orientation_1,
+ int from_2, int to_2, Eigen::MatrixXd tar_position_2, Eigen::MatrixXd tar_orientation_2,
+ int max_iter, double ik_err)
+{
+  bool ik_success = false;
+//  bool limit_success = false;
+
+//  calcForwardKinematics(0);
+
+  std::vector<int> idx_1 = findRoute(from_1, to_1);
+  std::vector<int> idx_2 = findRoute(from_2, to_2);
+
+  for (int iter=0; iter<max_iter; iter++)
+  {
+    Eigen::MatrixXd jacobian_1 = calcJacobian(idx_1);
+    Eigen::MatrixXd jacobian_2 = calcJacobian(idx_2);
+
+    Eigen::MatrixXd curr_position_1 = thormang3_link_data_[to_1]->position_;
+    Eigen::MatrixXd curr_orientation_1 = thormang3_link_data_[to_1]->orientation_;
+
+    Eigen::MatrixXd curr_position_2 = thormang3_link_data_[to_2]->position_;
+    Eigen::MatrixXd curr_orientation_2 = thormang3_link_data_[to_2]->orientation_;
+
+    Eigen::MatrixXd err_1 = calcVWerr(tar_position_1, curr_position_1, tar_orientation_1, curr_orientation_1);
+    Eigen::MatrixXd err_2 = calcVWerr(tar_position_2, curr_position_2, tar_orientation_2, curr_orientation_2);
+
+    if (err_1.norm()<ik_err && err_2.norm()<ik_err)
+    {
+      ik_success = true;
+      break;
+    }
+    else
+      ik_success = false;
+
+    Eigen::MatrixXd jacobian_trans_1 = jacobian_1 * jacobian_1.transpose();
+    Eigen::MatrixXd jacobian_inv_1 = jacobian_1.transpose() * jacobian_trans_1.inverse();
+
+    Eigen::MatrixXd delta_angle_1 = jacobian_inv_1 * err_1 ;
+
+    for (int id=0; id<idx_1.size(); id++)
+    {
+      int joint_num = idx_1[id];
+      thormang3_link_data_[joint_num]->joint_angle_ +=delta_angle_1.coeff(id);
+    }
+
+    Eigen::MatrixXd jacobian_trans_2 = jacobian_2 * jacobian_2.transpose();
+    Eigen::MatrixXd jacobian_inv_2 = jacobian_2.transpose() * jacobian_trans_2.inverse();
+
+    Eigen::MatrixXd delta_angle_2 = jacobian_inv_2 * err_2 ;
+
+    for (int id=0; id<idx_2.size(); id++)
+    {
+      int joint_num = idx_2[id];
+      thormang3_link_data_[joint_num]->joint_angle_ +=delta_angle_2.coeff(id);
+    }
+
+    calcForwardKinematics(0);
+  }
+
+//  for ( int id = 0; id < idx_1.size(); id++ )
+//  {
+//    int joint_num      =   idx_1[ id ];
+
+//    if ( thormang3_link_data_[ joint_num ]->joint_angle_ >= thormang3_link_data_[ joint_num ]->joint_limit_max_ )
+//    {
+//      limit_success = false;
+//      break;
+//    }
+//    else if ( thormang3_link_data_[ joint_num ]->joint_angle_ <= thormang3_link_data_[ joint_num ]->joint_limit_min_ )
+//    {
+//      limit_success = false;
+//      break;
+//    }
+//    else
+//      limit_success = true;
+//  }
+
+//  if (ik_success == true && limit_success == true)
+//    return true;
+//  else
+//    return false;
+
+  return ik_success;
 }
 
 }
