@@ -1145,46 +1145,46 @@ bool WholebodyModule::set()
   Eigen::MatrixXd desired_left_foot_rot_new = l_foot_pose.block<3,3>(0,0);
   Eigen::MatrixXd desired_left_foot_pos_new = l_foot_pose.block<3,1>(0,3);
 
-  ROS_INFO("desired_body_pos_new x: %f, y: %f, z: %f", desired_body_pos_new.coeff(0,0), desired_body_pos_new.coeff(1,0), desired_body_pos_new.coeff(2,0));
-  ROS_INFO("desired_body_pos     x: %f, y: %f, z: %f", desired_body_pos.coeff(0,0), desired_body_pos.coeff(1,0), desired_body_pos.coeff(2,0));
+//  ROS_INFO("desired_body_pos_new x: %f, y: %f, z: %f", desired_body_pos_new.coeff(0,0), desired_body_pos_new.coeff(1,0), desired_body_pos_new.coeff(2,0));
+//  ROS_INFO("desired_body_pos     x: %f, y: %f, z: %f", desired_body_pos.coeff(0,0), desired_body_pos.coeff(1,0), desired_body_pos.coeff(2,0));
 
-  ROS_INFO("desired_right_foot_pos_new x: %f, y: %f, z: %f", desired_right_foot_pos_new.coeff(0,0), desired_right_foot_pos_new.coeff(1,0), desired_right_foot_pos_new.coeff(2,0));
-  ROS_INFO("desired_right_foot_pos     x: %f, y: %f, z: %f", desired_right_foot_pos.coeff(0,0), desired_right_foot_pos.coeff(1,0), desired_right_foot_pos.coeff(2,0));
+//  ROS_INFO("desired_right_foot_pos_new x: %f, y: %f, z: %f", desired_right_foot_pos_new.coeff(0,0), desired_right_foot_pos_new.coeff(1,0), desired_right_foot_pos_new.coeff(2,0));
+//  ROS_INFO("desired_right_foot_pos     x: %f, y: %f, z: %f", desired_right_foot_pos.coeff(0,0), desired_right_foot_pos.coeff(1,0), desired_right_foot_pos.coeff(2,0));
 
-  ROS_INFO("desired_left_foot_pos_new x: %f, y: %f, z: %f", desired_left_foot_pos_new.coeff(0,0), desired_left_foot_pos_new.coeff(1,0), desired_left_foot_pos_new.coeff(2,0));
-  ROS_INFO("desired_left_foot_pos     x: %f, y: %f, z: %f", desired_left_foot_pos.coeff(0,0), desired_left_foot_pos.coeff(1,0), desired_left_foot_pos.coeff(2,0));
+//  ROS_INFO("desired_left_foot_pos_new x: %f, y: %f, z: %f", desired_left_foot_pos_new.coeff(0,0), desired_left_foot_pos_new.coeff(1,0), desired_left_foot_pos_new.coeff(2,0));
+//  ROS_INFO("desired_left_foot_pos     x: %f, y: %f, z: %f", desired_left_foot_pos.coeff(0,0), desired_left_foot_pos.coeff(1,0), desired_left_foot_pos.coeff(2,0));
 
   // Calc Inverse Kinematics
-//  robotis_->thormang3_link_data_[ID_PELVIS_POS_X]->relative_position_.coeffRef(0,0) = desired_body_pos_new.coeff(0,0);
-//  robotis_->thormang3_link_data_[ID_PELVIS_POS_Y]->relative_position_.coeffRef(1,0) = desired_body_pos_new.coeff(1,0);
-//  robotis_->thormang3_link_data_[ID_PELVIS_POS_Z]->relative_position_.coeffRef(2,0) = desired_body_pos_new.coeff(2,0);
-  robotis_->thormang3_link_data_[ID_PELVIS_POS_X]->relative_position_.coeffRef(0,0) = desired_body_pos.coeff(0,0);
-  robotis_->thormang3_link_data_[ID_PELVIS_POS_Y]->relative_position_.coeffRef(1,0) = desired_body_pos.coeff(1,0);
-  robotis_->thormang3_link_data_[ID_PELVIS_POS_Z]->relative_position_.coeffRef(2,0) = desired_body_pos.coeff(2,0);
+  robotis_->thormang3_link_data_[ID_PELVIS_POS_X]->relative_position_.coeffRef(0,0) = desired_body_pos_new.coeff(0,0);
+  robotis_->thormang3_link_data_[ID_PELVIS_POS_Y]->relative_position_.coeffRef(1,0) = desired_body_pos_new.coeff(1,0);
+  robotis_->thormang3_link_data_[ID_PELVIS_POS_Z]->relative_position_.coeffRef(2,0) = desired_body_pos_new.coeff(2,0);
+//  robotis_->thormang3_link_data_[ID_PELVIS_POS_X]->relative_position_.coeffRef(0,0) = desired_body_pos.coeff(0,0);
+//  robotis_->thormang3_link_data_[ID_PELVIS_POS_Y]->relative_position_.coeffRef(1,0) = desired_body_pos.coeff(1,0);
+//  robotis_->thormang3_link_data_[ID_PELVIS_POS_Z]->relative_position_.coeffRef(2,0) = desired_body_pos.coeff(2,0);
 
 
-//  Eigen::MatrixXd desired_body_rpy_new = robotis_framework::convertRotationToRPY(desired_body_rot_new);
-//  robotis_->thormang3_link_data_[ID_PELVIS_ROT_X]->joint_angle_ = desired_body_rpy_new.coeff(0,0);
-//  robotis_->thormang3_link_data_[ID_PELVIS_ROT_Y]->joint_angle_ = desired_body_rpy_new.coeff(1,0);
-//  robotis_->thormang3_link_data_[ID_PELVIS_ROT_Z]->joint_angle_ = desired_body_rpy_new.coeff(2,0);
+  Eigen::MatrixXd desired_body_rpy_new = robotis_framework::convertRotationToRPY(desired_body_rot_new);
+  robotis_->thormang3_link_data_[ID_PELVIS_ROT_X]->joint_angle_ = desired_body_rpy_new.coeff(0,0);
+  robotis_->thormang3_link_data_[ID_PELVIS_ROT_Y]->joint_angle_ = desired_body_rpy_new.coeff(1,0);
+  robotis_->thormang3_link_data_[ID_PELVIS_ROT_Z]->joint_angle_ = desired_body_rpy_new.coeff(2,0);
 
-  Eigen::MatrixXd desired_body_rpy = robotis_framework::convertRotationToRPY(desired_body_rot);
-  robotis_->thormang3_link_data_[ID_PELVIS_ROT_X]->joint_angle_ = desired_body_rpy.coeff(0,0);
-  robotis_->thormang3_link_data_[ID_PELVIS_ROT_Y]->joint_angle_ = desired_body_rpy.coeff(1,0);
-  robotis_->thormang3_link_data_[ID_PELVIS_ROT_Z]->joint_angle_ = desired_body_rpy.coeff(2,0);
+//  Eigen::MatrixXd desired_body_rpy = robotis_framework::convertRotationToRPY(desired_body_rot);
+//  robotis_->thormang3_link_data_[ID_PELVIS_ROT_X]->joint_angle_ = desired_body_rpy.coeff(0,0);
+//  robotis_->thormang3_link_data_[ID_PELVIS_ROT_Y]->joint_angle_ = desired_body_rpy.coeff(1,0);
+//  robotis_->thormang3_link_data_[ID_PELVIS_ROT_Z]->joint_angle_ = desired_body_rpy.coeff(2,0);
 
   for (int id=1; id<=MAX_JOINT_ID; id++)
     robotis_->thormang3_link_data_[id]->joint_angle_ = desired_joint_position_[id-1];
 
   robotis_->calcForwardKinematics(0);
 
-//  ik_success = robotis_->calcInverseKinematicsDual(ID_PELVIS, ID_R_LEG_END, desired_right_foot_pos_new, desired_right_foot_rot_new,
-//                                                   ID_PELVIS, ID_L_LEG_END, desired_left_foot_pos_new, desired_left_foot_rot_new,
-//                                                   max_iter, ik_tol);
-
-  ik_success = robotis_->calcInverseKinematicsDual(ID_PELVIS, ID_R_LEG_END, desired_right_foot_pos, desired_right_foot_rot,
-                                                   ID_PELVIS, ID_L_LEG_END, desired_left_foot_pos, desired_left_foot_rot,
+  ik_success = robotis_->calcInverseKinematicsDual(ID_PELVIS, ID_R_LEG_END, desired_right_foot_pos_new, desired_right_foot_rot_new,
+                                                   ID_PELVIS, ID_L_LEG_END, desired_left_foot_pos_new, desired_left_foot_rot_new,
                                                    max_iter, ik_tol);
+
+//  ik_success = robotis_->calcInverseKinematicsDual(ID_PELVIS, ID_R_LEG_END, desired_right_foot_pos, desired_right_foot_rot,
+//                                                   ID_PELVIS, ID_L_LEG_END, desired_left_foot_pos, desired_left_foot_rot,
+//                                                   max_iter, ik_tol);
 
   if (ik_success == true)
   {
