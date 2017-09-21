@@ -148,6 +148,10 @@ void WalkingControl::initialize(thormang3_wholebody_module_msgs::FootStepCommand
   init_left_foot_quaternion_ = robotis_framework::convertRotationToQuaternion(left_foot_rot);
   init_right_foot_quaternion_ = robotis_framework::convertRotationToQuaternion(right_foot_rot);
 
+  desired_body_quaternion_ = init_body_quaternion_;
+  desired_left_foot_quaternion_ = init_left_foot_quaternion_;
+  desired_right_foot_quaternion_ = init_right_foot_quaternion_;
+
   // Calculation Foot Step
   foot_step_command_ = foot_step_command;
   calcFootStepParam();
@@ -351,7 +355,7 @@ bool WalkingControl::set(double time, int step)
     desired_right_foot_quaternion_ = init_right_foot_quaternion_.slerp(count, goal_right_foot_quaternion_);
   }
 
-  Eigen::MatrixXd desired_right_foot_rot = robotis_framework::convertQuaternionToRotation(desired_right_foot_quaternion_);
+//  Eigen::MatrixXd desired_right_foot_rot = robotis_framework::convertQuaternionToRotation(desired_right_foot_quaternion_);
 
   bool ik_rleg_success = true;
 //  ik_rleg_success = robot_->calcInverseKinematics(ID_PELVIS, ID_R_LEG_END,
@@ -374,7 +378,7 @@ bool WalkingControl::set(double time, int step)
     desired_left_foot_quaternion_ = init_left_foot_quaternion_.slerp(count, goal_left_foot_quaternion_);
   }
 
-  Eigen::MatrixXd desired_left_foot_rot = robotis_framework::convertQuaternionToRotation(desired_left_foot_quaternion_);
+//  Eigen::MatrixXd desired_left_foot_rot = robotis_framework::convertQuaternionToRotation(desired_left_foot_quaternion_);
 
   bool ik_lleg_success = true;
 //  ik_lleg_success = robot_->calcInverseKinematicsWOFK(ID_PELVIS, ID_L_LEG_END,
@@ -558,9 +562,14 @@ void WalkingControl::updateFootStepParam()
 
 void WalkingControl::calcFootTrajectory(int step)
 {
-  Eigen::MatrixXd body_rot = robot_->thormang3_link_data_[ID_PELVIS]->orientation_;
-  Eigen::MatrixXd left_foot_rot = robot_->thormang3_link_data_[ID_L_LEG_END]->orientation_;
-  Eigen::MatrixXd right_foot_rot = robot_->thormang3_link_data_[ID_R_LEG_END]->orientation_;
+//  Eigen::MatrixXd body_rot = robot_->thormang3_link_data_[ID_PELVIS]->orientation_;
+//  Eigen::MatrixXd left_foot_rot = robot_->thormang3_link_data_[ID_L_LEG_END]->orientation_;
+//  Eigen::MatrixXd right_foot_rot = robot_->thormang3_link_data_[ID_R_LEG_END]->orientation_;
+
+  Eigen::MatrixXd body_rot = robotis_framework::convertQuaternionToRotation(desired_body_quaternion_);
+  Eigen::MatrixXd left_foot_rot = robotis_framework::convertQuaternionToRotation(desired_left_foot_quaternion_);
+  Eigen::MatrixXd right_foot_rot = robotis_framework::convertQuaternionToRotation(desired_right_foot_quaternion_);
+
   init_body_quaternion_ = robotis_framework::convertRotationToQuaternion(body_rot);
   init_left_foot_quaternion_ = robotis_framework::convertRotationToQuaternion(left_foot_rot);
   init_right_foot_quaternion_ = robotis_framework::convertRotationToQuaternion(right_foot_rot);

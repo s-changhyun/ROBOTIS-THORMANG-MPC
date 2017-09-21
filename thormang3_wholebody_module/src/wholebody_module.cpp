@@ -515,29 +515,22 @@ void WholebodyModule::goalJointPoseCallback(const thormang3_wholebody_module_msg
 {
   size_t joint_size = msg.pose.name.size();
 
-  if (balance_type_ == ON)
+  if (control_type_ == NONE || control_type_ == JOINT_CONTROL)
   {
-    ROS_WARN("[WARN] Balance is on!");
-    return;
+    mov_time_ = msg.mov_time;
+
+    for (size_t i = 0; i < msg.pose.name.size(); i++)
+    {
+      std::string joint_name = msg.pose.name[i];
+      goal_joint_position_[joint_name_to_id_[joint_name] - 1] = msg.pose.position[i];
+    }
+
+    joint_control_initialize_ = false;
+    control_type_ = JOINT_CONTROL;
+    balance_type_ = OFF;
   }
   else
-  {
-    if (control_type_ == NONE || control_type_ == JOINT_CONTROL)
-    {
-      mov_time_ = msg.mov_time;
-
-      for (size_t i = 0; i < msg.pose.name.size(); i++)
-      {
-        std::string joint_name = msg.pose.name[i];
-        goal_joint_position_[joint_name_to_id_[joint_name] - 1] = msg.pose.position[i];
-      }
-
-      joint_control_initialize_ = false;
-      control_type_ = JOINT_CONTROL;
-    }
-    else
-      ROS_WARN("[WARN] Control type is different!");
-  }
+    ROS_WARN("[WARN] Control type is different!");
 }
 
 void WholebodyModule::initJointControl()
@@ -597,6 +590,12 @@ void WholebodyModule::calcJointControl()
 
 void WholebodyModule::goalKinematicsPoseCallback(const thormang3_wholebody_module_msgs::KinematicsPose& msg)
 {
+  if (balance_type_ == OFF)
+  {
+    ROS_WARN("[WARN] Balance is off!");
+    return;
+  }
+
   if (control_type_ == NONE || control_type_ == WHOLEBODY_CONTROL)
   {
     if (is_moving_ == true)
@@ -710,6 +709,12 @@ void WholebodyModule::calcWholebodyControl()
 
 void WholebodyModule::footStepCommandCallback(const thormang3_wholebody_module_msgs::FootStepCommand& msg)
 {
+  if (balance_type_ == OFF)
+  {
+    ROS_WARN("[WARN] Balance is off!");
+    return;
+  }
+
   if (control_type_ == NONE || control_type_ == WALKING_CONTROL)
   {
     walking_size_ = msg.step_num + 2;
@@ -899,6 +904,9 @@ bool WholebodyModule::calcTaskControl()
 
   Eigen::MatrixXd desired_right_foot_rot = robotis_framework::convertQuaternionToRotation(desired_right_foot_quaternion);
 
+//  Eigen::MatrixXd desired_right_foot_rpy = robotis_framework::convertQuaternionToRPY(desired_right_foot_quaternion);
+//  ROS_INFO("desired_right_foot_z: %f", desired_right_foot_rpy.coeff(2,0));
+
 //  bool ik_rleg_success = false;
 //  ik_rleg_success = robotis_->calcInverseKinematics(ID_PELVIS, ID_R_LEG_END,
 //                                                    desired_right_foot_pos, desired_right_foot_rot,
@@ -916,6 +924,9 @@ bool WholebodyModule::calcTaskControl()
                                                   desired_left_foot_orientation_[1],desired_left_foot_orientation_[2]);
 
   Eigen::MatrixXd desired_left_foot_rot = robotis_framework::convertQuaternionToRotation(desired_left_foot_quaternion);
+
+//  Eigen::MatrixXd desired_left_foot_rpy = robotis_framework::convertQuaternionToRPY(desired_left_foot_quaternion);
+//  ROS_INFO("desired_left_foot_z: %f", desired_left_foot_rpy.coeff(2,0));
 
 //  bool ik_lleg_success = false;
 //  ik_lleg_success = robotis_->calcInverseKinematics(ID_PELVIS, ID_L_LEG_END,
