@@ -1140,10 +1140,10 @@ bool WholebodyModule::set()
   Eigen::MatrixXd desired_body_rot_new = pelvis_pose.block<3,3>(0,0);
   Eigen::MatrixXd desired_body_pos_new = pelvis_pose.block<3,1>(0,3);
 
-  Eigen::MatrixXd desired_right_foot_rot_new = l_foot_pose.block<3,3>(0,0);
-  Eigen::MatrixXd desired_right_foot_pos_new = l_foot_pose.block<3,1>(0,3);
-  Eigen::MatrixXd desired_left_foot_rot_new = r_foot_pose.block<3,3>(0,0);
-  Eigen::MatrixXd desired_left_foot_pos_new = r_foot_pose.block<3,1>(0,3);
+  Eigen::MatrixXd desired_right_foot_rot_new = r_foot_pose.block<3,3>(0,0);
+  Eigen::MatrixXd desired_right_foot_pos_new = r_foot_pose.block<3,1>(0,3);
+  Eigen::MatrixXd desired_left_foot_rot_new = l_foot_pose.block<3,3>(0,0);
+  Eigen::MatrixXd desired_left_foot_pos_new = l_foot_pose.block<3,1>(0,3);
 
   ROS_INFO("desired_body_pos_new x: %f, y: %f, z: %f", desired_body_pos_new.coeff(0,0), desired_body_pos_new.coeff(1,0), desired_body_pos_new.coeff(2,0));
   ROS_INFO("desired_body_pos     x: %f, y: %f, z: %f", desired_body_pos.coeff(0,0), desired_body_pos.coeff(1,0), desired_body_pos.coeff(2,0));
