@@ -288,10 +288,10 @@ bool WalkingControl::set(double time, int step)
   calcRefZMP(step);
   calcPreviewControl(time, step);
 
-  if (walking_leg_ == LEFT_LEG)
-    ROS_INFO("walking_leg_ : LEFT");
-  else if (walking_leg_ == RIGHT_LEG)
-    ROS_INFO("walking_leg_ : RIGHT");
+//  if (walking_leg_ == LEFT_LEG)
+//    ROS_INFO("walking_leg_ : LEFT");
+//  else if (walking_leg_ == RIGHT_LEG)
+//    ROS_INFO("walking_leg_ : RIGHT");
 
   /* ----- Inverse Kinematics ---- */
   double dsp_length = 0.5*(fin_time_ - init_time_)*dsp_ratio_;
@@ -325,10 +325,10 @@ bool WalkingControl::set(double time, int step)
   if (step == 0 || step == foot_step_size_ -1)
     walking_phase_ = DSP;
 
-  if (walking_phase_ == DSP)
-    ROS_INFO("DSP");
-  else if (walking_phase_ == SSP)
-    ROS_INFO("SSP");
+//  if (walking_phase_ == DSP)
+//    ROS_INFO("DSP");
+//  else if (walking_phase_ == SSP)
+//    ROS_INFO("SSP");
 
   robot_->thormang3_link_data_[ID_PELVIS_POS_X]->relative_position_.coeffRef(0,0) = desired_body_pos_[0];
   robot_->thormang3_link_data_[ID_PELVIS_POS_Y]->relative_position_.coeffRef(1,0) = desired_body_pos_[1];
