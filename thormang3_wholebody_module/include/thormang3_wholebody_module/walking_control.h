@@ -132,7 +132,7 @@ protected:
 
   double ref_zmp_x_, ref_zmp_y_;
   double preview_sum_zmp_x_, preview_sum_zmp_y_;
-  double offset_zmp_x_, offset_zmp_y_;
+  double zmp_offset_x_, zmp_offset_y_;
 
   // Pose Information
   double init_body_yaw_angle_;

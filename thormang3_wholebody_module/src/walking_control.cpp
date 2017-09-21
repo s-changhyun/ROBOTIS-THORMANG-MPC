@@ -31,8 +31,8 @@ WalkingControl::WalkingControl(double control_cycle,
   preview_size_ = round(preview_time_/control_cycle_);
 
   // ZMP Offset Parameter
-  offset_zmp_x_ = zmp_offset_x; // default :
-  offset_zmp_y_ = zmp_offset_y; // default :
+  zmp_offset_x_ = zmp_offset_x; // default :
+  zmp_offset_y_ = zmp_offset_y; // default :
 
   // Joint Initial Pose
   init_joint_pos_ = init_joint_pos;
@@ -116,9 +116,9 @@ void WalkingControl::initialize(thormang3_wholebody_module_msgs::FootStepCommand
   Eigen::Quaterniond init_body_quat(init_body_rot[3],init_body_rot[0],init_body_rot[1],init_body_rot[2]);
   Eigen::MatrixXd init_body_rpy = robotis_framework::convertQuaternionToRPY(init_body_quat);
 
-  robot_->thormang3_link_data_[ID_PELVIS_ROT_X]->joint_angle_  = init_body_rpy.coeff(0,0);
+  robot_->thormang3_link_data_[ID_PELVIS_ROT_X]->joint_angle_ = init_body_rpy.coeff(0,0);
   robot_->thormang3_link_data_[ID_PELVIS_ROT_Y]->joint_angle_ = init_body_rpy.coeff(1,0);
-  robot_->thormang3_link_data_[ID_PELVIS_ROT_Z]->joint_angle_   = init_body_rpy.coeff(2,0);
+  robot_->thormang3_link_data_[ID_PELVIS_ROT_Z]->joint_angle_ = init_body_rpy.coeff(2,0);
 
   init_body_yaw_angle_ = init_body_rpy.coeff(2,0);
 
@@ -137,9 +137,12 @@ void WalkingControl::initialize(thormang3_wholebody_module_msgs::FootStepCommand
     init_right_foot_pos_[i] = init_right_foot_pos.coeff(i,0);
   }
 
-//  ROS_INFO("init_left_foot_pos_ x: %f, y: %f, z: %f", init_left_foot_pos_[0], init_left_foot_pos_[1], init_left_foot_pos_[2]);
-//  ROS_INFO("init_right_foot_pos_ x: %f, y: %f, z: %f", init_right_foot_pos_[0], init_right_foot_pos_[1], init_right_foot_pos_[2]);
-//  ROS_INFO("init_body_pos_ x: %f, y: %f, z: %f", init_body_pos_[0], init_body_pos_[1], init_body_pos_[2]);
+  desired_left_foot_pos_ = init_left_foot_pos_;
+  desired_right_foot_pos_ = init_right_foot_pos_;
+
+  ROS_INFO("init_left_foot_pos_ x: %f, y: %f, z: %f", init_left_foot_pos_[0], init_left_foot_pos_[1], init_left_foot_pos_[2]);
+  ROS_INFO("init_right_foot_pos_ x: %f, y: %f, z: %f", init_right_foot_pos_[0], init_right_foot_pos_[1], init_right_foot_pos_[2]);
+  ROS_INFO("init_body_pos_ x: %f, y: %f, z: %f", init_body_pos_[0], init_body_pos_[1], init_body_pos_[2]);
 
   Eigen::MatrixXd body_rot = robot_->thormang3_link_data_[ID_PELVIS]->orientation_;
   Eigen::MatrixXd left_foot_rot = robot_->thormang3_link_data_[ID_L_LEG_END]->orientation_;
@@ -285,10 +288,10 @@ bool WalkingControl::set(double time, int step)
   calcRefZMP(step);
   calcPreviewControl(time, step);
 
-//  if (walking_leg_ == LEFT_LEG)
-//    ROS_INFO("walking_leg_ : LEFT");
-//  else if (walking_leg_ == RIGHT_LEG)
-//    ROS_INFO("walking_leg_ : RIGHT");
+  if (walking_leg_ == LEFT_LEG)
+    ROS_INFO("walking_leg_ : LEFT");
+  else if (walking_leg_ == RIGHT_LEG)
+    ROS_INFO("walking_leg_ : RIGHT");
 
   /* ----- Inverse Kinematics ---- */
   double dsp_length = 0.5*(fin_time_ - init_time_)*dsp_ratio_;
@@ -322,10 +325,10 @@ bool WalkingControl::set(double time, int step)
   if (step == 0 || step == foot_step_size_ -1)
     walking_phase_ = DSP;
 
-//  if (walking_phase_ == DSP)
-//    ROS_INFO("DSP");
-//  else if (walking_phase_ == SSP)
-//    ROS_INFO("SSP");
+  if (walking_phase_ == DSP)
+    ROS_INFO("DSP");
+  else if (walking_phase_ == SSP)
+    ROS_INFO("SSP");
 
   robot_->thormang3_link_data_[ID_PELVIS_POS_X]->relative_position_.coeffRef(0,0) = desired_body_pos_[0];
   robot_->thormang3_link_data_[ID_PELVIS_POS_Y]->relative_position_.coeffRef(1,0) = desired_body_pos_[1];
@@ -729,12 +732,12 @@ void WalkingControl::calcRefZMP(int step)
       if (foot_step_param_.moving_foot[step] == LEFT_LEG)
       {
         ref_zmp_x_ = goal_right_foot_pos_[0];
-        ref_zmp_y_ = goal_right_foot_pos_[1] + offset_zmp_y_;
+        ref_zmp_y_ = goal_right_foot_pos_[1] + zmp_offset_y_;
       }
       else if (foot_step_param_.moving_foot[step] == RIGHT_LEG)
       {
         ref_zmp_x_ = goal_left_foot_pos_[0];
-        ref_zmp_y_ = goal_left_foot_pos_[1] - offset_zmp_y_;
+        ref_zmp_y_ = goal_left_foot_pos_[1] - zmp_offset_y_;
       }
     }
   }
@@ -748,12 +751,12 @@ void WalkingControl::calcRefZMP(int step)
     if (foot_step_param_.moving_foot[step] == LEFT_LEG)
     {
       ref_zmp_x_ = goal_right_foot_pos_[0];
-      ref_zmp_y_ = goal_right_foot_pos_[1] + offset_zmp_y_;
+      ref_zmp_y_ = goal_right_foot_pos_[1] + zmp_offset_y_;
     }
     else if (foot_step_param_.moving_foot[step] == RIGHT_LEG)
     {
       ref_zmp_x_ = goal_left_foot_pos_[0];
-      ref_zmp_y_ = goal_left_foot_pos_[1] - offset_zmp_y_;
+      ref_zmp_y_ = goal_left_foot_pos_[1] - zmp_offset_y_;
     }
   }
 
@@ -806,9 +809,9 @@ double WalkingControl::calcRefZMPy(int step)
     else
     {
       if (foot_step_param_.moving_foot[step] == LEFT_LEG)
-        ref_zmp_y = goal_right_foot_pos_[1] + offset_zmp_y_;
+        ref_zmp_y = goal_right_foot_pos_[1] + zmp_offset_y_;
       else if (foot_step_param_.moving_foot[step] == RIGHT_LEG)
-        ref_zmp_y = goal_left_foot_pos_[1] - offset_zmp_y_;
+        ref_zmp_y = goal_left_foot_pos_[1] - zmp_offset_y_;
     }
   }
   else if (step >= foot_step_size_-1)
@@ -818,9 +821,9 @@ double WalkingControl::calcRefZMPy(int step)
   else
   {
     if (foot_step_param_.moving_foot[step] == LEFT_LEG)
-      ref_zmp_y = goal_right_foot_pos_[1] + offset_zmp_y_;
+      ref_zmp_y = goal_right_foot_pos_[1] + zmp_offset_y_;
     else if (foot_step_param_.moving_foot[step] == RIGHT_LEG)
-      ref_zmp_y = goal_left_foot_pos_[1] - offset_zmp_y_;
+      ref_zmp_y = goal_left_foot_pos_[1] - zmp_offset_y_;
   }
 
   return ref_zmp_y;
@@ -934,7 +937,7 @@ void WalkingControl::calcPreviewControl(double time, int step)
   x_lipm_ = A_*x_lipm_ + b_*u_x_;
   y_lipm_ = A_*y_lipm_ + b_*u_y_;
 
-  desired_body_pos_[0] = x_lipm_.coeff(0,0);
+  desired_body_pos_[0] = x_lipm_.coeff(0,0) + zmp_offset_x_;
   desired_body_pos_[1] = y_lipm_.coeff(0,0);
 
 //  ROS_INFO("time: %f, desired_body_pos_ x: %f , y: %f", time, desired_body_pos_[0], desired_body_pos_[1]);

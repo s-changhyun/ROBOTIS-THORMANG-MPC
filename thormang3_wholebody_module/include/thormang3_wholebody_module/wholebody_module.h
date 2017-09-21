@@ -146,7 +146,9 @@ private:
   void initWalkingControl();
   void calcWalkingControl();
 
-  bool calcTaskControl();
+  void calcGoalFT();
+  void setBalanceControlGain();
+  bool set();
 
   void initBalanceControl();
   void calcBalanceControl();
@@ -259,12 +261,26 @@ private:
   double wb_pelvis_z_max_;
   double wb_pelvis_z_min_;
 
-  double balance_goal_l_foot_ft_;
-  double balance_goal_r_foot_ft_;
+  double balance_l_foot_force_x_;
+  double balance_l_foot_force_y_;
+  double balance_l_foot_force_z_;
+  double balance_l_foot_torque_x_;
+  double balance_l_foot_torque_y_;
+  double balance_l_foot_torque_z_;
+
+  double balance_r_foot_force_x_;
+  double balance_r_foot_force_y_;
+  double balance_r_foot_force_z_;
+  double balance_r_foot_torque_x_;
+  double balance_r_foot_torque_y_;
+  double balance_r_foot_torque_z_;
 
   sensor_msgs::Imu imu_data_msg_;
   geometry_msgs::Wrench l_foot_ft_data_msg_;
   geometry_msgs::Wrench r_foot_ft_data_msg_;
+
+  double total_mass_;
+
 };
 
 }
