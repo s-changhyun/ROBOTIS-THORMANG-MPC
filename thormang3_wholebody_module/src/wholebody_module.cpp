@@ -475,9 +475,9 @@ void WholebodyModule::leftFootForceTorqueOutputCallback(const geometry_msgs::Wre
   l_foot_fx_N = robotis_framework::sign(l_foot_fx_N) * fmin( fabs(l_foot_fx_N), 2000.0);
   l_foot_fy_N = robotis_framework::sign(l_foot_fy_N) * fmin( fabs(l_foot_fy_N), 2000.0);
   l_foot_fz_N = robotis_framework::sign(l_foot_fz_N) * fmin( fabs(l_foot_fz_N), 2000.0);
-  l_foot_Tx_Nm = robotis_framework::sign(l_foot_Tx_Nm) *fmin(fabs(l_foot_Tx_Nm), 300.0);
-  l_foot_Ty_Nm = robotis_framework::sign(l_foot_Ty_Nm) *fmin(fabs(l_foot_Ty_Nm), 300.0);
-  l_foot_Tz_Nm = robotis_framework::sign(l_foot_Tz_Nm) *fmin(fabs(l_foot_Tz_Nm), 300.0);
+  l_foot_Tx_Nm = robotis_framework::sign(l_foot_Tx_Nm) * fmin(fabs(l_foot_Tx_Nm), 300.0);
+  l_foot_Ty_Nm = robotis_framework::sign(l_foot_Ty_Nm) * fmin(fabs(l_foot_Ty_Nm), 300.0);
+  l_foot_Tz_Nm = robotis_framework::sign(l_foot_Tz_Nm) * fmin(fabs(l_foot_Tz_Nm), 300.0);
 
   l_foot_ft_data_msg_.force.x = l_foot_fx_N;
   l_foot_ft_data_msg_.force.y = l_foot_fy_N;
