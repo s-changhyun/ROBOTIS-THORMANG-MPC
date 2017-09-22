@@ -1231,7 +1231,6 @@ void OnlineWalkingModule::process(std::map<std::string, robotis_framework::Dynam
 //  l_foot_Ty_Nm_ = sensors["l_foot_ty_scaled_Nm"];
 //  l_foot_Tz_Nm_ = sensors["l_foot_tz_scaled_Nm"];
 
-
   r_foot_fx_N_ = robotis_framework::sign(r_foot_fx_N_) * fmin( fabs(r_foot_fx_N_), 2000.0);
   r_foot_fy_N_ = robotis_framework::sign(r_foot_fy_N_) * fmin( fabs(r_foot_fy_N_), 2000.0);
   r_foot_fz_N_ = robotis_framework::sign(r_foot_fz_N_) * fmin( fabs(r_foot_fz_N_), 2000.0);
@@ -1245,7 +1244,6 @@ void OnlineWalkingModule::process(std::map<std::string, robotis_framework::Dynam
   l_foot_Tx_Nm_ = robotis_framework::sign(l_foot_Tx_Nm_) *fmin(fabs(l_foot_Tx_Nm_), 300.0);
   l_foot_Ty_Nm_ = robotis_framework::sign(l_foot_Ty_Nm_) *fmin(fabs(l_foot_Ty_Nm_), 300.0);
   l_foot_Tz_Nm_ = robotis_framework::sign(l_foot_Tz_Nm_) *fmin(fabs(l_foot_Tz_Nm_), 300.0);
-
 
   if(balance_update_with_loop_ == true)
   {

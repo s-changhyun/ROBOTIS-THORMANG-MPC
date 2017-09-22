@@ -347,7 +347,7 @@ void RobotisBalanceControl::setDesiredPose(const Eigen::MatrixXd &robot_to_cob, 
   desired_robot_to_left_foot_  = robot_to_left_foot;
 }
 
-void RobotisBalanceControl::setDesiredCOBGyro(double gyro_roll, double gyro_pitch)\
+void RobotisBalanceControl::setDesiredCOBGyro(double gyro_roll, double gyro_pitch)
 {
   desired_gyro_roll_  = gyro_roll;
   desired_gyro_pitch_ = gyro_pitch;

@@ -272,7 +272,7 @@ void WholebodyModule::reset()
 {
   desired_body_position_[0] = 0.0;
   desired_body_position_[1] = 0.0;
-  desired_body_position_[2] = 0.727;
+  desired_body_position_[2] = 0.734;
 
   desired_body_orientation_[0] = 0.0;
   desired_body_orientation_[1] = 0.0;
@@ -890,20 +890,20 @@ void WholebodyModule::calcGoalFT()
 {
   if (walking_phase_ == DSP)
   {
-    balance_r_foot_force_x_ = -0.5 * total_mass_ * x_lipm_[3];
-    balance_r_foot_force_y_ = -0.5 * total_mass_ * y_lipm_[3];
+    balance_r_foot_force_x_ = -0.5 * total_mass_ * x_lipm_[2];
+    balance_r_foot_force_y_ = -0.5 * total_mass_ * y_lipm_[2];
     balance_r_foot_force_z_ = -0.5 * total_mass_ * 9.81;
 
-    balance_l_foot_force_x_ = -0.5 * total_mass_ * x_lipm_[3];
-    balance_l_foot_force_y_ = -0.5 * total_mass_ * y_lipm_[3];
+    balance_l_foot_force_x_ = -0.5 * total_mass_ * x_lipm_[2];
+    balance_l_foot_force_y_ = -0.5 * total_mass_ * y_lipm_[2];
     balance_l_foot_force_z_ = -0.5 * total_mass_ * 9.81;
   }
   else if (walking_phase_ == SSP)
   {
     if (walking_leg_ == LEFT_LEG)
     {
-      balance_r_foot_force_x_ = -1.0 * total_mass_ * x_lipm_[3];
-      balance_r_foot_force_y_ = -1.0 * total_mass_ * y_lipm_[3];
+      balance_r_foot_force_x_ = -1.0 * total_mass_ * x_lipm_[2];
+      balance_r_foot_force_y_ = -1.0 * total_mass_ * y_lipm_[2];
       balance_r_foot_force_z_ = -1.0 * total_mass_ * 9.81;
 
       balance_l_foot_force_x_ = 0.0;
@@ -916,8 +916,8 @@ void WholebodyModule::calcGoalFT()
       balance_r_foot_force_y_ = 0.0;
       balance_r_foot_force_z_ = 0.0;
 
-      balance_l_foot_force_x_ = -1.0 * total_mass_ * x_lipm_[3];
-      balance_l_foot_force_y_ = -1.0 * total_mass_ * y_lipm_[3];
+      balance_l_foot_force_x_ = -1.0 * total_mass_ * x_lipm_[2];
+      balance_l_foot_force_y_ = -1.0 * total_mass_ * y_lipm_[2];
       balance_l_foot_force_z_ = -1.0 * total_mass_ * 9.81;
     }
   }
@@ -926,7 +926,7 @@ void WholebodyModule::calcGoalFT()
 void WholebodyModule::setBalanceControlGain()
 {
   double gain_ratio;
-  double max_pelvis = 0.727;
+  double max_pelvis = 0.734;
   double min_pelvis = 0.3;
 
   if (robotis_->thormang3_link_data_[ID_PELVIS]->position_.coeff(2,0) > max_pelvis)
@@ -1011,7 +1011,6 @@ bool WholebodyModule::set()
   balance_control_.setForceTorqueBalanceEnable(true);
 
   // Set Inverse Kinematics
-
   int     max_iter    = 30;
   double  ik_tol      = 1e-5;
 
@@ -1104,19 +1103,19 @@ bool WholebodyModule::set()
       robotis_framework::convertRotationToRPY(robotis_framework::getRotationX(M_PI) * imu_quaternion.toRotationMatrix() * robotis_framework::getRotationZ(M_PI));
 
   Eigen::MatrixXd g_to_r_foot_force =
-      robotis_->thormang3_link_data_[ID_R_LEG_FT]->orientation_ * robotis_framework::getRotationX(M_PI) *
+      robotis_->thormang3_link_data_[ID_R_LEG_FT]->orientation_ *
       robotis_framework::getTransitionXYZ(r_foot_ft_data_msg_.force.x, r_foot_ft_data_msg_.force.y, r_foot_ft_data_msg_.force.z);
 
   Eigen::MatrixXd g_to_r_foot_torque =
-      robotis_->thormang3_link_data_[ID_R_LEG_FT]->orientation_ * robotis_framework::getRotationX(M_PI) *
+      robotis_->thormang3_link_data_[ID_R_LEG_FT]->orientation_ *
       robotis_framework::getTransitionXYZ(r_foot_ft_data_msg_.torque.x, r_foot_ft_data_msg_.torque.y, r_foot_ft_data_msg_.torque.z);
 
   Eigen::MatrixXd g_to_l_foot_force =
-      robotis_->thormang3_link_data_[ID_L_LEG_FT]->orientation_ * robotis_framework::getRotationX(M_PI) *
+      robotis_->thormang3_link_data_[ID_L_LEG_FT]->orientation_ *
       robotis_framework::getTransitionXYZ(l_foot_ft_data_msg_.force.x, l_foot_ft_data_msg_.force.y, l_foot_ft_data_msg_.force.z);
 
   Eigen::MatrixXd g_to_l_foot_torque =
-      robotis_->thormang3_link_data_[ID_L_LEG_FT]->orientation_ * robotis_framework::getRotationX(M_PI) *
+      robotis_->thormang3_link_data_[ID_L_LEG_FT]->orientation_ *
       robotis_framework::getTransitionXYZ(l_foot_ft_data_msg_.torque.x, l_foot_ft_data_msg_.torque.y, l_foot_ft_data_msg_.torque.z);
 
   balance_control_.setCurrentOrientationSensorOutput(imu_rpy.coeff(0,0), imu_rpy.coeff(1,0));
