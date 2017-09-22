@@ -921,6 +921,9 @@ void WholebodyModule::calcGoalFT()
       balance_l_foot_force_z_ = -1.0 * total_mass_ * 9.81;
     }
   }
+
+  ROS_INFO("r_foot_force x: %f, y: %f, z: %f", balance_r_foot_force_x_, balance_r_foot_force_y_, balance_r_foot_force_z_);
+  ROS_INFO("l_foot_force x: %f, y: %f, z: %f", balance_l_foot_force_x_, balance_l_foot_force_y_, balance_l_foot_force_z_);
 }
 
 void WholebodyModule::setBalanceControlGain()
@@ -1160,7 +1163,6 @@ bool WholebodyModule::set()
 //  robotis_->thormang3_link_data_[ID_PELVIS_POS_X]->relative_position_.coeffRef(0,0) = desired_body_pos.coeff(0,0);
 //  robotis_->thormang3_link_data_[ID_PELVIS_POS_Y]->relative_position_.coeffRef(1,0) = desired_body_pos.coeff(1,0);
 //  robotis_->thormang3_link_data_[ID_PELVIS_POS_Z]->relative_position_.coeffRef(2,0) = desired_body_pos.coeff(2,0);
-
 
   Eigen::MatrixXd desired_body_rpy_new = robotis_framework::convertRotationToRPY(desired_body_rot_new);
   robotis_->thormang3_link_data_[ID_PELVIS_ROT_X]->joint_angle_ = desired_body_rpy_new.coeff(0,0);
