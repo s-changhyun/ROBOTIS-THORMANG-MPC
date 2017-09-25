@@ -1218,26 +1218,26 @@ bool WholebodyModule::set()
   Eigen::MatrixXd desired_left_foot_rot_new = l_foot_pose_new.block<3,3>(0,0);
   Eigen::MatrixXd desired_left_foot_pos_new = l_foot_pose_new.block<3,1>(0,3);
 
-  ROS_INFO("--");
+//  ROS_INFO("--");
 
-  ROS_INFO("desired_body_pos_new x: %f, y: %f, z: %f", desired_body_pos_new.coeff(0,0), desired_body_pos_new.coeff(1,0), desired_body_pos_new.coeff(2,0));
-  ROS_INFO("desired_body_pos     x: %f, y: %f, z: %f", desired_body_pos.coeff(0,0), desired_body_pos.coeff(1,0), desired_body_pos.coeff(2,0));
+//  ROS_INFO("desired_body_pos_new x: %f, y: %f, z: %f", desired_body_pos_new.coeff(0,0), desired_body_pos_new.coeff(1,0), desired_body_pos_new.coeff(2,0));
+//  ROS_INFO("desired_body_pos     x: %f, y: %f, z: %f", desired_body_pos.coeff(0,0), desired_body_pos.coeff(1,0), desired_body_pos.coeff(2,0));
 
-  Eigen::MatrixXd body_rpy_new = robotis_framework::convertRotationToRPY(desired_body_rot_new);
-  Eigen::MatrixXd body_rpy = robotis_framework::convertRotationToRPY(desired_body_rot);
-  ROS_INFO("body_rpy_new r: %f, p: %f, y: %f", body_rpy_new.coeff(0,0), body_rpy_new.coeff(1,0), body_rpy_new.coeff(2,0));
-  ROS_INFO("body_rpy r: %f, p: %f, y: %f", body_rpy.coeff(0,0), body_rpy.coeff(1,0), body_rpy.coeff(2,0));
+//  Eigen::MatrixXd body_rpy_new = robotis_framework::convertRotationToRPY(desired_body_rot_new);
+//  Eigen::MatrixXd body_rpy = robotis_framework::convertRotationToRPY(desired_body_rot);
+//  ROS_INFO("body_rpy_new r: %f, p: %f, y: %f", body_rpy_new.coeff(0,0), body_rpy_new.coeff(1,0), body_rpy_new.coeff(2,0));
+//  ROS_INFO("body_rpy r: %f, p: %f, y: %f", body_rpy.coeff(0,0), body_rpy.coeff(1,0), body_rpy.coeff(2,0));
 
-  ROS_INFO("desired_right_foot_pos_new x: %f, y: %f, z: %f", desired_right_foot_pos_new.coeff(0,0), desired_right_foot_pos_new.coeff(1,0), desired_right_foot_pos_new.coeff(2,0));
-  ROS_INFO("desired_right_foot_pos     x: %f, y: %f, z: %f", desired_right_foot_pos.coeff(0,0), desired_right_foot_pos.coeff(1,0), desired_right_foot_pos.coeff(2,0));
+//  ROS_INFO("desired_right_foot_pos_new x: %f, y: %f, z: %f", desired_right_foot_pos_new.coeff(0,0), desired_right_foot_pos_new.coeff(1,0), desired_right_foot_pos_new.coeff(2,0));
+//  ROS_INFO("desired_right_foot_pos     x: %f, y: %f, z: %f", desired_right_foot_pos.coeff(0,0), desired_right_foot_pos.coeff(1,0), desired_right_foot_pos.coeff(2,0));
 
-  ROS_INFO("desired_left_foot_pos_new x: %f, y: %f, z: %f", desired_left_foot_pos_new.coeff(0,0), desired_left_foot_pos_new.coeff(1,0), desired_left_foot_pos_new.coeff(2,0));
-  ROS_INFO("desired_left_foot_pos     x: %f, y: %f, z: %f", desired_left_foot_pos.coeff(0,0), desired_left_foot_pos.coeff(1,0), desired_left_foot_pos.coeff(2,0));
+//  ROS_INFO("desired_left_foot_pos_new x: %f, y: %f, z: %f", desired_left_foot_pos_new.coeff(0,0), desired_left_foot_pos_new.coeff(1,0), desired_left_foot_pos_new.coeff(2,0));
+//  ROS_INFO("desired_left_foot_pos     x: %f, y: %f, z: %f", desired_left_foot_pos.coeff(0,0), desired_left_foot_pos.coeff(1,0), desired_left_foot_pos.coeff(2,0));
 
-  Eigen::MatrixXd left_foot_rpy_new = robotis_framework::convertRotationToRPY(desired_left_foot_rot_new);
-  Eigen::MatrixXd left_foot_rpy = robotis_framework::convertRotationToRPY(desired_left_foot_rot);
-  ROS_INFO("left_foot_rpy_new r: %f, p: %f, y: %f", left_foot_rpy_new.coeff(0,0), left_foot_rpy_new.coeff(1,0), left_foot_rpy_new.coeff(2,0));
-  ROS_INFO("left_foot_rpy r: %f, p: %f, y: %f", left_foot_rpy.coeff(0,0), left_foot_rpy.coeff(1,0), left_foot_rpy.coeff(2,0));
+//  Eigen::MatrixXd left_foot_rpy_new = robotis_framework::convertRotationToRPY(desired_left_foot_rot_new);
+//  Eigen::MatrixXd left_foot_rpy = robotis_framework::convertRotationToRPY(desired_left_foot_rot);
+//  ROS_INFO("left_foot_rpy_new r: %f, p: %f, y: %f", left_foot_rpy_new.coeff(0,0), left_foot_rpy_new.coeff(1,0), left_foot_rpy_new.coeff(2,0));
+//  ROS_INFO("left_foot_rpy r: %f, p: %f, y: %f", left_foot_rpy.coeff(0,0), left_foot_rpy.coeff(1,0), left_foot_rpy.coeff(2,0));
 
   // Set Body Pose
   robotis_->thormang3_link_data_[ID_PELVIS_POS_X]->relative_position_.coeffRef(0,0) = desired_body_pos_new.coeff(0,0);
