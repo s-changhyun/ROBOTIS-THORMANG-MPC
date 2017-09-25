@@ -900,11 +900,11 @@ void WholebodyModule::calcGoalFT()
   {
     balance_r_foot_force_x_ = 0.0; //-0.5 * total_mass_ * x_lipm_[2];
     balance_r_foot_force_y_ = 0.0; //-0.5 * total_mass_ * y_lipm_[2];
-    balance_r_foot_force_z_ = 0.5 * total_mass_ * 9.81;
+    balance_r_foot_force_z_ = -0.5 * total_mass_ * 9.81;
 
     balance_l_foot_force_x_ = 0.0; //-0.5 * total_mass_ * x_lipm_[2];
     balance_l_foot_force_y_ = 0.0; //-0.5 * total_mass_ * y_lipm_[2];
-    balance_l_foot_force_z_ = 0.5 * total_mass_ * 9.81;
+    balance_l_foot_force_z_ = -0.5 * total_mass_ * 9.81;
   }
   else if (walking_phase_ == SSP)
   {
@@ -912,7 +912,7 @@ void WholebodyModule::calcGoalFT()
     {
       balance_r_foot_force_x_ = 0.0; //-1.0 * total_mass_ * x_lipm_[2];
       balance_r_foot_force_y_ = 0.0; //-1.0 * total_mass_ * y_lipm_[2];
-      balance_r_foot_force_z_ = 1.0 * total_mass_ * 9.81;
+      balance_r_foot_force_z_ = -1.0 * total_mass_ * 9.81;
 
       balance_l_foot_force_x_ = 0.0;
       balance_l_foot_force_y_ = 0.0;
@@ -926,7 +926,7 @@ void WholebodyModule::calcGoalFT()
 
       balance_l_foot_force_x_ = 0.0; //-1.0 * total_mass_ * x_lipm_[2];
       balance_l_foot_force_y_ = 0.0; //-1.0 * total_mass_ * y_lipm_[2];
-      balance_l_foot_force_z_ = 1.0 * total_mass_ * 9.81;
+      balance_l_foot_force_z_ = -1.0 * total_mass_ * 9.81;
     }
   }
 
@@ -1158,19 +1158,19 @@ bool WholebodyModule::set()
   imu_data_mutex_lock_.unlock();
 
   Eigen::MatrixXd g_to_r_foot_force =
-      robotis_->thormang3_link_data_[ID_R_LEG_FT]->orientation_ *
+      robotis_->thormang3_link_data_[ID_R_LEG_FT]->orientation_ * robotis_framework::getRotationX(M_PI) *
       robotis_framework::getTransitionXYZ(r_foot_ft_data_msg_.force.x, r_foot_ft_data_msg_.force.y, r_foot_ft_data_msg_.force.z);
 
   Eigen::MatrixXd g_to_r_foot_torque =
-      robotis_->thormang3_link_data_[ID_R_LEG_FT]->orientation_ *
+      robotis_->thormang3_link_data_[ID_R_LEG_FT]->orientation_ * robotis_framework::getRotationX(M_PI) *
       robotis_framework::getTransitionXYZ(r_foot_ft_data_msg_.torque.x, r_foot_ft_data_msg_.torque.y, r_foot_ft_data_msg_.torque.z);
 
   Eigen::MatrixXd g_to_l_foot_force =
-      robotis_->thormang3_link_data_[ID_L_LEG_FT]->orientation_ *
+      robotis_->thormang3_link_data_[ID_L_LEG_FT]->orientation_ * robotis_framework::getRotationX(M_PI) *
       robotis_framework::getTransitionXYZ(l_foot_ft_data_msg_.force.x, l_foot_ft_data_msg_.force.y, l_foot_ft_data_msg_.force.z);
 
   Eigen::MatrixXd g_to_l_foot_torque =
-      robotis_->thormang3_link_data_[ID_L_LEG_FT]->orientation_ *
+      robotis_->thormang3_link_data_[ID_L_LEG_FT]->orientation_ * robotis_framework::getRotationX(M_PI) *
       robotis_framework::getTransitionXYZ(l_foot_ft_data_msg_.torque.x, l_foot_ft_data_msg_.torque.y, l_foot_ft_data_msg_.torque.z);
 
   balance_control_.setCurrentOrientationSensorOutput(imu_rpy.coeff(0,0), imu_rpy.coeff(1,0));
