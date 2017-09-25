@@ -1179,6 +1179,9 @@ bool WholebodyModule::set()
                                                          g_to_l_foot_force.coeff(0,0),  g_to_l_foot_force.coeff(1,0),  g_to_l_foot_force.coeff(2,0),
                                                          g_to_l_foot_torque.coeff(0,0), g_to_l_foot_torque.coeff(1,0), g_to_l_foot_torque.coeff(2,0));
 
+  ROS_INFO("g_to_r_foot_force x: %f, y: %f, z: %f", g_to_r_foot_force.coeff(0,0), g_to_r_foot_force.coeff(1,0), g_to_r_foot_force.coeff(2,0));
+  ROS_INFO("g_to_l_foot_force x: %f, y: %f, z: %f", g_to_l_foot_force.coeff(0,0), g_to_l_foot_force.coeff(1,0), g_to_l_foot_force.coeff(2,0));
+
   balance_control_.setDesiredCOBGyro(0.0, 0.0);
   balance_control_.setDesiredCOBOrientation(robotis_->thormang3_link_data_[ID_PELVIS_ROT_X]->joint_angle_,
                                             robotis_->thormang3_link_data_[ID_PELVIS_ROT_Y]->joint_angle_);

@@ -1443,6 +1443,8 @@ void THORMANG3OnlineWalking::process()
                                                         mat_left_force.coeff(0,0),   mat_left_force.coeff(1,0),   mat_left_force.coeff(2,0),
                                                         mat_left_torque.coeff(0,0),  mat_left_torque.coeff(1,0),  mat_left_torque.coeff(2,0));
 
+    ROS_INFO("mat_right_force x: %f, y: %f, z: %f", mat_right_force.coeff(0,0), mat_right_force.coeff(1,0), mat_right_force.coeff(2,0));
+    ROS_INFO("mat_left_force x: %f, y: %f, z: %f", mat_left_force.coeff(0,0), mat_left_force.coeff(1,0), mat_left_force.coeff(2,0));
 
     double r_target_fx_N = 0;
     double l_target_fx_N = 0;
