@@ -1604,8 +1604,8 @@ void THORMANG3OnlineWalking::process()
                                             l_target_fx_N*1.0, l_target_fy_N*1.0, l_target_fz_N, 0, 0, 0);
     balance_ctrl_.setDesiredPose(mat_robot_to_cob_, mat_robot_to_rfoot_, mat_robot_to_lfoot_);
 
-    ROS_INFO("r_target_fx_N: %f, r_target_fy_N: %f, r_target_fz_N: %f", r_target_fx_N, r_target_fy_N, r_target_fz_N);
-    ROS_INFO("l_target_fx_N: %f, l_target_fy_N: %f, l_target_fz_N: %f", l_target_fx_N, l_target_fy_N, l_target_fz_N);
+//    ROS_INFO("r_target_fx_N: %f, r_target_fy_N: %f, r_target_fz_N: %f", r_target_fx_N, r_target_fy_N, r_target_fz_N);
+//    ROS_INFO("l_target_fx_N: %f, l_target_fy_N: %f, l_target_fz_N: %f", l_target_fx_N, l_target_fy_N, l_target_fz_N);
 
     balance_ctrl_.process(&balance_error_, &mat_robot_to_cob_modified_, &mat_robot_to_rf_modified_, &mat_robot_to_lf_modified_);
     mat_cob_to_robot_modified_ = robotis_framework::getInverseTransformation(mat_robot_to_cob_modified_);
