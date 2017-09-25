@@ -122,6 +122,8 @@ WholebodyModule::WholebodyModule()
   /* parameter */
   number_of_joints_ = MAX_JOINT_ID;
 
+  walking_init_joint_position_.resize(number_of_joints_, 0.0);
+
   present_joint_torque_.resize(number_of_joints_, 0.0);
   present_joint_acceleration_.resize(number_of_joints_, 0.0);
   present_joint_velocity_.resize(number_of_joints_, 0.0);
@@ -372,6 +374,9 @@ void WholebodyModule::setWholebodyBalanceMsgCallback(const std_msgs::String::Con
   {
     ROS_INFO("balance on");
     goal_balance_gain_ratio_[0] = 1.0;
+
+    for (int i=0; i<number_of_joints_; i++)
+      walking_init_joint_position_[i] = desired_joint_position_[i];
   }
   else if(msg->data == "balance_off")
   {
@@ -776,7 +781,7 @@ void WholebodyModule::initWalkingControl()
                                         walking_param_.dsp_ratio, walking_param_.lipm_height, walking_param_.foot_height_max,
                                         walking_param_.zmp_offset_x, walking_param_.zmp_offset_y,
                                         x_lipm_, y_lipm_,
-                                        desired_joint_position_, desired_joint_velocity_, desired_joint_acceleration_);
+                                        walking_init_joint_position_, desired_joint_velocity_, desired_joint_acceleration_);
 
   double lipm_height = walking_control_->getLipmHeight();
   preview_request_.lipm_height = lipm_height;
