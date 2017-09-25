@@ -898,20 +898,20 @@ void WholebodyModule::calcGoalFT()
 {
   if (walking_phase_ == DSP)
   {
-    balance_r_foot_force_x_ = 0.0; //-0.5 * total_mass_ * x_lipm_[2];
-    balance_r_foot_force_y_ = 0.0; //-0.5 * total_mass_ * y_lipm_[2];
+    balance_r_foot_force_x_ = -0.5 * total_mass_ * x_lipm_[2];
+    balance_r_foot_force_y_ = -0.5 * total_mass_ * y_lipm_[2];
     balance_r_foot_force_z_ = -0.5 * total_mass_ * 9.81;
 
-    balance_l_foot_force_x_ = 0.0; //-0.5 * total_mass_ * x_lipm_[2];
-    balance_l_foot_force_y_ = 0.0; //-0.5 * total_mass_ * y_lipm_[2];
+    balance_l_foot_force_x_ = -0.5 * total_mass_ * x_lipm_[2];
+    balance_l_foot_force_y_ = -0.5 * total_mass_ * y_lipm_[2];
     balance_l_foot_force_z_ = -0.5 * total_mass_ * 9.81;
   }
   else if (walking_phase_ == SSP)
   {
     if (walking_leg_ == LEFT_LEG)
     {
-      balance_r_foot_force_x_ = 0.0; //-1.0 * total_mass_ * x_lipm_[2];
-      balance_r_foot_force_y_ = 0.0; //-1.0 * total_mass_ * y_lipm_[2];
+      balance_r_foot_force_x_ = -1.0 * total_mass_ * x_lipm_[2];
+      balance_r_foot_force_y_ = -1.0 * total_mass_ * y_lipm_[2];
       balance_r_foot_force_z_ = -1.0 * total_mass_ * 9.81;
 
       balance_l_foot_force_x_ = 0.0;
@@ -924,8 +924,8 @@ void WholebodyModule::calcGoalFT()
       balance_r_foot_force_y_ = 0.0;
       balance_r_foot_force_z_ = 0.0;
 
-      balance_l_foot_force_x_ = 0.0; //-1.0 * total_mass_ * x_lipm_[2];
-      balance_l_foot_force_y_ = 0.0; //-1.0 * total_mass_ * y_lipm_[2];
+      balance_l_foot_force_x_ = -1.0 * total_mass_ * x_lipm_[2];
+      balance_l_foot_force_y_ = -1.0 * total_mass_ * y_lipm_[2];
       balance_l_foot_force_z_ = -1.0 * total_mass_ * 9.81;
     }
   }
@@ -1179,8 +1179,8 @@ bool WholebodyModule::set()
                                                          g_to_l_foot_force.coeff(0,0),  g_to_l_foot_force.coeff(1,0),  g_to_l_foot_force.coeff(2,0),
                                                          g_to_l_foot_torque.coeff(0,0), g_to_l_foot_torque.coeff(1,0), g_to_l_foot_torque.coeff(2,0));
 
-  ROS_INFO("g_to_r_foot_force x: %f, y: %f, z: %f", g_to_r_foot_force.coeff(0,0), g_to_r_foot_force.coeff(1,0), g_to_r_foot_force.coeff(2,0));
-  ROS_INFO("g_to_l_foot_force x: %f, y: %f, z: %f", g_to_l_foot_force.coeff(0,0), g_to_l_foot_force.coeff(1,0), g_to_l_foot_force.coeff(2,0));
+//  ROS_INFO("g_to_r_foot_force x: %f, y: %f, z: %f", g_to_r_foot_force.coeff(0,0), g_to_r_foot_force.coeff(1,0), g_to_r_foot_force.coeff(2,0));
+//  ROS_INFO("g_to_l_foot_force x: %f, y: %f, z: %f", g_to_l_foot_force.coeff(0,0), g_to_l_foot_force.coeff(1,0), g_to_l_foot_force.coeff(2,0));
 
   balance_control_.setDesiredCOBGyro(0.0, 0.0);
   balance_control_.setDesiredCOBOrientation(robotis_->thormang3_link_data_[ID_PELVIS_ROT_X]->joint_angle_,
