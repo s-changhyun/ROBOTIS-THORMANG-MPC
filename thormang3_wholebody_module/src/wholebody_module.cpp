@@ -1203,7 +1203,7 @@ bool WholebodyModule::set()
 
   int error;
   Eigen::MatrixXd pelvis_pose_new, r_foot_pose_new, l_foot_pose_new;
-  balance_control_.process(&error, &pelvis_pose, &r_foot_pose, &l_foot_pose);
+  balance_control_.process(&error, &pelvis_pose_new, &r_foot_pose_new, &l_foot_pose_new);
 
   ROS_INFO("error: %d", error);
 
