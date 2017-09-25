@@ -900,11 +900,11 @@ void WholebodyModule::calcGoalFT()
   {
     balance_r_foot_force_x_ = 0.0; //-0.5 * total_mass_ * x_lipm_[2];
     balance_r_foot_force_y_ = 0.0; //-0.5 * total_mass_ * y_lipm_[2];
-    balance_r_foot_force_z_ = -0.5 * total_mass_ * 9.81;
+    balance_r_foot_force_z_ = 0.5 * total_mass_ * 9.81;
 
     balance_l_foot_force_x_ = 0.0; //-0.5 * total_mass_ * x_lipm_[2];
     balance_l_foot_force_y_ = 0.0; //-0.5 * total_mass_ * y_lipm_[2];
-    balance_l_foot_force_z_ = -0.5 * total_mass_ * 9.81;
+    balance_l_foot_force_z_ = 0.5 * total_mass_ * 9.81;
   }
   else if (walking_phase_ == SSP)
   {
@@ -912,7 +912,7 @@ void WholebodyModule::calcGoalFT()
     {
       balance_r_foot_force_x_ = 0.0; //-1.0 * total_mass_ * x_lipm_[2];
       balance_r_foot_force_y_ = 0.0; //-1.0 * total_mass_ * y_lipm_[2];
-      balance_r_foot_force_z_ = -1.0 * total_mass_ * 9.81;
+      balance_r_foot_force_z_ = 1.0 * total_mass_ * 9.81;
 
       balance_l_foot_force_x_ = 0.0;
       balance_l_foot_force_y_ = 0.0;
@@ -926,7 +926,7 @@ void WholebodyModule::calcGoalFT()
 
       balance_l_foot_force_x_ = 0.0; //-1.0 * total_mass_ * x_lipm_[2];
       balance_l_foot_force_y_ = 0.0; //-1.0 * total_mass_ * y_lipm_[2];
-      balance_l_foot_force_z_ = -1.0 * total_mass_ * 9.81;
+      balance_l_foot_force_z_ = 1.0 * total_mass_ * 9.81;
     }
   }
 
