@@ -940,8 +940,8 @@ void WalkingControl::calcPreviewControl(double time, int step)
   desired_body_pos_[0] = x_lipm_.coeff(0,0) + zmp_offset_x_;
   desired_body_pos_[1] = y_lipm_.coeff(0,0);
 
-  ROS_INFO("x_lipm 1: %f, 2: %f, 3:%f", x_lipm_.coeff(0,0), x_lipm_.coeff(1,0), x_lipm_.coeff(2,0));
-  ROS_INFO("y_lipm 1: %f, 2: %f, 3:%f", y_lipm_.coeff(0,0), y_lipm_.coeff(1,0), y_lipm_.coeff(2,0));
+//  ROS_INFO("x_lipm 1: %f, 2: %f, 3:%f", x_lipm_.coeff(0,0), x_lipm_.coeff(1,0), x_lipm_.coeff(2,0));
+//  ROS_INFO("y_lipm 1: %f, 2: %f, 3:%f", y_lipm_.coeff(0,0), y_lipm_.coeff(1,0), y_lipm_.coeff(2,0));
 
 //  ROS_INFO("time: %f, desired_body_pos_ x: %f , y: %f", time, desired_body_pos_[0], desired_body_pos_[1]);
 }
