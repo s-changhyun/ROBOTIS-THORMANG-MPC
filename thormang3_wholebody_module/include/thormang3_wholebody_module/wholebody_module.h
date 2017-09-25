@@ -56,7 +56,7 @@
 #include "robotis_controller_msgs/StatusMsg.h"
 
 #include "thormang3_kinematics_dynamics/kinematics_dynamics.h"
-#include "thormang3_wholebody_balance_control/thormang3_wholebody_balance_control.h"
+#include "thormang3_balance_control/thormang3_balance_control.h"
 
 #include "thormang3_wholebody_module_msgs/JointPose.h"
 #include "thormang3_wholebody_module_msgs/KinematicsPose.h"
@@ -216,50 +216,49 @@ private:
   bool is_balancing_;
   int balance_step_, balance_size_;
   Eigen::MatrixXd on_balance_gain_tra_, off_balance_gain_tra_;
-  RobotisBalanceControl balance_control_;
+  BalanceControlUsingPDController balance_control_;
 
-  std::vector<double_t> desired_balance_gain_;
-  std::vector<double_t> goal_balance_gain_;
+  std::vector<double_t> desired_balance_gain_ratio_;
+  std::vector<double_t> goal_balance_gain_ratio_;
 
-  double gyro_gain_;
-  double foot_roll_angle_gain_;
-  double foot_pitch_angle_gain_;
-  double foot_roll_angle_time_constant_;
-  double foot_pitch_angle_time_constant_;
+  double foot_roll_gyro_p_gain_;
+  double foot_roll_gyro_d_gain_;
 
-  double left_foot_force_x_gain_;
-  double left_foot_force_y_gain_;
-  double left_foot_force_x_time_constant_;
-  double left_foot_force_y_time_constant_;
+  double foot_pitch_gyro_p_gain_;
+  double foot_pitch_gyro_d_gain_;
 
-  double right_foot_force_x_gain_;
-  double right_foot_force_y_gain_;
-  double right_foot_force_x_time_constant_;
-  double right_foot_force_y_time_constant_;
+  double foot_roll_angle_p_gain_;
+  double foot_roll_angle_d_gain_;
 
-  double foot_force_z_gain_;
-  double foot_force_z_time_constant_;
+  double foot_pitch_angle_p_gain_;
+  double foot_pitch_angle_d_gain_;
 
-  double left_foot_torque_roll_gain_;
-  double left_foot_torque_pitch_gain_;
-  double left_foot_torque_roll_time_constant_;
-  double left_foot_torque_pitch_time_constant_;
+  double foot_x_force_p_gain_;
+  double foot_x_force_d_gain_;
 
-  double right_foot_torque_roll_gain_;
-  double right_foot_torque_pitch_gain_;
-  double right_foot_torque_roll_time_constant_;
-  double right_foot_torque_pitch_time_constant_;
+  double foot_y_force_p_gain_;
+  double foot_y_force_d_gain_;
 
-  double wb_pelvis_diff_x_constant_;
-  double wb_pelvis_diff_y_constant_;
-  double wb_pelvis_diff_z_constant_;
+  double foot_z_force_p_gain_;
+  double foot_z_force_d_gain_;
 
-  double wb_pelvis_x_max_;
-  double wb_pelvis_x_min_;
-  double wb_pelvis_y_max_;
-  double wb_pelvis_y_min_;
-  double wb_pelvis_z_max_;
-  double wb_pelvis_z_min_;
+  double foot_roll_torque_p_gain_;
+  double foot_roll_torque_d_gain_;
+
+  double foot_pitch_torque_p_gain_;
+  double foot_pitch_torque_d_gain_;
+
+  double roll_gyro_cut_off_frequency_;
+  double pitch_gyro_cut_off_frequency_;
+
+  double roll_angle_cut_off_frequency_;
+  double pitch_angle_cut_off_frequency_;
+
+  double foot_x_force_cut_off_frequency_;
+  double foot_y_force_cut_off_frequency_;
+  double foot_z_force_cut_off_frequency_;
+  double foot_roll_torque_cut_off_frequency_;
+  double foot_pitch_torque_cut_off_frequency_;
 
   double balance_l_foot_force_x_;
   double balance_l_foot_force_y_;

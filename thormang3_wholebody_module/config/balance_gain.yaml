@@ -1,46 +1,47 @@
-gyro_gain : 0.25
+######## Gain ########
+# by gyro
+foot_roll_gyro_p_gain : 0.5
+foot_roll_gyro_d_gain : 0.0
 
-foot_roll_angle_gain : -0.25
-foot_pitch_angle_gain : -0.25
+foot_pitch_gyro_p_gain : 0.5
+foot_pitch_gyro_d_gain : 0.0
 
-foot_roll_angle_time_constant : 1.0
-foot_pitch_angle_time_constant : 1.0
+# by imu
+foot_roll_angle_p_gain : 1.0
+foot_roll_angle_d_gain : 0.0
 
-left_foot_force_x_gain : 0.05
-left_foot_force_y_gain : 0.05
+foot_pitch_angle_p_gain : 1.0
+foot_pitch_angle_d_gain : 0.0
 
-left_foot_force_x_time_constant : 1.0
-left_foot_force_y_time_constant : 1.0
+# by ft sensor
+foot_x_force_p_gain : 0.1
+foot_x_force_d_gain : 0.0
 
-right_foot_force_x_gain : 0.05
-right_foot_force_y_gain : 0.05
+foot_y_force_p_gain : 0.1
+foot_y_force_d_gain : 0.0
 
-right_foot_force_x_time_constant : 1.0
-right_foot_force_y_time_constant : 1.0
+foot_z_force_p_gain : 0.015
+foot_z_force_d_gain : 0.0
 
-foot_force_z_gain : -0.017
+foot_roll_torque_p_gain : 0.001
+foot_roll_torque_d_gain : 0.0
 
-foot_force_z_time_constant : 1.0
+foot_pitch_torque_p_gain : 0.001
+foot_pitch_torque_d_gain : 0.0
 
-left_foot_torque_roll_gain : 0.0018
-left_foot_torque_pitch_gain : 0.0012
+######## CUT OFF FREQUENCY ########
+# by gyro
+roll_gyro_cut_off_frequency  : 10.0
+pitch_gyro_cut_off_frequency : 10.0
 
-left_foot_torque_roll_time_constant : 1.0
-left_foot_torque_pitch_time_constant : 1.0
+# by imu
+roll_angle_cut_off_frequency  : 10.0
+pitch_angle_cut_off_frequency : 10.0
 
-right_foot_torque_roll_gain : 0.0018
-right_foot_torque_pitch_gain : 0.0012
+# by ft sensor
+foot_x_force_cut_off_frequency : 10.0
+foot_y_force_cut_off_frequency : 10.0
+foot_z_force_cut_off_frequency : 10.0
+foot_roll_torque_cut_off_frequency : 10.0
+foot_pitch_torque_cut_off_frequency : 10.0
 
-right_foot_torque_roll_time_constant : 1.0
-right_foot_torque_pitch_time_constant : 1.0
-
-wb_pelvis_diff_x_constant : -0.15
-wb_pelvis_diff_y_constant : -0.09
-wb_pelvis_diff_z_constant : 0.2
-
-wb_pelvis_x_max : 0.1
-wb_pelvis_x_min : -0.12
-wb_pelvis_y_max : 0.05
-wb_pelvis_y_min : -0.05
-wb_pelvis_z_max : 0.8
-wb_pelvis_z_min : 0.3

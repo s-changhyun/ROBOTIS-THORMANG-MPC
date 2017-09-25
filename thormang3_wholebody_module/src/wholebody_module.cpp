@@ -173,12 +173,13 @@ WholebodyModule::WholebodyModule()
   walking_param_.zmp_offset_x = 0.0; // not applied
   walking_param_.zmp_offset_y = 0.0;
 
-  desired_balance_gain_.resize(1, 0.0);
-  goal_balance_gain_.resize(1, 0.0);
+  desired_balance_gain_ratio_.resize(1, 0.0);
+  goal_balance_gain_ratio_.resize(1, 0.0);
 
   reset();
   robotis_ = new KinematicsDynamics(WholeBody);
 
+  balance_control_.initialize(control_cycle_sec_*1000.0);
   balance_control_.setGyroBalanceEnable(false); // Gyro
   balance_control_.setOrientationBalanceEnable(false); // IMU
   balance_control_.setForceTorqueBalanceEnable(false); // FT
@@ -322,46 +323,44 @@ void WholebodyModule::parseBalanceGainData(const std::string &path)
 
   //  ROS_INFO("Parse Balance Gain Data");
 
-  gyro_gain_ = doc["gyro_gain"].as<double>();
+  foot_roll_gyro_p_gain_ = doc["foot_roll_gyro_p_gain"].as<double>();
+  foot_roll_gyro_d_gain_ = doc["foot_roll_gyro_d_gain"].as<double>();
 
-  foot_roll_angle_gain_ = doc["foot_roll_angle_gain"].as<double>();
-  foot_pitch_angle_gain_ = doc["foot_pitch_angle_gain"].as<double>();
-  foot_roll_angle_time_constant_ = doc["foot_roll_angle_time_constant"].as<double>();
-  foot_pitch_angle_time_constant_ = doc["foot_pitch_angle_time_constant"].as<double>();
+  foot_pitch_gyro_p_gain_ = doc["foot_pitch_gyro_p_gain"].as<double>();
+  foot_pitch_gyro_d_gain_ = doc["foot_pitch_gyro_d_gain"].as<double>();
 
-  left_foot_force_x_gain_ = doc["left_foot_force_x_gain"].as<double>();
-  left_foot_force_y_gain_ = doc["left_foot_force_y_gain"].as<double>();
-  left_foot_force_x_time_constant_ = doc["left_foot_force_x_time_constant"].as<double>();
-  left_foot_force_y_time_constant_ = doc["left_foot_force_y_time_constant"].as<double>();
+  foot_roll_angle_p_gain_ = doc["foot_roll_angle_p_gain"].as<double>();
+  foot_roll_angle_d_gain_ = doc["foot_roll_angle_d_gain"].as<double>();
 
-  right_foot_force_x_gain_ = doc["right_foot_force_x_gain"].as<double>();
-  right_foot_force_y_gain_ = doc["right_foot_force_y_gain"].as<double>();
-  right_foot_force_x_time_constant_ = doc["right_foot_force_x_time_constant"].as<double>();
-  right_foot_force_y_time_constant_ = doc["right_foot_force_y_time_constant"].as<double>();
+  foot_pitch_angle_p_gain_ = doc["foot_pitch_angle_p_gain"].as<double>();
+  foot_pitch_angle_d_gain_ = doc["foot_pitch_angle_d_gain"].as<double>();
 
-  foot_force_z_gain_ = doc["foot_force_z_gain"].as<double>();
-  foot_force_z_time_constant_ = doc["foot_force_z_time_constant"].as<double>();
+  foot_x_force_p_gain_ = doc["foot_x_force_p_gain"].as<double>();
+  foot_x_force_d_gain_ = doc["foot_x_force_d_gain"].as<double>();
 
-  left_foot_torque_roll_gain_ = doc["left_foot_torque_roll_gain"].as<double>();
-  left_foot_torque_pitch_gain_ = doc["left_foot_torque_pitch_gain"].as<double>();
-  left_foot_torque_roll_time_constant_ = doc["left_foot_torque_roll_time_constant"].as<double>();
-  left_foot_torque_pitch_time_constant_ = doc["left_foot_torque_pitch_time_constant"].as<double>();
+  foot_y_force_p_gain_ = doc["foot_y_force_p_gain"].as<double>();
+  foot_y_force_d_gain_ = doc["foot_y_force_d_gain"].as<double>();
 
-  right_foot_torque_roll_gain_ = doc["right_foot_torque_roll_gain"].as<double>();
-  right_foot_torque_pitch_gain_ = doc["right_foot_torque_pitch_gain"].as<double>();
-  right_foot_torque_roll_time_constant_ = doc["right_foot_torque_roll_time_constant"].as<double>();
-  right_foot_torque_pitch_time_constant_ = doc["right_foot_torque_pitch_time_constant"].as<double>();
+  foot_z_force_p_gain_ = doc["foot_z_force_p_gain"].as<double>();
+  foot_z_force_d_gain_ = doc["foot_z_force_d_gain"].as<double>();
 
-  wb_pelvis_diff_x_constant_ = doc["wb_pelvis_diff_x_constant"].as<double>();
-  wb_pelvis_diff_y_constant_ = doc["wb_pelvis_diff_y_constant"].as<double>();
-  wb_pelvis_diff_z_constant_ = doc["wb_pelvis_diff_z_constant"].as<double>();
+  foot_roll_torque_p_gain_ = doc["foot_roll_torque_p_gain"].as<double>();
+  foot_roll_torque_d_gain_ = doc["foot_roll_torque_d_gain"].as<double>();
 
-  wb_pelvis_x_max_ = doc["wb_pelvis_x_max"].as<double>();
-  wb_pelvis_x_min_ = doc["wb_pelvis_x_min"].as<double>();
-  wb_pelvis_y_max_ = doc["wb_pelvis_y_max"].as<double>();
-  wb_pelvis_y_min_ = doc["wb_pelvis_y_min"].as<double>();
-  wb_pelvis_z_max_ = doc["wb_pelvis_z_max"].as<double>();
-  wb_pelvis_z_min_ = doc["wb_pelvis_z_min"].as<double>();
+  foot_pitch_torque_p_gain_ = doc["foot_pitch_torque_p_gain"].as<double>();
+  foot_pitch_torque_d_gain_ = doc["foot_pitch_torque_d_gain"].as<double>();
+
+  roll_gyro_cut_off_frequency_ = doc["roll_gyro_cut_off_frequency"].as<double>();
+  pitch_gyro_cut_off_frequency_ = doc["pitch_gyro_cut_off_frequency"].as<double>();
+
+  roll_angle_cut_off_frequency_ = doc["roll_angle_cut_off_frequency"].as<double>();
+  pitch_angle_cut_off_frequency_ = doc["pitch_angle_cut_off_frequency"].as<double>();
+
+  foot_x_force_cut_off_frequency_ = doc["foot_x_force_cut_off_frequency"].as<double>();
+  foot_y_force_cut_off_frequency_ = doc["foot_y_force_cut_off_frequency"].as<double>();
+  foot_z_force_cut_off_frequency_ = doc["foot_z_force_cut_off_frequency"].as<double>();
+  foot_roll_torque_cut_off_frequency_ = doc["foot_roll_torque_cut_off_frequency"].as<double>();
+  foot_pitch_torque_cut_off_frequency_ = doc["foot_pitch_torque_cut_off_frequency"].as<double>();
 }
 
 void WholebodyModule::setWholebodyBalanceMsgCallback(const std_msgs::String::ConstPtr& msg)
@@ -372,12 +371,12 @@ void WholebodyModule::setWholebodyBalanceMsgCallback(const std_msgs::String::Con
   if (msg->data == "balance_on")
   {
     ROS_INFO("balance on");
-    goal_balance_gain_[0] = 1.0;
+    goal_balance_gain_ratio_[0] = 1.0;
   }
   else if(msg->data == "balance_off")
   {
     ROS_INFO("balance off");
-    goal_balance_gain_[0] = 0.0;
+    goal_balance_gain_ratio_[0] = 0.0;
   }
 
   balance_control_initialize_ = false;
@@ -403,8 +402,8 @@ void WholebodyModule::initBalanceControl()
 
   balance_trajectory_ =
       new robotis_framework::MinimumJerk(ini_time, mov_time,
-                                         desired_balance_gain_, balance_zero, balance_zero,
-                                         goal_balance_gain_, balance_zero, balance_zero);
+                                         desired_balance_gain_ratio_, balance_zero, balance_zero,
+                                         goal_balance_gain_ratio_, balance_zero, balance_zero);
   if (is_balancing_ == true)
     ROS_INFO("[UPDATE] Balance Gain");
   else
@@ -419,7 +418,7 @@ void WholebodyModule::calcBalanceControl()
   if (is_balancing_ == true)
   {
     double cur_time = (double) balance_step_ * control_cycle_sec_;
-    desired_balance_gain_ = balance_trajectory_->getPosition(cur_time);
+    desired_balance_gain_ratio_ = balance_trajectory_->getPosition(cur_time);
 
 //    ROS_INFO("desired_balance_gain: %f", desired_balance_gain_[0]);
 
@@ -429,7 +428,7 @@ void WholebodyModule::calcBalanceControl()
       is_balancing_ = false;
       delete balance_trajectory_;
 
-      if (desired_balance_gain_[0] == 0.0)
+      if (desired_balance_gain_ratio_[0] == 0.0)
       {
         control_type_ = NONE;
         balance_type_ = OFF;
@@ -871,7 +870,7 @@ void WholebodyModule::calcWalkingControl()
       {
         is_moving_ = false;
         walking_control_->finalize();
-//        reset();
+        reset();
 
         control_type_ = NONE;
       }
@@ -890,20 +889,20 @@ void WholebodyModule::calcGoalFT()
 {
   if (walking_phase_ == DSP)
   {
-    balance_r_foot_force_x_ = -0.5 * total_mass_ * x_lipm_[2];
-    balance_r_foot_force_y_ = -0.5 * total_mass_ * y_lipm_[2];
+    balance_r_foot_force_x_ = 0.0; //-0.5 * total_mass_ * x_lipm_[2];
+    balance_r_foot_force_y_ = 0.0; //-0.5 * total_mass_ * y_lipm_[2];
     balance_r_foot_force_z_ = -0.5 * total_mass_ * 9.81;
 
-    balance_l_foot_force_x_ = -0.5 * total_mass_ * x_lipm_[2];
-    balance_l_foot_force_y_ = -0.5 * total_mass_ * y_lipm_[2];
+    balance_l_foot_force_x_ = 0.0; //-0.5 * total_mass_ * x_lipm_[2];
+    balance_l_foot_force_y_ = 0.0; //-0.5 * total_mass_ * y_lipm_[2];
     balance_l_foot_force_z_ = -0.5 * total_mass_ * 9.81;
   }
   else if (walking_phase_ == SSP)
   {
     if (walking_leg_ == LEFT_LEG)
     {
-      balance_r_foot_force_x_ = -1.0 * total_mass_ * x_lipm_[2];
-      balance_r_foot_force_y_ = -1.0 * total_mass_ * y_lipm_[2];
+      balance_r_foot_force_x_ = 0.0; //-1.0 * total_mass_ * x_lipm_[2];
+      balance_r_foot_force_y_ = 0.0; //-1.0 * total_mass_ * y_lipm_[2];
       balance_r_foot_force_z_ = -1.0 * total_mass_ * 9.81;
 
       balance_l_foot_force_x_ = 0.0;
@@ -916,28 +915,82 @@ void WholebodyModule::calcGoalFT()
       balance_r_foot_force_y_ = 0.0;
       balance_r_foot_force_z_ = 0.0;
 
-      balance_l_foot_force_x_ = -1.0 * total_mass_ * x_lipm_[2];
-      balance_l_foot_force_y_ = -1.0 * total_mass_ * y_lipm_[2];
+      balance_l_foot_force_x_ = 0.0; //-1.0 * total_mass_ * x_lipm_[2];
+      balance_l_foot_force_y_ = 0.0; //-1.0 * total_mass_ * y_lipm_[2];
       balance_l_foot_force_z_ = -1.0 * total_mass_ * 9.81;
     }
   }
 
-  ROS_INFO("r_foot_force x: %f, y: %f, z: %f", balance_r_foot_force_x_, balance_r_foot_force_y_, balance_r_foot_force_z_);
-  ROS_INFO("l_foot_force x: %f, y: %f, z: %f", balance_l_foot_force_x_, balance_l_foot_force_y_, balance_l_foot_force_z_);
+//  ROS_INFO("r_foot_force x: %f, y: %f, z: %f", balance_r_foot_force_x_, balance_r_foot_force_y_, balance_r_foot_force_z_);
+//  ROS_INFO("l_foot_force x: %f, y: %f, z: %f", balance_l_foot_force_x_, balance_l_foot_force_y_, balance_l_foot_force_z_);
 }
 
 void WholebodyModule::setBalanceControlGain()
 {
-  double gain_ratio;
-  double max_pelvis = 0.734;
-  double min_pelvis = 0.3;
+  //// set gain
+  //gyro
+  balance_control_.foot_roll_gyro_ctrl_.p_gain_ = foot_roll_gyro_p_gain_ * desired_balance_gain_ratio_[0];
+  balance_control_.foot_roll_gyro_ctrl_.d_gain_ = foot_roll_gyro_d_gain_ * desired_balance_gain_ratio_[0];
+  balance_control_.foot_pitch_gyro_ctrl_.p_gain_ = foot_pitch_gyro_p_gain_ * desired_balance_gain_ratio_[0];
+  balance_control_.foot_pitch_gyro_ctrl_.d_gain_ = foot_pitch_gyro_d_gain_ * desired_balance_gain_ratio_[0];
 
-  if (robotis_->thormang3_link_data_[ID_PELVIS]->position_.coeff(2,0) > max_pelvis)
-    gain_ratio = 1.0;
-  else if (robotis_->thormang3_link_data_[ID_PELVIS]->position_.coeff(2,0) < min_pelvis)
-    gain_ratio = 0.0;
-  else
-    gain_ratio = (robotis_->thormang3_link_data_[ID_PELVIS]->position_.coeff(2,0) - min_pelvis) / (max_pelvis - min_pelvis);
+  //orientation
+  balance_control_.foot_roll_angle_ctrl_.p_gain_  = foot_roll_angle_p_gain_ * desired_balance_gain_ratio_[0];
+  balance_control_.foot_roll_angle_ctrl_.d_gain_  = foot_roll_angle_d_gain_ * desired_balance_gain_ratio_[0];
+  balance_control_.foot_pitch_angle_ctrl_.p_gain_ = foot_pitch_angle_p_gain_ * desired_balance_gain_ratio_[0];
+  balance_control_.foot_pitch_angle_ctrl_.d_gain_ = foot_pitch_angle_d_gain_ * desired_balance_gain_ratio_[0];
+
+  //force torque
+  balance_control_.right_foot_force_x_ctrl_.p_gain_      = foot_x_force_p_gain_ * desired_balance_gain_ratio_[0];
+  balance_control_.right_foot_force_y_ctrl_.p_gain_      = foot_y_force_p_gain_ * desired_balance_gain_ratio_[0];
+  balance_control_.right_foot_force_z_ctrl_.p_gain_      = foot_z_force_p_gain_ * desired_balance_gain_ratio_[0];
+  balance_control_.right_foot_torque_roll_ctrl_.p_gain_  = foot_roll_torque_p_gain_ * desired_balance_gain_ratio_[0];
+  balance_control_.right_foot_torque_pitch_ctrl_.p_gain_ = foot_roll_torque_p_gain_ * desired_balance_gain_ratio_[0];
+  balance_control_.right_foot_force_x_ctrl_.d_gain_      = foot_x_force_d_gain_ * desired_balance_gain_ratio_[0];
+  balance_control_.right_foot_force_y_ctrl_.d_gain_      = foot_y_force_d_gain_ * desired_balance_gain_ratio_[0];
+  balance_control_.right_foot_force_z_ctrl_.d_gain_      = foot_z_force_d_gain_ * desired_balance_gain_ratio_[0];
+  balance_control_.right_foot_torque_roll_ctrl_.d_gain_  = foot_roll_torque_d_gain_ * desired_balance_gain_ratio_[0];
+  balance_control_.right_foot_torque_pitch_ctrl_.d_gain_ = foot_roll_torque_d_gain_ * desired_balance_gain_ratio_[0];
+
+  balance_control_.left_foot_force_x_ctrl_.p_gain_      = foot_x_force_p_gain_ * desired_balance_gain_ratio_[0];
+  balance_control_.left_foot_force_y_ctrl_.p_gain_      = foot_y_force_p_gain_ * desired_balance_gain_ratio_[0];
+  balance_control_.left_foot_force_z_ctrl_.p_gain_      = foot_z_force_p_gain_ * desired_balance_gain_ratio_[0];
+  balance_control_.left_foot_torque_roll_ctrl_.p_gain_  = foot_roll_torque_p_gain_ * desired_balance_gain_ratio_[0];
+  balance_control_.left_foot_torque_pitch_ctrl_.p_gain_ = foot_roll_torque_p_gain_ * desired_balance_gain_ratio_[0];
+  balance_control_.left_foot_force_x_ctrl_.d_gain_      = foot_x_force_d_gain_ * desired_balance_gain_ratio_[0];
+  balance_control_.left_foot_force_y_ctrl_.d_gain_      = foot_y_force_d_gain_ * desired_balance_gain_ratio_[0];
+  balance_control_.left_foot_force_z_ctrl_.d_gain_      = foot_z_force_d_gain_ * desired_balance_gain_ratio_[0];
+  balance_control_.left_foot_torque_roll_ctrl_.d_gain_  = foot_roll_torque_d_gain_ * desired_balance_gain_ratio_[0];
+  balance_control_.left_foot_torque_pitch_ctrl_.d_gain_ = foot_roll_torque_d_gain_ * desired_balance_gain_ratio_[0];
+
+  //// set cut off freq
+  balance_control_.roll_gyro_lpf_.setCutOffFrequency(roll_gyro_cut_off_frequency_);
+  balance_control_.pitch_gyro_lpf_.setCutOffFrequency(pitch_gyro_cut_off_frequency_);
+  balance_control_.roll_angle_lpf_.setCutOffFrequency(roll_angle_cut_off_frequency_);
+  balance_control_.pitch_angle_lpf_.setCutOffFrequency(pitch_angle_cut_off_frequency_);
+
+  balance_control_.right_foot_force_x_lpf_.setCutOffFrequency(foot_x_force_cut_off_frequency_);
+  balance_control_.right_foot_force_y_lpf_.setCutOffFrequency(foot_y_force_cut_off_frequency_);
+  balance_control_.right_foot_force_z_lpf_.setCutOffFrequency(foot_z_force_cut_off_frequency_);
+  balance_control_.right_foot_torque_roll_lpf_.setCutOffFrequency(foot_roll_torque_cut_off_frequency_);
+  balance_control_.right_foot_torque_pitch_lpf_.setCutOffFrequency(foot_pitch_torque_cut_off_frequency_);
+
+  balance_control_.left_foot_force_x_lpf_.setCutOffFrequency(foot_x_force_cut_off_frequency_);
+  balance_control_.left_foot_force_y_lpf_.setCutOffFrequency(foot_y_force_cut_off_frequency_);
+  balance_control_.left_foot_force_z_lpf_.setCutOffFrequency(foot_z_force_cut_off_frequency_);
+  balance_control_.left_foot_torque_roll_lpf_.setCutOffFrequency(foot_roll_torque_cut_off_frequency_);
+  balance_control_.left_foot_torque_pitch_lpf_.setCutOffFrequency(foot_pitch_torque_cut_off_frequency_);
+
+//  double gain_ratio;
+//  double max_pelvis = 0.734;
+//  double min_pelvis = 0.3;
+
+//  if (robotis_->thormang3_link_data_[ID_PELVIS]->position_.coeff(2,0) > max_pelvis)
+//    gain_ratio = 1.0;
+//  else if (robotis_->thormang3_link_data_[ID_PELVIS]->position_.coeff(2,0) < min_pelvis)
+//    gain_ratio = 0.0;
+//  else
+//    gain_ratio = (robotis_->thormang3_link_data_[ID_PELVIS]->position_.coeff(2,0) - min_pelvis) / (max_pelvis - min_pelvis);
 
   //  double sim_constant;
   //  if (gazebo_ == true)
@@ -945,66 +998,72 @@ void WholebodyModule::setBalanceControlGain()
   //  else
   //    sim_constant = 1.0;
 
-  double gyro_gain = gyro_gain_ * gain_ratio;
+//  double gyro_gain = gyro_gain_ * gain_ratio;
 
-  balance_control_.setGyroBalanceGainRatio(gyro_gain);
+//  balance_control_.setGyroBalanceGainRatio(gyro_gain);
 
-  balance_control_.foot_roll_angle_ctrl_.gain_ = foot_roll_angle_gain_ * gain_ratio;
-  balance_control_.foot_pitch_angle_ctrl_.gain_ = foot_pitch_angle_gain_ * gain_ratio;
+//  balance_control_.foot_roll_angle_ctrl_.gain_ = foot_roll_angle_gain_ * gain_ratio;
+//  balance_control_.foot_pitch_angle_ctrl_.gain_ = foot_pitch_angle_gain_ * gain_ratio;
 
-  balance_control_.left_foot_force_x_ctrl_.gain_ = left_foot_force_x_gain_ * gain_ratio;
-  balance_control_.left_foot_force_y_ctrl_.gain_ = left_foot_force_y_gain_ * gain_ratio;
+//  balance_control_.left_foot_force_x_ctrl_.gain_ = left_foot_force_x_gain_ * gain_ratio;
+//  balance_control_.left_foot_force_y_ctrl_.gain_ = left_foot_force_y_gain_ * gain_ratio;
 
-  balance_control_.right_foot_force_x_ctrl_.gain_ = right_foot_force_x_gain_ * gain_ratio;
-  balance_control_.right_foot_force_y_ctrl_.gain_ = right_foot_force_y_gain_ * gain_ratio;
+//  balance_control_.right_foot_force_x_ctrl_.gain_ = right_foot_force_x_gain_ * gain_ratio;
+//  balance_control_.right_foot_force_y_ctrl_.gain_ = right_foot_force_y_gain_ * gain_ratio;
 
-  balance_control_.foot_force_z_diff_ctrl_.gain_ = foot_force_z_gain_ * gain_ratio;
+//  balance_control_.foot_force_z_diff_ctrl_.gain_ = foot_force_z_gain_ * gain_ratio;
 
-  balance_control_.right_foot_torque_roll_ctrl_.gain_ = left_foot_torque_roll_gain_ * gain_ratio;
-  balance_control_.right_foot_torque_pitch_ctrl_.gain_ = left_foot_torque_pitch_gain_ * gain_ratio;
+//  balance_control_.right_foot_torque_roll_ctrl_.gain_ = left_foot_torque_roll_gain_ * gain_ratio;
+//  balance_control_.right_foot_torque_pitch_ctrl_.gain_ = left_foot_torque_pitch_gain_ * gain_ratio;
 
-  balance_control_.left_foot_torque_roll_ctrl_.gain_ = right_foot_torque_roll_gain_ * gain_ratio;
-  balance_control_.left_foot_torque_pitch_ctrl_.gain_ = right_foot_torque_pitch_gain_ * gain_ratio;
+//  balance_control_.left_foot_torque_roll_ctrl_.gain_ = right_foot_torque_roll_gain_ * gain_ratio;
+//  balance_control_.left_foot_torque_pitch_ctrl_.gain_ = right_foot_torque_pitch_gain_ * gain_ratio;
 
-  balance_control_.foot_roll_angle_ctrl_.time_constant_sec_ = foot_roll_angle_time_constant_;
-  balance_control_.foot_pitch_angle_ctrl_.time_constant_sec_ = foot_pitch_angle_time_constant_;
+//  balance_control_.foot_roll_angle_ctrl_.time_constant_sec_ = foot_roll_angle_time_constant_;
+//  balance_control_.foot_pitch_angle_ctrl_.time_constant_sec_ = foot_pitch_angle_time_constant_;
 
-  balance_control_.left_foot_force_x_ctrl_.time_constant_sec_ = left_foot_force_x_time_constant_;
-  balance_control_.left_foot_force_y_ctrl_.time_constant_sec_ = left_foot_force_y_time_constant_;
+//  balance_control_.left_foot_force_x_ctrl_.time_constant_sec_ = left_foot_force_x_time_constant_;
+//  balance_control_.left_foot_force_y_ctrl_.time_constant_sec_ = left_foot_force_y_time_constant_;
 
-  balance_control_.right_foot_force_x_ctrl_.time_constant_sec_ = right_foot_force_x_time_constant_;
-  balance_control_.right_foot_force_y_ctrl_.time_constant_sec_ = right_foot_force_y_time_constant_;
+//  balance_control_.right_foot_force_x_ctrl_.time_constant_sec_ = right_foot_force_x_time_constant_;
+//  balance_control_.right_foot_force_y_ctrl_.time_constant_sec_ = right_foot_force_y_time_constant_;
 
-  balance_control_.foot_force_z_diff_ctrl_.time_constant_sec_ = foot_force_z_time_constant_;
+//  balance_control_.foot_force_z_diff_ctrl_.time_constant_sec_ = foot_force_z_time_constant_;
 
-  balance_control_.right_foot_torque_roll_ctrl_.time_constant_sec_ = left_foot_torque_roll_time_constant_;
-  balance_control_.right_foot_torque_pitch_ctrl_.time_constant_sec_ = left_foot_torque_pitch_time_constant_;
+//  balance_control_.right_foot_torque_roll_ctrl_.time_constant_sec_ = left_foot_torque_roll_time_constant_;
+//  balance_control_.right_foot_torque_pitch_ctrl_.time_constant_sec_ = left_foot_torque_pitch_time_constant_;
 
-  balance_control_.left_foot_torque_roll_ctrl_.time_constant_sec_ = right_foot_torque_roll_time_constant_;
-  balance_control_.left_foot_torque_pitch_ctrl_.time_constant_sec_ = right_foot_torque_pitch_time_constant_;
+//  balance_control_.left_foot_torque_roll_ctrl_.time_constant_sec_ = right_foot_torque_roll_time_constant_;
+//  balance_control_.left_foot_torque_pitch_ctrl_.time_constant_sec_ = right_foot_torque_pitch_time_constant_;
 
-  balance_control_.setGyroBalanceGainRatio(gyro_gain * desired_balance_gain_[0]);
+//  balance_control_.setGyroBalanceGainRatio(gyro_gain * desired_balance_gain_[0]);
 
-  balance_control_.foot_roll_angle_ctrl_.gain_ *= desired_balance_gain_[0];
-  balance_control_.foot_pitch_angle_ctrl_.gain_ *= desired_balance_gain_[0];
+//  balance_control_.foot_roll_angle_ctrl_.gain_ *= desired_balance_gain_[0];
+//  balance_control_.foot_pitch_angle_ctrl_.gain_ *= desired_balance_gain_[0];
 
-  balance_control_.left_foot_force_x_ctrl_.gain_ *= desired_balance_gain_[0];
-  balance_control_.left_foot_force_y_ctrl_.gain_ *= desired_balance_gain_[0];
+//  balance_control_.left_foot_force_x_ctrl_.gain_ *= desired_balance_gain_[0];
+//  balance_control_.left_foot_force_y_ctrl_.gain_ *= desired_balance_gain_[0];
 
-  balance_control_.right_foot_force_x_ctrl_.gain_ *= desired_balance_gain_[0];
-  balance_control_.right_foot_force_y_ctrl_.gain_ *= desired_balance_gain_[0];
+//  balance_control_.right_foot_force_x_ctrl_.gain_ *= desired_balance_gain_[0];
+//  balance_control_.right_foot_force_y_ctrl_.gain_ *= desired_balance_gain_[0];
 
-  balance_control_.foot_force_z_diff_ctrl_.gain_ *= desired_balance_gain_[0];
+//  balance_control_.foot_force_z_diff_ctrl_.gain_ *= desired_balance_gain_[0];
 
-  balance_control_.right_foot_torque_roll_ctrl_.gain_ *= desired_balance_gain_[0];
-  balance_control_.right_foot_torque_pitch_ctrl_.gain_ *= desired_balance_gain_[0];
+//  balance_control_.right_foot_torque_roll_ctrl_.gain_ *= desired_balance_gain_[0];
+//  balance_control_.right_foot_torque_pitch_ctrl_.gain_ *= desired_balance_gain_[0];
 
-  balance_control_.left_foot_torque_roll_ctrl_.gain_ *= desired_balance_gain_[0];
-  balance_control_.left_foot_torque_pitch_ctrl_.gain_ *= desired_balance_gain_[0];
+//  balance_control_.left_foot_torque_roll_ctrl_.gain_ *= desired_balance_gain_[0];
+//  balance_control_.left_foot_torque_pitch_ctrl_.gain_ *= desired_balance_gain_[0];
 }
 
 bool WholebodyModule::set()
 {
+  // Forward Kinematics
+  for (int id=1; id<=MAX_JOINT_ID; id++)
+    robotis_->thormang3_link_data_[id]->joint_angle_ = desired_joint_position_[id-1];
+
+  robotis_->calcForwardKinematics(0);
+
   // Set Balance Control
   setBalanceControlGain();
   calcGoalFT();
@@ -1131,6 +1190,9 @@ bool WholebodyModule::set()
   balance_control_.setDesiredCOBOrientation(robotis_->thormang3_link_data_[ID_PELVIS_ROT_X]->joint_angle_,
                                             robotis_->thormang3_link_data_[ID_PELVIS_ROT_Y]->joint_angle_);
 
+//  ROS_INFO("r_foot_force x: %f, y: %f, z: %f", balance_r_foot_force_x_, balance_r_foot_force_y_, balance_r_foot_force_z_);
+//  ROS_INFO("l_foot_force x: %f, y: %f, z: %f", balance_l_foot_force_x_, balance_l_foot_force_y_, balance_l_foot_force_z_);
+
   balance_control_.setDesiredFootForceTorque(balance_r_foot_force_x_, balance_r_foot_force_y_, balance_r_foot_force_z_,
                                              balance_r_foot_torque_x_, balance_r_foot_torque_y_, balance_r_foot_torque_z_,
                                              balance_l_foot_force_x_, balance_l_foot_force_y_, balance_l_foot_force_z_,
@@ -1173,11 +1235,6 @@ bool WholebodyModule::set()
 //  robotis_->thormang3_link_data_[ID_PELVIS_ROT_X]->joint_angle_ = desired_body_rpy.coeff(0,0);
 //  robotis_->thormang3_link_data_[ID_PELVIS_ROT_Y]->joint_angle_ = desired_body_rpy.coeff(1,0);
 //  robotis_->thormang3_link_data_[ID_PELVIS_ROT_Z]->joint_angle_ = desired_body_rpy.coeff(2,0);
-
-  for (int id=1; id<=MAX_JOINT_ID; id++)
-    robotis_->thormang3_link_data_[id]->joint_angle_ = desired_joint_position_[id-1];
-
-  robotis_->calcForwardKinematics(0);
 
   ik_success = robotis_->calcInverseKinematicsDual(ID_PELVIS, ID_R_LEG_END, desired_right_foot_pos_new, desired_right_foot_rot_new,
                                                    ID_PELVIS, ID_L_LEG_END, desired_left_foot_pos_new, desired_left_foot_rot_new,

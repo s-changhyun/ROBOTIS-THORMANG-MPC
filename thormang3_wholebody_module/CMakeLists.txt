@@ -13,7 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   robotis_controller_msgs
   robotis_framework_common
   thormang3_kinematics_dynamics
-  thormang3_wholebody_balance_control
+  thormang3_balance_control
   thormang3_wholebody_module_msgs
 )
 
