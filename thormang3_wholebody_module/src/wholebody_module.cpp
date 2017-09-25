@@ -1062,13 +1062,15 @@ void WholebodyModule::setBalanceControlGain()
 
 bool WholebodyModule::set()
 {
-  // Set Balance Control
-  setBalanceControlGain();
-  calcGoalFT();
+  ROS_INFO("Gain Ratio: %f", desired_balance_gain_ratio_[0]);
 
+  // Set Balance Control
   balance_control_.setGyroBalanceEnable(true);
   balance_control_.setOrientationBalanceEnable(true);
   balance_control_.setForceTorqueBalanceEnable(true);
+
+  setBalanceControlGain();
+  calcGoalFT();
 
   // Set Inverse Kinematics
   int     max_iter    = 30;
