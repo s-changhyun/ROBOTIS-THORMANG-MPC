@@ -443,10 +443,14 @@ void WholebodyModule::calcBalanceControl()
 
 void WholebodyModule::imuDataCallback(const sensor_msgs::Imu::ConstPtr& msg)
 {
+  imu_data_mutex_lock_.lock();
+
   imu_data_msg_ = *msg;
 
   imu_data_msg_.angular_velocity.x *= -1.0;
   imu_data_msg_.angular_velocity.y *= -1.0;
+
+  imu_data_mutex_lock_.unlock();
 }
 
 void WholebodyModule::leftFootForceTorqueOutputCallback(const geometry_msgs::WrenchStamped::ConstPtr &msg)
@@ -1149,6 +1153,8 @@ bool WholebodyModule::set()
   balance_control_.setDesiredPose(pelvis_pose, r_foot_pose, l_foot_pose);
 
   // Set IMU
+  imu_data_mutex_lock_.lock();
+
   balance_control_.setCurrentGyroSensorOutput(imu_data_msg_.angular_velocity.x, imu_data_msg_.angular_velocity.y);
 
   Eigen::Quaterniond imu_quaternion(imu_data_msg_.orientation.w,
@@ -1157,6 +1163,8 @@ bool WholebodyModule::set()
                                     imu_data_msg_.orientation.z);
   Eigen::MatrixXd imu_rpy =
       robotis_framework::convertRotationToRPY(robotis_framework::getRotationX(M_PI) * imu_quaternion.toRotationMatrix() * robotis_framework::getRotationZ(M_PI));
+
+  imu_data_mutex_lock_.unlock();
 
   Eigen::MatrixXd g_to_r_foot_force =
       robotis_->thormang3_link_data_[ID_R_LEG_FT]->orientation_ *

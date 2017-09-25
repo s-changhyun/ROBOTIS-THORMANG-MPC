@@ -156,6 +156,7 @@ private:
   double          control_cycle_sec_;
   boost::thread   queue_thread_;
   boost::mutex    queue_mutex_;
+  boost::mutex    imu_data_mutex_lock_;
 
   std_msgs::String movement_done_msg_;
 
