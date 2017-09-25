@@ -1062,7 +1062,7 @@ void WholebodyModule::setBalanceControlGain()
 
 bool WholebodyModule::set()
 {
-  ROS_INFO("Gain Ratio: %f", desired_balance_gain_ratio_[0]);
+//  ROS_INFO("Gain Ratio: %f", desired_balance_gain_ratio_[0]);
 
   // Set Balance Control
   balance_control_.setGyroBalanceEnable(true);
@@ -1138,22 +1138,6 @@ bool WholebodyModule::set()
 //  PRINT_MAT(desired_left_foot_pos);
 //  PRINT_MAT(desired_left_foot_rot);
 
-
-  // Set Desired Value for Balance Control
-  Eigen::MatrixXd pelvis_pose = Eigen::MatrixXd::Identity(4,4);
-  pelvis_pose.block<3,3>(0,0) = desired_body_rot;
-  pelvis_pose.block<3,1>(0,3) = desired_body_pos;
-
-  Eigen::MatrixXd l_foot_pose = Eigen::MatrixXd::Identity(4,4);
-  l_foot_pose.block<3,3>(0,0) = desired_left_foot_rot;
-  l_foot_pose.block<3,1>(0,3) = desired_left_foot_pos;
-
-  Eigen::MatrixXd r_foot_pose = Eigen::MatrixXd::Identity(4,4);
-  r_foot_pose.block<3,3>(0,0) = desired_right_foot_rot;
-  r_foot_pose.block<3,1>(0,3) = desired_right_foot_pos;
-
-  balance_control_.setDesiredPose(pelvis_pose, r_foot_pose, l_foot_pose);
-
   // Set IMU
   imu_data_mutex_lock_.lock();
 
@@ -1202,16 +1186,35 @@ bool WholebodyModule::set()
                                              balance_l_foot_force_x_, balance_l_foot_force_y_, balance_l_foot_force_z_,
                                              balance_l_foot_torque_x_, balance_l_foot_torque_y_, balance_l_foot_torque_z_);
 
+  // Set Desired Value for Balance Control
+  Eigen::MatrixXd pelvis_pose = Eigen::MatrixXd::Identity(4,4);
+  pelvis_pose.block<3,3>(0,0) = desired_body_rot;
+  pelvis_pose.block<3,1>(0,3) = desired_body_pos;
+
+  Eigen::MatrixXd l_foot_pose = Eigen::MatrixXd::Identity(4,4);
+  l_foot_pose.block<3,3>(0,0) = desired_left_foot_rot;
+  l_foot_pose.block<3,1>(0,3) = desired_left_foot_pos;
+
+  Eigen::MatrixXd r_foot_pose = Eigen::MatrixXd::Identity(4,4);
+  r_foot_pose.block<3,3>(0,0) = desired_right_foot_rot;
+  r_foot_pose.block<3,1>(0,3) = desired_right_foot_pos;
+
+  balance_control_.setDesiredPose(pelvis_pose, r_foot_pose, l_foot_pose);
+
   int error;
+  Eigen::MatrixXd pelvis_pose_new, r_foot_pose_new, l_foot_pose_new;
   balance_control_.process(&error, &pelvis_pose, &r_foot_pose, &l_foot_pose);
 
-  Eigen::MatrixXd desired_body_rot_new = pelvis_pose.block<3,3>(0,0);
-  Eigen::MatrixXd desired_body_pos_new = pelvis_pose.block<3,1>(0,3);
+  ROS_INFO("error: %d", error);
 
-  Eigen::MatrixXd desired_right_foot_rot_new = r_foot_pose.block<3,3>(0,0);
-  Eigen::MatrixXd desired_right_foot_pos_new = r_foot_pose.block<3,1>(0,3);
-  Eigen::MatrixXd desired_left_foot_rot_new = l_foot_pose.block<3,3>(0,0);
-  Eigen::MatrixXd desired_left_foot_pos_new = l_foot_pose.block<3,1>(0,3);
+
+  Eigen::MatrixXd desired_body_rot_new = pelvis_pose_new.block<3,3>(0,0);
+  Eigen::MatrixXd desired_body_pos_new = pelvis_pose_new.block<3,1>(0,3);
+
+  Eigen::MatrixXd desired_right_foot_rot_new = r_foot_pose_new.block<3,3>(0,0);
+  Eigen::MatrixXd desired_right_foot_pos_new = r_foot_pose_new.block<3,1>(0,3);
+  Eigen::MatrixXd desired_left_foot_rot_new = l_foot_pose_new.block<3,3>(0,0);
+  Eigen::MatrixXd desired_left_foot_pos_new = l_foot_pose_new.block<3,1>(0,3);
 
 //  ROS_INFO("desired_body_pos_new x: %f, y: %f, z: %f", desired_body_pos_new.coeff(0,0), desired_body_pos_new.coeff(1,0), desired_body_pos_new.coeff(2,0));
 //  ROS_INFO("desired_body_pos     x: %f, y: %f, z: %f", desired_body_pos.coeff(0,0), desired_body_pos.coeff(1,0), desired_body_pos.coeff(2,0));
