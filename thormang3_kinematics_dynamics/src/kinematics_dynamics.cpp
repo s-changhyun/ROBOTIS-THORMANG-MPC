@@ -838,8 +838,6 @@ void KinematicsDynamics::calcForwardKinematicsLowerBody(int joint_id)
     //    thormang3_link_data_[joint_id]->transformation_.block<3,3>(0,0) = thormang3_link_data_[joint_id]->orientation_;
   }
 
-  ROS_INFO("joint_id: %d", joint_id);
-
   calcForwardKinematicsLowerBody(thormang3_link_data_[joint_id]->sibling_);
   calcForwardKinematicsLowerBody(thormang3_link_data_[joint_id]->child_);
 }
