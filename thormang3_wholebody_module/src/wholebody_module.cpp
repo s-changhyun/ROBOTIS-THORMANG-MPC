@@ -877,7 +877,7 @@ void WholebodyModule::calcWalkingControl()
       {
         is_moving_ = false;
         walking_control_->finalize();
-        reset();
+//        reset();
 
         control_type_ = NONE;
       }
