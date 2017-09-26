@@ -1261,7 +1261,7 @@ bool WholebodyModule::set()
   for (int id=1; id<=MAX_JOINT_ID; id++)
     robotis_->thormang3_link_data_[id]->joint_angle_ = desired_joint_position_[id-1];
 
-  robotis_->calcForwardKinematics(0);
+  robotis_->calcForwardKinematicsLowerBody(0);
 
   // Inverse Kinematics
   ik_success = robotis_->calcInverseKinematicsDual(ID_PELVIS, ID_R_LEG_END, desired_right_foot_pos_new, desired_right_foot_rot_new,
