@@ -1077,7 +1077,7 @@ bool WholebodyModule::set()
 
   // Set Inverse Kinematics
   int     max_iter    = 30;
-  double  ik_tol      = 1e-5;
+  double  ik_tol      = 1e-3;
 
   bool ik_success = false;
 
@@ -1307,8 +1307,6 @@ void WholebodyModule::process(std::map<std::string, robotis_framework::Dynamixel
   }
 
   /* Trajectory Calculation */
-  ros::Time begin = ros::Time::now();
-
   if (control_type_ == JOINT_CONTROL)
   {
     initJointControl();
@@ -1330,6 +1328,7 @@ void WholebodyModule::process(std::map<std::string, robotis_framework::Dynamixel
 //    ROS_INFO("calc time: %f", time_duration.toSec());
   }
 
+  ros::Time begin = ros::Time::now();
   if (balance_type_ == ON)
   {
     initBalanceControl();

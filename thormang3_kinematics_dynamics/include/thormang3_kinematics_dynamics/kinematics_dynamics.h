@@ -73,6 +73,7 @@ public:
   void calcJointsCenterOfMass(int joint_id);
 
   void calcForwardKinematics(int joint_ID);
+  void calcForwardKinematicsLowerBody(int joint_id);
 
   Eigen::MatrixXd calcJacobian(std::vector<int> idx);
   Eigen::MatrixXd calcJacobianCOM(std::vector<int> idx);

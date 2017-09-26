@@ -809,6 +809,40 @@ void KinematicsDynamics::calcForwardKinematics(int joint_id)
   calcForwardKinematics(thormang3_link_data_[joint_id]->child_);
 }
 
+void KinematicsDynamics::calcForwardKinematicsLowerBody(int joint_id)
+{
+  if (joint_id == -1)
+    return;
+
+  if (joint_id == 28)
+    return;
+
+  if (joint_id == 0)
+  {
+    thormang3_link_data_[0]->position_ = Eigen::MatrixXd::Zero(3,1);
+    thormang3_link_data_[0]->orientation_ =
+        robotis_framework::calcRodrigues( robotis_framework::calcHatto( thormang3_link_data_[0]->joint_axis_ ), thormang3_link_data_[ 0 ]->joint_angle_ );
+  }
+
+  if ( joint_id != 0 )
+  {
+    int parent = thormang3_link_data_[joint_id]->parent_;
+
+    thormang3_link_data_[joint_id]->position_ =
+        thormang3_link_data_[parent]->orientation_ * thormang3_link_data_[joint_id]->relative_position_ + thormang3_link_data_[parent]->position_;
+    thormang3_link_data_[ joint_id ]->orientation_ =
+        thormang3_link_data_[ parent ]->orientation_ *
+        robotis_framework::calcRodrigues(robotis_framework::calcHatto(thormang3_link_data_[joint_id]->joint_axis_), thormang3_link_data_[joint_id]->joint_angle_);
+
+    //    thormang3_link_data_[joint_id]->transformation_.block<3,1>(0,3) = thormang3_link_data_[joint_id]->position_;
+    //    thormang3_link_data_[joint_id]->transformation_.block<3,3>(0,0) = thormang3_link_data_[joint_id]->orientation_;
+  }
+
+  calcForwardKinematics(thormang3_link_data_[joint_id]->sibling_);
+  calcForwardKinematics(thormang3_link_data_[joint_id]->child_);
+}
+
+
 Eigen::MatrixXd KinematicsDynamics::calcJacobian(std::vector<int> idx)
 {
   int idx_size = idx.size();
@@ -1469,7 +1503,7 @@ bool KinematicsDynamics::calcInverseKinematicsDual
       thormang3_link_data_[joint_num]->joint_angle_ +=delta_angle_2.coeff(id);
     }
 
-    calcForwardKinematics(0);
+    calcForwardKinematicsLowerBody(0);
   }
 
 //  for ( int id = 0; id < idx_1.size(); id++ )
