@@ -1329,6 +1329,7 @@ void WholebodyModule::process(std::map<std::string, robotis_framework::Dynamixel
   }
 
   ros::Time begin = ros::Time::now();
+
   if (balance_type_ == ON)
   {
     initBalanceControl();
@@ -1351,8 +1352,8 @@ void WholebodyModule::process(std::map<std::string, robotis_framework::Dynamixel
 
   ros::Duration time_duration = ros::Time::now() - begin;
 
-  if (time_duration.toSec() > 0.004)
-    ROS_INFO("calc time: %f", time_duration.toSec());
+//  if (time_duration.toSec() > 0.004)
+//    ROS_INFO("calc time: %f", time_duration.toSec());
 
   /*----- set joint data -----*/
   for (std::map<std::string, robotis_framework::DynamixelState *>::iterator state_iter = result_.begin();
