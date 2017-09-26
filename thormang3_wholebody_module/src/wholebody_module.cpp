@@ -372,9 +372,6 @@ void WholebodyModule::setWholebodyBalanceMsgCallback(const std_msgs::String::Con
   {
     ROS_INFO("balance on");
     goal_balance_gain_ratio_[0] = 1.0;
-
-    for (int i=0; i<number_of_joints_; i++)
-      walking_init_joint_position_[i] = desired_joint_position_[i];
   }
   else if(msg->data == "balance_off")
   {
