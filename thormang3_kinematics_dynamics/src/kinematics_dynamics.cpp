@@ -840,8 +840,8 @@ void KinematicsDynamics::calcForwardKinematicsLowerBody(int joint_id)
 
   ROS_INFO("joint_id: %d", joint_id);
 
-  calcForwardKinematics(thormang3_link_data_[joint_id]->sibling_);
-  calcForwardKinematics(thormang3_link_data_[joint_id]->child_);
+  calcForwardKinematicsLowerBody(thormang3_link_data_[joint_id]->sibling_);
+  calcForwardKinematicsLowerBody(thormang3_link_data_[joint_id]->child_);
 }
 
 
