@@ -1077,7 +1077,7 @@ bool WholebodyModule::set()
 
   // Set Inverse Kinematics
   int     max_iter    = 30;
-  double  ik_tol      = 1e-3;
+  double  ik_tol      = 1e-5;
 
   bool ik_success = false;
 
