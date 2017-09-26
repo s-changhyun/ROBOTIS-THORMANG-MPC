@@ -103,39 +103,45 @@ WalkingControl::~WalkingControl()
 }
 
 void WalkingControl::initialize(thormang3_wholebody_module_msgs::FootStepCommand foot_step_command,
-                                std::vector<double_t> init_body_pos, std::vector<double_t> init_body_rot)
+                                std::vector<double_t> init_body_pos, std::vector<double_t> init_body_rot,
+                                std::vector<double_t> init_right_foot_pos, std::vector<double_t> init_right_foot_rot,
+                                std::vector<double_t> init_left_foot_pos, std::vector<double_t> init_left_foot_rot)
 {
   walking_update_ = false;
 
   desired_body_pos_ = init_body_pos;
 
-  robot_->thormang3_link_data_[ID_PELVIS_POS_X]->relative_position_.coeffRef(0,0) = init_body_pos[0];
-  robot_->thormang3_link_data_[ID_PELVIS_POS_Y]->relative_position_.coeffRef(1,0) = init_body_pos[1];
-  robot_->thormang3_link_data_[ID_PELVIS_POS_Z]->relative_position_.coeffRef(2,0) = init_body_pos[2];
+//  robot_->thormang3_link_data_[ID_PELVIS_POS_X]->relative_position_.coeffRef(0,0) = init_body_pos[0];
+//  robot_->thormang3_link_data_[ID_PELVIS_POS_Y]->relative_position_.coeffRef(1,0) = init_body_pos[1];
+//  robot_->thormang3_link_data_[ID_PELVIS_POS_Z]->relative_position_.coeffRef(2,0) = init_body_pos[2];
 
   Eigen::Quaterniond init_body_quat(init_body_rot[3],init_body_rot[0],init_body_rot[1],init_body_rot[2]);
   Eigen::MatrixXd init_body_rpy = robotis_framework::convertQuaternionToRPY(init_body_quat);
 
-  robot_->thormang3_link_data_[ID_PELVIS_ROT_X]->joint_angle_ = init_body_rpy.coeff(0,0);
-  robot_->thormang3_link_data_[ID_PELVIS_ROT_Y]->joint_angle_ = init_body_rpy.coeff(1,0);
-  robot_->thormang3_link_data_[ID_PELVIS_ROT_Z]->joint_angle_ = init_body_rpy.coeff(2,0);
+//  robot_->thormang3_link_data_[ID_PELVIS_ROT_X]->joint_angle_ = init_body_rpy.coeff(0,0);
+//  robot_->thormang3_link_data_[ID_PELVIS_ROT_Y]->joint_angle_ = init_body_rpy.coeff(1,0);
+//  robot_->thormang3_link_data_[ID_PELVIS_ROT_Z]->joint_angle_ = init_body_rpy.coeff(2,0);
 
   init_body_yaw_angle_ = init_body_rpy.coeff(2,0);
 
-  for (int id=1; id<=MAX_JOINT_ID; id++)
-    robot_->thormang3_link_data_[id]->joint_angle_ = init_joint_pos_[id-1];
+//  for (int id=1; id<=MAX_JOINT_ID; id++)
+//    robot_->thormang3_link_data_[id]->joint_angle_ = init_joint_pos_[id-1];
 
-  robot_->calcForwardKinematics(0);
+//  robot_->calcForwardKinematics(0);
 
-  Eigen::MatrixXd init_left_foot_pos = robot_->thormang3_link_data_[ID_L_LEG_END]->position_;
-  Eigen::MatrixXd init_right_foot_pos = robot_->thormang3_link_data_[ID_R_LEG_END]->position_;
+//  Eigen::MatrixXd init_left_foot_pos = robot_->thormang3_link_data_[ID_L_LEG_END]->position_;
+//  Eigen::MatrixXd init_right_foot_pos = robot_->thormang3_link_data_[ID_R_LEG_END]->position_;
 
   init_body_pos_ = init_body_pos;
-  for (int i=0; i<3; i++)
-  {
-    init_left_foot_pos_[i] = init_left_foot_pos.coeff(i,0);
-    init_right_foot_pos_[i] = init_right_foot_pos.coeff(i,0);
-  }
+
+  init_right_foot_pos_ = init_right_foot_pos;
+  init_left_foot_pos_ = init_left_foot_pos;
+
+//  for (int i=0; i<3; i++)
+//  {
+//    init_left_foot_pos_[i] = init_left_foot_pos.coeff(i,0);
+//    init_right_foot_pos_[i] = init_right_foot_pos.coeff(i,0);
+//  }
 
   desired_left_foot_pos_ = init_left_foot_pos_;
   desired_right_foot_pos_ = init_right_foot_pos_;
@@ -144,12 +150,19 @@ void WalkingControl::initialize(thormang3_wholebody_module_msgs::FootStepCommand
   ROS_INFO("init_right_foot_pos_ x: %f, y: %f, z: %f", init_right_foot_pos_[0], init_right_foot_pos_[1], init_right_foot_pos_[2]);
   ROS_INFO("init_body_pos_ x: %f, y: %f, z: %f", init_body_pos_[0], init_body_pos_[1], init_body_pos_[2]);
 
-  Eigen::MatrixXd body_rot = robot_->thormang3_link_data_[ID_PELVIS]->orientation_;
-  Eigen::MatrixXd left_foot_rot = robot_->thormang3_link_data_[ID_L_LEG_END]->orientation_;
-  Eigen::MatrixXd right_foot_rot = robot_->thormang3_link_data_[ID_R_LEG_END]->orientation_;
-  init_body_quaternion_ = robotis_framework::convertRotationToQuaternion(body_rot);
-  init_left_foot_quaternion_ = robotis_framework::convertRotationToQuaternion(left_foot_rot);
-  init_right_foot_quaternion_ = robotis_framework::convertRotationToQuaternion(right_foot_rot);
+//  Eigen::MatrixXd body_rot = robot_->thormang3_link_data_[ID_PELVIS]->orientation_;
+//  Eigen::MatrixXd left_foot_rot = robot_->thormang3_link_data_[ID_L_LEG_END]->orientation_;
+//  Eigen::MatrixXd right_foot_rot = robot_->thormang3_link_data_[ID_R_LEG_END]->orientation_;
+//  init_body_quaternion_ = robotis_framework::convertRotationToQuaternion(body_rot);
+//  init_left_foot_quaternion_ = robotis_framework::convertRotationToQuaternion(left_foot_rot);
+//  init_right_foot_quaternion_ = robotis_framework::convertRotationToQuaternion(right_foot_rot);
+
+  init_body_quaternion_ = init_body_quat;
+
+  Eigen::Quaterniond init_left_foot_quat(init_left_foot_rot[3],init_left_foot_rot[0],init_left_foot_rot[1],init_left_foot_rot[2]);
+  init_left_foot_quaternion_ = init_left_foot_quat;
+  Eigen::Quaterniond init_right_foot_quat(init_right_foot_rot[3],init_right_foot_rot[0],init_right_foot_rot[1],init_right_foot_rot[2]);
+  init_right_foot_quaternion_ = init_right_foot_quat;
 
   desired_body_quaternion_ = init_body_quaternion_;
   desired_left_foot_quaternion_ = init_left_foot_quaternion_;

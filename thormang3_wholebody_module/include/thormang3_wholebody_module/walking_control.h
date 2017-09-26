@@ -41,7 +41,9 @@ public:
   virtual ~WalkingControl();
 
   void initialize(thormang3_wholebody_module_msgs::FootStepCommand foot_step_command,
-                  std::vector<double_t> init_body_pos, std::vector<double_t> init_body_rot);
+                  std::vector<double_t> init_body_pos, std::vector<double_t> init_body_rot,
+                  std::vector<double_t> init_right_foot_pos, std::vector<double_t> init_right_foot_rot,
+                  std::vector<double_t> init_left_foot_pos, std::vector<double_t> init_left_foot_rot);
   void update(int walking_leg, int walking_phase,
               thormang3_wholebody_module_msgs::FootStepCommand foot_step_command,
               std::vector<double_t> init_body_pos, std::vector<double_t> init_body_rot,

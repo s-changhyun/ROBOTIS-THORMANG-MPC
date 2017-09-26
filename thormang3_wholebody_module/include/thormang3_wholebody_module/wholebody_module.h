@@ -194,7 +194,6 @@ private:
   // Joint Command
   std::vector<double_t> present_joint_torque_, present_joint_acceleration_, present_joint_velocity_, present_joint_position_;
   std::vector<double_t> desired_joint_torque_, desired_joint_acceleration_, desired_joint_velocity_, desired_joint_position_;
-  std::vector<double_t> walking_init_joint_position_;
   std::vector<double_t> goal_joint_torque_, goal_joint_acceleration_, goal_joint_velocity_, goal_joint_position_;
 
   std::vector<double_t> goal_task_position_, goal_task_orientation_;

@@ -122,8 +122,6 @@ WholebodyModule::WholebodyModule()
   /* parameter */
   number_of_joints_ = MAX_JOINT_ID;
 
-  walking_init_joint_position_.resize(number_of_joints_, 0.0);
-
   present_joint_torque_.resize(number_of_joints_, 0.0);
   present_joint_acceleration_.resize(number_of_joints_, 0.0);
   present_joint_velocity_.resize(number_of_joints_, 0.0);
@@ -781,7 +779,7 @@ void WholebodyModule::initWalkingControl()
                                         walking_param_.dsp_ratio, walking_param_.lipm_height, walking_param_.foot_height_max,
                                         walking_param_.zmp_offset_x, walking_param_.zmp_offset_y,
                                         x_lipm_, y_lipm_,
-                                        walking_init_joint_position_, desired_joint_velocity_, desired_joint_acceleration_);
+                                        desired_joint_position_, desired_joint_velocity_, desired_joint_acceleration_);
 
   double lipm_height = walking_control_->getLipmHeight();
   preview_request_.lipm_height = lipm_height;
@@ -806,7 +804,10 @@ void WholebodyModule::initWalkingControl()
     }
     else
     {
-      walking_control_->initialize(foot_step_command_, desired_body_position_, desired_body_orientation_);
+      walking_control_->initialize(foot_step_command_,
+                                   desired_body_position_, desired_body_orientation_,
+                                   desired_right_foot_position_, desired_right_foot_orientation_,
+                                   desired_left_foot_position_, desired_left_foot_orientation_);
       walking_control_->calcPreviewParam(preview_response_);
       is_moving_ = true;
 
