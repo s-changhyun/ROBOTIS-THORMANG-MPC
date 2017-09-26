@@ -202,7 +202,7 @@ WholebodyModule::WholebodyModule()
   parseBalanceGainData(balance_gain_path);
 
   std::string joint_feedback_gain_path = ros::package::getPath("thormang3_wholebody_module") + "/config/joint_feedback_gain.yaml";
-  parseJointFeedbackGainData(balance_gain_path);
+  parseJointFeedbackGainData(joint_feedback_gain_path);
 
   for(int i=0; i<number_of_joints_; i++)
   {
@@ -464,7 +464,7 @@ void WholebodyModule::setWholebodyBalanceMsgCallback(const std_msgs::String::Con
   parseBalanceGainData(balance_gain_path);
 
   std::string joint_feedback_gain_path = ros::package::getPath("thormang3_wholebody_module") + "/config/joint_feedback_gain.yaml";
-  parseJointFeedbackGainData(balance_gain_path);
+  parseJointFeedbackGainData(joint_feedback_gain_path);
 
   if (msg->data == "balance_on")
   {
