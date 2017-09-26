@@ -179,6 +179,7 @@ WholebodyModule::WholebodyModule()
   reset();
   robotis_ = new KinematicsDynamics(WholeBody);
 
+  balance_control_.initialize(control_cycle_sec_*1000.0);
   balance_control_.setGyroBalanceEnable(false); // Gyro
   balance_control_.setOrientationBalanceEnable(false); // IMU
   balance_control_.setForceTorqueBalanceEnable(false); // FT
@@ -1067,7 +1068,6 @@ bool WholebodyModule::set()
 //  ROS_INFO("Gain Ratio: %f", desired_balance_gain_ratio_[0]);
 
   // Set Balance Control
-  balance_control_.initialize(control_cycle_sec_*1000.0);
   balance_control_.setGyroBalanceEnable(true);
   balance_control_.setOrientationBalanceEnable(true);
   balance_control_.setForceTorqueBalanceEnable(true);
