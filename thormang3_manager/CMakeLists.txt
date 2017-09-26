@@ -16,7 +16,6 @@ find_package(catkin REQUIRED COMPONENTS
   robotis_controller_msgs
   robotis_math
   cmake_modules
-  ati_ft_sensor
   thormang3_kinematics_dynamics
   thormang3_balance_control
   thormang3_action_module
@@ -27,7 +26,6 @@ find_package(catkin REQUIRED COMPONENTS
   thormang3_base_module
   thormang3_wholebody_module
   thormang3_optimization
-#  thormang3_wholebody_balance_control
 )
 
 find_package(Eigen REQUIRED)
