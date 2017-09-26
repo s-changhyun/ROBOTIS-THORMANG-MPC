@@ -117,6 +117,7 @@ public:
   void reset();
 
   void parseBalanceGainData(const std::string &path);
+  void parseJointFeedbackGainData(const std::string &path);
   void setWholebodyBalanceMsgCallback(const std_msgs::String::ConstPtr& msg);
 
   void imuDataCallback(const sensor_msgs::Imu::ConstPtr& msg);
@@ -218,6 +219,7 @@ private:
   int balance_step_, balance_size_;
   Eigen::MatrixXd on_balance_gain_tra_, off_balance_gain_tra_;
   BalanceControlUsingPDController balance_control_;
+  BalancePDController joint_feed_back_[MAX_JOINT_ID];
 
   std::vector<double_t> desired_balance_gain_ratio_;
   std::vector<double_t> goal_balance_gain_ratio_;
@@ -260,6 +262,32 @@ private:
   double foot_z_force_cut_off_frequency_;
   double foot_roll_torque_cut_off_frequency_;
   double foot_pitch_torque_cut_off_frequency_;
+
+  double r_leg_hip_y_p_gain_;
+  double r_leg_hip_y_d_gain_;
+  double r_leg_hip_r_p_gain_;
+  double r_leg_hip_r_d_gain_;
+  double r_leg_hip_p_p_gain_;
+  double r_leg_hip_p_d_gain_;
+  double r_leg_kn_p_p_gain_;
+  double r_leg_kn_p_d_gain_;
+  double r_leg_an_p_p_gain_;
+  double r_leg_an_p_d_gain_;
+  double r_leg_an_r_p_gain_;
+  double r_leg_an_r_d_gain_;
+
+  double l_leg_hip_y_p_gain_;
+  double l_leg_hip_y_d_gain_;
+  double l_leg_hip_r_p_gain_;
+  double l_leg_hip_r_d_gain_;
+  double l_leg_hip_p_p_gain_;
+  double l_leg_hip_p_d_gain_;
+  double l_leg_kn_p_p_gain_;
+  double l_leg_kn_p_d_gain_;
+  double l_leg_an_p_p_gain_;
+  double l_leg_an_p_d_gain_;
+  double l_leg_an_r_p_gain_;
+  double l_leg_an_r_d_gain_;
 
   double balance_l_foot_force_x_;
   double balance_l_foot_force_y_;

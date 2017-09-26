@@ -201,6 +201,15 @@ WholebodyModule::WholebodyModule()
   std::string balance_gain_path = ros::package::getPath("thormang3_wholebody_module") + "/config/balance_gain.yaml";
   parseBalanceGainData(balance_gain_path);
 
+  std::string joint_feedback_gain_path = ros::package::getPath("thormang3_wholebody_module") + "/config/joint_feedback_gain.yaml";
+  parseJointFeedbackGainData(balance_gain_path);
+
+  for(int i=0; i<number_of_joints_; i++)
+  {
+    joint_feed_back_[i].p_gain_ = 0;
+    joint_feed_back_[i].d_gain_ = 0;
+  }
+
   total_mass_ = robotis_->calcTotalMass(0);
   ROS_INFO("total_mass: %f", total_mass_);
 
@@ -363,10 +372,99 @@ void WholebodyModule::parseBalanceGainData(const std::string &path)
   foot_pitch_torque_cut_off_frequency_ = doc["foot_pitch_torque_cut_off_frequency"].as<double>();
 }
 
+void WholebodyModule::parseJointFeedbackGainData(const std::string &path)
+{
+  YAML::Node doc;
+  try
+  {
+    // load yaml
+    doc = YAML::LoadFile(path.c_str());
+  }
+  catch (const std::exception& e)
+  {
+    ROS_ERROR("Fail to load yaml file.");
+    return;
+  }
+  r_leg_hip_y_p_gain_ = doc["r_leg_hip_y_p_gain"].as<double>();
+  r_leg_hip_y_d_gain_ = doc["r_leg_hip_y_d_gain"].as<double>();
+
+  r_leg_hip_r_p_gain_ = doc["r_leg_hip_r_p_gain"].as<double>();
+  r_leg_hip_r_d_gain_ = doc["r_leg_hip_r_d_gain"].as<double>();
+
+  r_leg_hip_p_p_gain_ = doc["r_leg_hip_p_p_gain"].as<double>();
+  r_leg_hip_p_d_gain_ = doc["r_leg_hip_p_d_gain"].as<double>();
+
+  r_leg_kn_p_p_gain_ = doc["r_leg_kn_p_p_gain"].as<double>();
+  r_leg_kn_p_d_gain_ = doc["r_leg_kn_p_d_gain"].as<double>();
+
+  r_leg_an_p_p_gain_ = doc["r_leg_an_p_p_gain"].as<double>();
+  r_leg_an_p_d_gain_ = doc["r_leg_an_p_d_gain"].as<double>();
+
+  r_leg_an_r_p_gain_ = doc["r_leg_an_r_p_gain"].as<double>();
+  r_leg_an_r_d_gain_ = doc["r_leg_an_r_d_gain"].as<double>();
+
+  l_leg_hip_y_p_gain_ = doc["l_leg_hip_y_p_gain"].as<double>();
+  l_leg_hip_y_d_gain_ = doc["l_leg_hip_y_d_gain"].as<double>();
+
+  l_leg_hip_r_p_gain_ = doc["l_leg_hip_r_p_gain"].as<double>();
+  l_leg_hip_r_d_gain_ = doc["l_leg_hip_r_d_gain"].as<double>();
+
+  l_leg_hip_p_p_gain_ = doc["l_leg_hip_p_p_gain"].as<double>();
+  l_leg_hip_p_d_gain_ = doc["l_leg_hip_p_d_gain"].as<double>();
+
+  l_leg_kn_p_p_gain_ = doc["l_leg_kn_p_p_gain"].as<double>();
+  l_leg_kn_p_d_gain_ = doc["l_leg_kn_p_d_gain"].as<double>();
+
+  l_leg_an_p_p_gain_ = doc["l_leg_an_p_p_gain"].as<double>();
+  l_leg_an_p_d_gain_ = doc["l_leg_an_p_d_gain"].as<double>();
+
+  l_leg_an_r_p_gain_ = doc["l_leg_an_r_p_gain"].as<double>();
+  l_leg_an_r_d_gain_ = doc["l_leg_an_r_d_gain"].as<double>();
+
+  joint_feed_back_[joint_name_to_id_["r_leg_hip_y"]-1].p_gain_ = r_leg_hip_y_p_gain_;
+  joint_feed_back_[joint_name_to_id_["r_leg_hip_y"]-1].d_gain_ = r_leg_hip_y_d_gain_;
+
+  joint_feed_back_[joint_name_to_id_["r_leg_hip_r"]-1].p_gain_ = r_leg_hip_r_p_gain_;
+  joint_feed_back_[joint_name_to_id_["r_leg_hip_r"]-1].d_gain_ = r_leg_hip_r_d_gain_;
+
+  joint_feed_back_[joint_name_to_id_["r_leg_hip_p"]-1].p_gain_ = r_leg_hip_p_p_gain_;
+  joint_feed_back_[joint_name_to_id_["r_leg_hip_p"]-1].d_gain_ = r_leg_hip_p_d_gain_;
+
+  joint_feed_back_[joint_name_to_id_["r_leg_kn_p"]-1].p_gain_ = r_leg_kn_p_p_gain_;
+  joint_feed_back_[joint_name_to_id_["r_leg_kn_p"]-1].d_gain_ = r_leg_kn_p_d_gain_;
+
+  joint_feed_back_[joint_name_to_id_["r_leg_an_p"]-1].p_gain_ = r_leg_an_p_p_gain_;
+  joint_feed_back_[joint_name_to_id_["r_leg_an_p"]-1].d_gain_ = r_leg_an_p_d_gain_;
+
+  joint_feed_back_[joint_name_to_id_["r_leg_an_r"]-1].p_gain_ = r_leg_an_r_p_gain_;
+  joint_feed_back_[joint_name_to_id_["r_leg_an_r"]-1].d_gain_ = r_leg_an_r_d_gain_;
+
+  joint_feed_back_[joint_name_to_id_["l_leg_hip_y"]-1].p_gain_ = l_leg_hip_y_p_gain_;
+  joint_feed_back_[joint_name_to_id_["l_leg_hip_y"]-1].d_gain_ = l_leg_hip_y_d_gain_;
+
+  joint_feed_back_[joint_name_to_id_["l_leg_hip_r"]-1].p_gain_ = l_leg_hip_r_p_gain_;
+  joint_feed_back_[joint_name_to_id_["l_leg_hip_r"]-1].d_gain_ = l_leg_hip_r_d_gain_;
+
+  joint_feed_back_[joint_name_to_id_["l_leg_hip_p"]-1].p_gain_ = l_leg_hip_p_p_gain_;
+  joint_feed_back_[joint_name_to_id_["l_leg_hip_p"]-1].d_gain_ = l_leg_hip_p_d_gain_;
+
+  joint_feed_back_[joint_name_to_id_["l_leg_kn_p"]-1].p_gain_ = l_leg_kn_p_p_gain_;
+  joint_feed_back_[joint_name_to_id_["l_leg_kn_p"]-1].d_gain_ = l_leg_kn_p_d_gain_;
+
+  joint_feed_back_[joint_name_to_id_["l_leg_an_p"]-1].p_gain_ = l_leg_an_p_p_gain_;
+  joint_feed_back_[joint_name_to_id_["l_leg_an_p"]-1].d_gain_ = l_leg_an_p_d_gain_;
+
+  joint_feed_back_[joint_name_to_id_["l_leg_an_r"]-1].p_gain_ = l_leg_an_r_p_gain_;
+  joint_feed_back_[joint_name_to_id_["l_leg_an_r"]-1].d_gain_ = l_leg_an_r_d_gain_;
+}
+
 void WholebodyModule::setWholebodyBalanceMsgCallback(const std_msgs::String::ConstPtr& msg)
 {
   std::string balance_gain_path = ros::package::getPath("thormang3_wholebody_module") + "/config/balance_gain.yaml";
   parseBalanceGainData(balance_gain_path);
+
+  std::string joint_feedback_gain_path = ros::package::getPath("thormang3_wholebody_module") + "/config/joint_feedback_gain.yaml";
+  parseJointFeedbackGainData(balance_gain_path);
 
   if (msg->data == "balance_on")
   {
@@ -1304,6 +1402,7 @@ void WholebodyModule::process(std::map<std::string, robotis_framework::Dynamixel
     double joint_goal_position = dxl->dxl_state_->goal_position_;
 
     desired_joint_position_[joint_name_to_id_[joint_name]-1] = joint_goal_position;
+    present_joint_position_[joint_name_to_id_[joint_name]-1] = joint_curr_position;
   }
 
   /* Trajectory Calculation */
@@ -1328,7 +1427,7 @@ void WholebodyModule::process(std::map<std::string, robotis_framework::Dynamixel
 //    ROS_INFO("calc time: %f", time_duration.toSec());
   }
 
-  ros::Time begin = ros::Time::now();
+//  ros::Time begin = ros::Time::now();
 
   if (balance_type_ == ON)
   {
@@ -1350,17 +1449,22 @@ void WholebodyModule::process(std::map<std::string, robotis_framework::Dynamixel
     }
   }
 
-  ros::Duration time_duration = ros::Time::now() - begin;
+//  ros::Duration time_duration = ros::Time::now() - begin;
 
 //  if (time_duration.toSec() > 0.004)
 //    ROS_INFO("calc time: %f", time_duration.toSec());
+
+  for (int i=0; i<number_of_joints_; i++)
+    joint_feed_back_[i].desired_ = desired_joint_position_[i];
 
   /*----- set joint data -----*/
   for (std::map<std::string, robotis_framework::DynamixelState *>::iterator state_iter = result_.begin();
       state_iter != result_.end(); state_iter++)
   {
     std::string joint_name = state_iter->first;
-    result_[joint_name]->goal_position_ = desired_joint_position_[joint_name_to_id_[joint_name]-1];
+    result_[joint_name]->goal_position_ =
+        desired_joint_position_[joint_name_to_id_[joint_name]-1] +
+        joint_feed_back_[joint_name_to_id_[joint_name]-1].getFeedBack(present_joint_position_[joint_name_to_id_[joint_name]-1]);
   }
 }
 
