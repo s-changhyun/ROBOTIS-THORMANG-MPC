@@ -1307,8 +1307,6 @@ void WholebodyModule::process(std::map<std::string, robotis_framework::Dynamixel
   }
 
   /* Trajectory Calculation */
-  ros::Time begin = ros::Time::now();
-
   if (control_type_ == JOINT_CONTROL)
   {
     initJointControl();
@@ -1329,6 +1327,8 @@ void WholebodyModule::process(std::map<std::string, robotis_framework::Dynamixel
 //    ros::Duration time_duration = ros::Time::now() - begin;
 //    ROS_INFO("calc time: %f", time_duration.toSec());
   }
+
+  ros::Time begin = ros::Time::now();
 
   if (balance_type_ == ON)
   {
@@ -1354,6 +1354,7 @@ void WholebodyModule::process(std::map<std::string, robotis_framework::Dynamixel
 
   if (time_duration.toSec() > 0.004)
     ROS_INFO("calc time: %f", time_duration.toSec());
+
 
 //  ROS_INFO("Balance Gain: %f", desired_balance_gain_[0]);
 
