@@ -458,8 +458,8 @@ void WholebodyModule::parseJointFeedbackGainData(const std::string &path)
   joint_feed_back_[joint_name_to_id_["l_leg_an_r"]-1].p_gain_ = l_leg_an_r_p_gain_;
   joint_feed_back_[joint_name_to_id_["l_leg_an_r"]-1].d_gain_ = l_leg_an_r_d_gain_;
 
-  for (int i=0; i<number_of_joints_; i++)
-    ROS_INFO("joint_feed_back_[%d]: %f", i, joint_feed_back_[i].p_gain_);
+//  for (int i=0; i<number_of_joints_; i++)
+//    ROS_INFO("joint_feed_back_[%d]: %f", i, joint_feed_back_[i].p_gain_);
 }
 
 void WholebodyModule::setWholebodyBalanceMsgCallback(const std_msgs::String::ConstPtr& msg)
@@ -1416,7 +1416,7 @@ void WholebodyModule::process(std::map<std::string, robotis_framework::Dynamixel
   goal_initialize_ = true;
 
   /* Trajectory Calculation */
-//  ros::Time begin = ros::Time::now();
+  ros::Time begin = ros::Time::now();
 
   if (control_type_ == JOINT_CONTROL)
   {
@@ -1459,10 +1459,10 @@ void WholebodyModule::process(std::map<std::string, robotis_framework::Dynamixel
     }
   }
 
-//  ros::Duration time_duration = ros::Time::now() - begin;
+  ros::Duration time_duration = ros::Time::now() - begin;
 
 //  if (time_duration.toSec() > 0.004)
-//    ROS_INFO("calc time: %f", time_duration.toSec());
+  ROS_INFO("[wholebody module] calc time: %f", time_duration.toSec());
 
   for (int i=0; i<number_of_joints_; i++)
   {
