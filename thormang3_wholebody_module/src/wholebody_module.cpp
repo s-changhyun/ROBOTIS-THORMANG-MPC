@@ -655,10 +655,11 @@ void WholebodyModule::goalJointPoseCallback(const thormang3_wholebody_module_msg
     }
 
     joint_control_initialize_ = false;
-    initJointControl();
 
     control_type_ = JOINT_CONTROL;
     balance_type_ = OFF;
+
+    initJointControl();
   }
   else
     ROS_WARN("[WARN] Control type is different!");
@@ -1461,8 +1462,8 @@ void WholebodyModule::process(std::map<std::string, robotis_framework::Dynamixel
 
   ros::Duration time_duration = ros::Time::now() - begin;
 
-//  if (time_duration.toSec() > 0.004)
-  ROS_INFO("[wholebody module] calc time: %f", time_duration.toSec());
+  if (time_duration.toSec() > 0.004)
+    ROS_INFO("[wholebody module] calc time: %f", time_duration.toSec());
 
   for (int i=0; i<number_of_joints_; i++)
   {
