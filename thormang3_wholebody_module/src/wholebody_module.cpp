@@ -456,6 +456,9 @@ void WholebodyModule::parseJointFeedbackGainData(const std::string &path)
 
   joint_feed_back_[joint_name_to_id_["l_leg_an_r"]-1].p_gain_ = l_leg_an_r_p_gain_;
   joint_feed_back_[joint_name_to_id_["l_leg_an_r"]-1].d_gain_ = l_leg_an_r_d_gain_;
+
+  for (int i=0; i<number_of_joints_; i++)
+    ROS_INFO("joint_feed_back_[%d]: %f", i, joint_feed_back_[i].p_gain_);
 }
 
 void WholebodyModule::setWholebodyBalanceMsgCallback(const std_msgs::String::ConstPtr& msg)
@@ -1455,7 +1458,14 @@ void WholebodyModule::process(std::map<std::string, robotis_framework::Dynamixel
 //    ROS_INFO("calc time: %f", time_duration.toSec());
 
   for (int i=0; i<number_of_joints_; i++)
+  {
     joint_feed_back_[i].desired_ = desired_joint_position_[i];
+
+    if (i==14)
+    {
+      ROS_INFO("joint_feed_back_[%d].desired_: %f", i, joint_feed_back_[i].desired_);
+    }
+  }
 
   /*----- set joint data -----*/
   for (std::map<std::string, robotis_framework::DynamixelState *>::iterator state_iter = result_.begin();
@@ -1464,8 +1474,14 @@ void WholebodyModule::process(std::map<std::string, robotis_framework::Dynamixel
     std::string joint_name = state_iter->first;
     result_[joint_name]->goal_position_ =
         desired_joint_position_[joint_name_to_id_[joint_name]-1];
+
+    if (joint_name == "r_leg_hip_y")
+      ROS_INFO("joint_feed_back_[%d].getFeedBack: %f", joint_name_to_id_[joint_name]-1, joint_feed_back_[joint_name_to_id_[joint_name]-1].getFeedBack(present_joint_position_[joint_name_to_id_[joint_name]-1]));
+
 //        + joint_feed_back_[joint_name_to_id_[joint_name]-1].getFeedBack(present_joint_position_[joint_name_to_id_[joint_name]-1]);
   }
+
+  ROS_INFO("--");
 }
 
 void WholebodyModule::stop()
