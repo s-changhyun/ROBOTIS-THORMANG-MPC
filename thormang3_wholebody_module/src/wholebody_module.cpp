@@ -233,7 +233,7 @@ void WholebodyModule::initialize(const int control_cycle_msec, robotis_framework
   // for gui
   status_msg_pub_     = ros_node.advertise<robotis_controller_msgs::StatusMsg>("/robotis/status", 1);
   movement_done_pub_  = ros_node.advertise<std_msgs::String>("/robotis/movement_done", 1);
-  goal_joint_state_pub_ = ros_node.advertise<sensor_msgs::JointState>("/robotis/goal_joint_state", 1);
+  goal_joint_state_pub_ = ros_node.advertise<sensor_msgs::JointState>("/robotis/wholebody/goal_joint_states", 1);
 
   // Client
   get_preview_matrix_client_ = ros_node.serviceClient<thormang3_wholebody_module_msgs::GetPreviewMatrix>("/robotis/get_preview_matrix", 0);
@@ -1467,6 +1467,9 @@ void WholebodyModule::process(std::map<std::string, robotis_framework::Dynamixel
     }
   }
 
+  sensor_msgs::JointState goal_joint_msg;
+
+  goal_joint_msg.header.stamp = ros::Time::now();
   /*----- set joint data -----*/
   for (std::map<std::string, robotis_framework::DynamixelState *>::iterator state_iter = result_.begin();
       state_iter != result_.end(); state_iter++)
@@ -1474,15 +1477,19 @@ void WholebodyModule::process(std::map<std::string, robotis_framework::Dynamixel
     std::string joint_name = state_iter->first;
     result_[joint_name]->goal_position_ =
         desired_joint_position_[joint_name_to_id_[joint_name]-1];
+//        + joint_feed_back_[joint_name_to_id_[joint_name]-1].getFeedBack(present_joint_position_[joint_name_to_id_[joint_name]-1]);
+
+    goal_joint_msg.name.push_back(joint_name);
+    goal_joint_msg.position.push_back(desired_joint_position_[joint_name_to_id_[joint_name]-1]);
 
     if (joint_name == "r_leg_kn_p")
     {
       ROS_INFO("present: %f", present_joint_position_[joint_name_to_id_[joint_name]-1]);
       ROS_INFO("joint_feed_back_[%d].getFeedBack: %f", joint_name_to_id_[joint_name]-1, joint_feed_back_[joint_name_to_id_[joint_name]-1].getFeedBack(present_joint_position_[joint_name_to_id_[joint_name]-1]));
     }
-
-//        + joint_feed_back_[joint_name_to_id_[joint_name]-1].getFeedBack(present_joint_position_[joint_name_to_id_[joint_name]-1]);
   }
+
+  goal_joint_state_pub_.publish(goal_joint_msg);
 
   ROS_INFO("--");
 }
