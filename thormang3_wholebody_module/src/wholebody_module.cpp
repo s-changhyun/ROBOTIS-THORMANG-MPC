@@ -1461,10 +1461,10 @@ void WholebodyModule::process(std::map<std::string, robotis_framework::Dynamixel
   {
     joint_feed_back_[i].desired_ = desired_joint_position_[i];
 
-    if (i==20)
-    {
-      ROS_INFO("joint_feed_back_[%d].desired_: %f", i, joint_feed_back_[i].desired_);
-    }
+//    if (i==20)
+//    {
+//      ROS_INFO("joint_feed_back_[%d].desired_: %f", i, joint_feed_back_[i].desired_);
+//    }
   }
 
   sensor_msgs::JointState goal_joint_msg;
@@ -1482,11 +1482,11 @@ void WholebodyModule::process(std::map<std::string, robotis_framework::Dynamixel
     goal_joint_msg.name.push_back(joint_name);
     goal_joint_msg.position.push_back(desired_joint_position_[joint_name_to_id_[joint_name]-1]);
 
-    if (joint_name == "r_leg_kn_p")
-    {
-      ROS_INFO("present: %f", present_joint_position_[joint_name_to_id_[joint_name]-1]);
+//    if (joint_name == "r_leg_kn_p")
+//    {
+//      ROS_INFO("present: %f", present_joint_position_[joint_name_to_id_[joint_name]-1]);
       ROS_INFO("joint_feed_back_[%d].getFeedBack: %f", joint_name_to_id_[joint_name]-1, joint_feed_back_[joint_name_to_id_[joint_name]-1].getFeedBack(present_joint_position_[joint_name_to_id_[joint_name]-1]));
-    }
+//    }
   }
 
   goal_joint_state_pub_.publish(goal_joint_msg);
