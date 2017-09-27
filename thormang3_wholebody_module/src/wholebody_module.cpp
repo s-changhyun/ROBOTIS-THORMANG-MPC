@@ -655,11 +655,8 @@ void WholebodyModule::goalJointPoseCallback(const thormang3_wholebody_module_msg
     }
 
     joint_control_initialize_ = false;
-
     control_type_ = JOINT_CONTROL;
     balance_type_ = OFF;
-
-    initJointControl();
   }
   else
     ROS_WARN("[WARN] Control type is different!");
@@ -857,12 +854,12 @@ void WholebodyModule::footStepCommandCallback(const thormang3_wholebody_module_m
     foot_step_command_ = msg;
     foot_step_command_.step_num = walking_size_;
 
+    control_type_ = WALKING_CONTROL;
+
     if (is_moving_ == false)
       initWalkingControl();
     else
       ROS_WARN("[WARN] Previous task is alive!");
-
-    control_type_ = WALKING_CONTROL;
   }
   else
     ROS_WARN("[WARN] Control type is different!");
@@ -1421,8 +1418,8 @@ void WholebodyModule::process(std::map<std::string, robotis_framework::Dynamixel
 
   if (control_type_ == JOINT_CONTROL)
   {
-    if(joint_control_initialize_ == true)
-      calcJointControl();
+    initJointControl();
+    calcJointControl();
   }
   else if (control_type_ == WHOLEBODY_CONTROL)
   {
@@ -1463,7 +1460,7 @@ void WholebodyModule::process(std::map<std::string, robotis_framework::Dynamixel
   ros::Duration time_duration = ros::Time::now() - begin;
 
   if (time_duration.toSec() > 0.004)
-    ROS_INFO("[wholebody module] calc time: %f", time_duration.toSec());
+    ROS_INFO("[Wholebody Module] Calc Time: %f", time_duration.toSec());
 
   for (int i=0; i<number_of_joints_; i++)
   {
