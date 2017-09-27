@@ -36,6 +36,7 @@ WholebodyModule::WholebodyModule()
   : control_cycle_sec_(0.008),
     is_moving_(false),
     is_balancing_(false),
+    goal_initialize_(false),
     balance_control_initialize_(false),
     joint_control_initialize_(false),
     wholebody_initialize_(false),
@@ -1404,9 +1405,13 @@ void WholebodyModule::process(std::map<std::string, robotis_framework::Dynamixel
     double joint_curr_position = dxl->dxl_state_->present_position_;
     double joint_goal_position = dxl->dxl_state_->goal_position_;
 
-    desired_joint_position_[joint_name_to_id_[joint_name]-1] = joint_goal_position;
+    if (goal_initialize_==false)
+      desired_joint_position_[joint_name_to_id_[joint_name]-1] = joint_goal_position;
+
     present_joint_position_[joint_name_to_id_[joint_name]-1] = joint_curr_position;
   }
+
+  goal_initialize_ = true;
 
   /* Trajectory Calculation */
   if (control_type_ == JOINT_CONTROL)
@@ -1476,22 +1481,22 @@ void WholebodyModule::process(std::map<std::string, robotis_framework::Dynamixel
   {
     std::string joint_name = state_iter->first;
     result_[joint_name]->goal_position_ =
-        desired_joint_position_[joint_name_to_id_[joint_name]-1]
+        desired_joint_position_[joint_name_to_id_[joint_name]-1];
         + joint_feed_back_[joint_name_to_id_[joint_name]-1].getFeedBack(present_joint_position_[joint_name_to_id_[joint_name]-1]);
 
     goal_joint_msg.name.push_back(joint_name);
     goal_joint_msg.position.push_back(desired_joint_position_[joint_name_to_id_[joint_name]-1]);
 
-//    if (joint_name == "r_leg_kn_p")
-//    {
-//      ROS_INFO("present: %f", present_joint_position_[joint_name_to_id_[joint_name]-1]);
-//      ROS_INFO("joint_feed_back_[%d].getFeedBack: %f", joint_name_to_id_[joint_name]-1, joint_feed_back_[joint_name_to_id_[joint_name]-1].getFeedBack(present_joint_position_[joint_name_to_id_[joint_name]-1]));
-//    }
+    if (joint_name == "r_leg_kn_p")
+    {
+      ROS_INFO("present: %f", present_joint_position_[joint_name_to_id_[joint_name]-1]);
+      ROS_INFO("joint_feed_back_[%d].getFeedBack: %f", joint_name_to_id_[joint_name]-1, joint_feed_back_[joint_name_to_id_[joint_name]-1].getFeedBack(present_joint_position_[joint_name_to_id_[joint_name]-1]));
+    }
   }
 
   goal_joint_state_pub_.publish(goal_joint_msg);
 
-  ROS_INFO("--");
+//  ROS_INFO("--");
 }
 
 void WholebodyModule::stop()

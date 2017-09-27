@@ -171,6 +171,7 @@ private:
   double mov_time_;
   int mov_size_, mov_step_;
 
+  bool goal_initialize_;
   bool joint_control_initialize_;
   bool wholebody_initialize_;
   bool walking_initialize_;
