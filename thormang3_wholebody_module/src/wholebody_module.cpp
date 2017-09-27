@@ -1476,8 +1476,8 @@ void WholebodyModule::process(std::map<std::string, robotis_framework::Dynamixel
   {
     std::string joint_name = state_iter->first;
     result_[joint_name]->goal_position_ =
-        desired_joint_position_[joint_name_to_id_[joint_name]-1];
-//        + joint_feed_back_[joint_name_to_id_[joint_name]-1].getFeedBack(present_joint_position_[joint_name_to_id_[joint_name]-1]);
+        desired_joint_position_[joint_name_to_id_[joint_name]-1]
+        + joint_feed_back_[joint_name_to_id_[joint_name]-1].getFeedBack(present_joint_position_[joint_name_to_id_[joint_name]-1]);
 
     goal_joint_msg.name.push_back(joint_name);
     goal_joint_msg.position.push_back(desired_joint_position_[joint_name_to_id_[joint_name]-1]);
