@@ -1476,7 +1476,10 @@ void WholebodyModule::process(std::map<std::string, robotis_framework::Dynamixel
         desired_joint_position_[joint_name_to_id_[joint_name]-1];
 
     if (joint_name == "r_leg_kn_p")
+    {
+      ROS_INFO("present: %f", present_joint_position_[joint_name_to_id_[joint_name]-1]);
       ROS_INFO("joint_feed_back_[%d].getFeedBack: %f", joint_name_to_id_[joint_name]-1, joint_feed_back_[joint_name_to_id_[joint_name]-1].getFeedBack(present_joint_position_[joint_name_to_id_[joint_name]-1]));
+    }
 
 //        + joint_feed_back_[joint_name_to_id_[joint_name]-1].getFeedBack(present_joint_position_[joint_name_to_id_[joint_name]-1]);
   }
