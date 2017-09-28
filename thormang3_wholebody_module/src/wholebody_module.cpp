@@ -48,6 +48,8 @@ WholebodyModule::WholebodyModule()
   control_type_ = NONE;
   balance_type_ = OFF;
 
+  thormang3_kdl_ = new Thormang3Kinematics();
+
   /* arm */
   result_["r_arm_sh_p1"]   = new robotis_framework::DynamixelState();
   result_["l_arm_sh_p1"]   = new robotis_framework::DynamixelState();
@@ -215,6 +217,48 @@ WholebodyModule::WholebodyModule()
   ROS_INFO("total_mass: %f", total_mass_);
 
   walking_phase_ = DSP;
+
+  Eigen::VectorXd body_position(3);
+  for (int i=0; i<3; i++)
+    body_position(i) = desired_body_position_[i];
+
+  Eigen::MatrixXd body_orientation = Eigen::MatrixXd::Identity(3,3);
+
+  thormang3_kdl_->initialize(body_position, body_orientation);
+
+  Eigen::VectorXd rleg_joint_position;
+  rleg_joint_position.resize(6);
+
+  rleg_joint_position(0) = 0.0;
+  rleg_joint_position(1) = 0.0;
+  rleg_joint_position(2) = 30.0 * DEGREE2RADIAN;
+  rleg_joint_position(3) = -60.0 * DEGREE2RADIAN;
+  rleg_joint_position(4) = -30.0 * DEGREE2RADIAN;
+  rleg_joint_position(5) = 0.0;
+
+  Eigen::VectorXd lleg_joint_position;
+  lleg_joint_position.resize(6);
+
+  lleg_joint_position(0) = 0.0;
+  lleg_joint_position(1) = 0.0;
+  lleg_joint_position(2) = -30.0 * DEGREE2RADIAN;
+  lleg_joint_position(3) = 60.0 * DEGREE2RADIAN;
+  lleg_joint_position(4) = 30.0 * DEGREE2RADIAN;
+  lleg_joint_position(5) = 0.0;
+
+  ROS_INFO("2");
+  thormang3_kdl_->setJointPosition(rleg_joint_position, lleg_joint_position);
+
+  std::vector<double_t> rleg_position, rleg_orientation;
+  rleg_position.resize(3,0.0);
+  rleg_orientation.resize(4,0.0);
+
+  std::vector<double_t> lleg_position, lleg_orientation;
+  lleg_position.resize(3,0.0);
+  lleg_orientation.resize(4,0.0);
+
+  thormang3_kdl_->solveForwardKinematics(rleg_position, rleg_orientation,
+                                         lleg_position, lleg_orientation);
 }
 
 WholebodyModule::~WholebodyModule()
@@ -283,7 +327,7 @@ void WholebodyModule::reset()
 {
   desired_body_position_[0] = 0.0;
   desired_body_position_[1] = 0.0;
-  desired_body_position_[2] = 0.734;
+  desired_body_position_[2] = 0.734015;
 
   desired_body_orientation_[0] = 0.0;
   desired_body_orientation_[1] = 0.0;
@@ -867,6 +911,16 @@ void WholebodyModule::footStepCommandCallback(const thormang3_wholebody_module_m
 
 void WholebodyModule::initWalkingControl()
 {
+  Eigen::VectorXd body_position(3);
+  for (int i=0; i<3; i++)
+    body_position(i) = desired_body_position_[i];
+
+  Eigen::Quaterniond body_quaternion(desired_body_orientation_[3],desired_body_orientation_[0],desired_body_orientation_[1],desired_body_orientation_[2]);
+  Eigen::MatrixXd body_orientation = robotis_framework::convertQuaternionToRotation(body_quaternion);
+
+  thormang3_kdl_->initialize(body_position, body_orientation);
+
+  //
   double mov_time = mov_time_;
 
   mov_step_ = 0;
@@ -1181,7 +1235,7 @@ bool WholebodyModule::set()
   int     max_iter    = 30;
   double  ik_tol      = 1e-3;
 
-  bool ik_success = false;
+  bool ik_success = true;
 
   // BODY
   Eigen::MatrixXd desired_body_pos = Eigen::MatrixXd::Zero(3,1);
@@ -1359,24 +1413,95 @@ bool WholebodyModule::set()
 //  robotis_->thormang3_link_data_[ID_PELVIS_ROT_Y]->joint_angle_ = desired_body_rpy.coeff(1,0);
 //  robotis_->thormang3_link_data_[ID_PELVIS_ROT_Z]->joint_angle_ = desired_body_rpy.coeff(2,0);
 
-  // Forward Kinematics
-  for (int id=1; id<=MAX_JOINT_ID; id++)
-    robotis_->thormang3_link_data_[id]->joint_angle_ = desired_joint_position_[id-1];
+  Eigen::VectorXd body_position(3);
+  for (int i=0; i<3; i++)
+    body_position(i) = desired_body_pos_new.coeff(i,0);
 
-  robotis_->calcForwardKinematicsLowerBody(0);
+  Eigen::MatrixXd body_orientation = desired_body_rot_new;
+
+  thormang3_kdl_->initialize(body_position, body_orientation);
+
+  Eigen::VectorXd rleg_joint_position;
+  rleg_joint_position.resize(6);
+
+  rleg_joint_position(0) = desired_joint_position_[joint_name_to_id_["r_leg_hip_y"]-1];
+  rleg_joint_position(1) = desired_joint_position_[joint_name_to_id_["r_leg_hip_r"]-1];
+  rleg_joint_position(2) = desired_joint_position_[joint_name_to_id_["r_leg_hip_p"]-1];
+  rleg_joint_position(3) = desired_joint_position_[joint_name_to_id_["r_leg_kn_p"]-1];
+  rleg_joint_position(4) = desired_joint_position_[joint_name_to_id_["r_leg_an_p"]-1];
+  rleg_joint_position(5) = desired_joint_position_[joint_name_to_id_["r_leg_an_r"]-1];
+
+  Eigen::VectorXd lleg_joint_position;
+  lleg_joint_position.resize(6);
+
+  lleg_joint_position(0) = desired_joint_position_[joint_name_to_id_["l_leg_hip_y"]-1];
+  lleg_joint_position(1) = desired_joint_position_[joint_name_to_id_["l_leg_hip_r"]-1];
+  lleg_joint_position(2) = desired_joint_position_[joint_name_to_id_["l_leg_hip_p"]-1];
+  lleg_joint_position(3) = desired_joint_position_[joint_name_to_id_["l_leg_kn_p"]-1];
+  lleg_joint_position(4) = desired_joint_position_[joint_name_to_id_["l_leg_an_p"]-1];
+  lleg_joint_position(5) = desired_joint_position_[joint_name_to_id_["l_leg_an_r"]-1];
+
+  thormang3_kdl_->setJointPosition(rleg_joint_position, lleg_joint_position);
+
+  std::vector<double_t> rleg_position, rleg_orientation;
+  rleg_position.resize(3,0.0);
+  rleg_orientation.resize(4,0.0);
+
+  std::vector<double_t> lleg_position, lleg_orientation;
+  lleg_position.resize(3,0.0);
+  lleg_orientation.resize(4,0.0);
+
+  thormang3_kdl_->solveForwardKinematics(rleg_position, rleg_orientation,
+                                         lleg_position, lleg_orientation);
+
+  std::vector<double_t> rleg_output, lleg_output;
+
+  Eigen::VectorXd kdl_desired_right_foot_pos_new(3), kdl_desired_left_foot_pos_new(3);
+  for (int i=0; i<3; i++)
+  {
+    kdl_desired_right_foot_pos_new(i) = desired_right_foot_pos_new.coeff(i,0);
+    kdl_desired_left_foot_pos_new(i) = desired_left_foot_pos_new.coeff(i,0);
+  }
+
+  Eigen::Quaterniond desired_right_foot_quat_new = robotis_framework::convertRotationToQuaternion(desired_right_foot_rot_new);
+  Eigen::Quaterniond desired_left_foot_quat_new = robotis_framework::convertRotationToQuaternion(desired_left_foot_rot_new);
+
+  ik_success = thormang3_kdl_->solveInverseKinematics(rleg_output,
+                                                      kdl_desired_right_foot_pos_new,desired_right_foot_quat_new,
+                                                      lleg_output,
+                                                      kdl_desired_left_foot_pos_new,desired_left_foot_quat_new);
+
+  thormang3_kdl_->finalize();
+
+  // Forward Kinematics
+//  for (int id=1; id<=MAX_JOINT_ID; id++)
+//    robotis_->thormang3_link_data_[id]->joint_angle_ = desired_joint_position_[id-1];
+
+//  robotis_->calcForwardKinematicsLowerBody(0);
 
   // Inverse Kinematics
-  ik_success = robotis_->calcInverseKinematicsDual(ID_PELVIS, ID_R_LEG_END, desired_right_foot_pos_new, desired_right_foot_rot_new,
-                                                   ID_PELVIS, ID_L_LEG_END, desired_left_foot_pos_new, desired_left_foot_rot_new,
-                                                   max_iter, ik_tol);
+//  ik_success = robotis_->calcInverseKinematicsDual(ID_PELVIS, ID_R_LEG_END, desired_right_foot_pos_new, desired_right_foot_rot_new,
+//                                                   ID_PELVIS, ID_L_LEG_END, desired_left_foot_pos_new, desired_left_foot_rot_new,
+//                                                   max_iter, ik_tol);
 //  ik_success = robotis_->calcInverseKinematicsDual(ID_PELVIS, ID_R_LEG_END, desired_right_foot_pos, desired_right_foot_rot,
 //                                                   ID_PELVIS, ID_L_LEG_END, desired_left_foot_pos, desired_left_foot_rot,
 //                                                   max_iter, ik_tol);
 
   if (ik_success == true)
   {
-    for (int id=1; id<=MAX_JOINT_ID; id++)
-      desired_joint_position_[id-1] = robotis_->thormang3_link_data_[id]->joint_angle_;
+    desired_joint_position_[joint_name_to_id_["r_leg_hip_y"]-1] = rleg_output[0];
+    desired_joint_position_[joint_name_to_id_["r_leg_hip_r"]-1] = rleg_output[1];
+    desired_joint_position_[joint_name_to_id_["r_leg_hip_p"]-1] = rleg_output[2];
+    desired_joint_position_[joint_name_to_id_["r_leg_kn_p"]-1]  = rleg_output[3];
+    desired_joint_position_[joint_name_to_id_["r_leg_an_p"]-1]  = rleg_output[4];
+    desired_joint_position_[joint_name_to_id_["r_leg_an_r"]-1]  = rleg_output[5];
+
+    desired_joint_position_[joint_name_to_id_["l_leg_hip_y"]-1] = lleg_output[0];
+    desired_joint_position_[joint_name_to_id_["l_leg_hip_r"]-1] = lleg_output[1];
+    desired_joint_position_[joint_name_to_id_["l_leg_hip_p"]-1] = lleg_output[2];
+    desired_joint_position_[joint_name_to_id_["l_leg_kn_p"]-1]  = lleg_output[3];
+    desired_joint_position_[joint_name_to_id_["l_leg_an_p"]-1]  = lleg_output[4];
+    desired_joint_position_[joint_name_to_id_["l_leg_an_r"]-1]  = lleg_output[5];
   }
 
   return ik_success;
@@ -1459,7 +1584,7 @@ void WholebodyModule::process(std::map<std::string, robotis_framework::Dynamixel
 
   ros::Duration time_duration = ros::Time::now() - begin;
 
-  if (time_duration.toSec() > 0.004)
+//  if (time_duration.toSec() > 0.003)
     ROS_INFO("[Wholebody Module] Calc Time: %f", time_duration.toSec());
 
   for (int i=0; i<number_of_joints_; i++)

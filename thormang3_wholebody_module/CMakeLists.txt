@@ -43,6 +43,7 @@ include_directories(
   include
   ${catkin_INCLUDE_DIRS}
   ${Eigen_INCLUDE_DIRS}
+  /opt/ros/kinetic/include/kdl
 )
 
 add_library(thormang3_wholebody_module
@@ -50,6 +51,7 @@ add_library(thormang3_wholebody_module
   src/joint_control.cpp
   src/walking_control.cpp
   src/wholebody_control.cpp
+  src/thormang3_kdl.cpp
 )
 
 add_dependencies(thormang3_wholebody_module ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -57,6 +59,7 @@ add_dependencies(thormang3_wholebody_module ${${PROJECT_NAME}_EXPORTED_TARGETS} 
 target_link_libraries(thormang3_wholebody_module
   yaml-cpp
   ${catkin_LIBRARIES}
+  /opt/ros/kinetic/lib/liborocos-kdl.so
 )
 
 ################################################################################

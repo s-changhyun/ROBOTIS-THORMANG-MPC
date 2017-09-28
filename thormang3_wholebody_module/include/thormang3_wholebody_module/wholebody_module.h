@@ -48,6 +48,7 @@
 #include "joint_control.h"
 #include "wholebody_control.h"
 #include "walking_control.h"
+#include "thormang3_kdl.h"
 
 #include "robotis_math/robotis_math.h"
 #include "robotis_framework_common/motion_module.h"
@@ -136,6 +137,8 @@ public:
   KinematicsDynamics *robotis_;
   WholebodyControl  *wholebody_control_;
   WalkingControl    *walking_control_;
+
+  Thormang3Kinematics *thormang3_kdl_;
 
 private:
   void queueThread();
