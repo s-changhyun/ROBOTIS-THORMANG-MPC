@@ -16,36 +16,38 @@ Thormang3Kinematics::~Thormang3Kinematics()
 
 void Thormang3Kinematics::initialize(Eigen::VectorXd pelvis_position, Eigen::MatrixXd pelvis_orientation)
 {
-  KDL::Chain rleg_chain_;
-  KDL::Chain lleg_chain_;
+  KDL::Chain rleg_chain, lleg_chain;
 
   double pelvis_x = pelvis_position(0);
   double pelvis_y = pelvis_position(1);
   double pelvis_z = pelvis_position(2);
 
   double pelvis_Xx = pelvis_orientation.coeff(0,0);
-  double pelvis_Yx = pelvis_orientation.coeff(1,0);
-  double pelvis_Zx = pelvis_orientation.coeff(2,0);
+  double pelvis_Yx = pelvis_orientation.coeff(0,1);
+  double pelvis_Zx = pelvis_orientation.coeff(0,2);
 
-  double pelvis_Xy = pelvis_orientation.coeff(0,1);
+  double pelvis_Xy = pelvis_orientation.coeff(1,0);
   double pelvis_Yy = pelvis_orientation.coeff(1,1);
-  double pelvis_Zy = pelvis_orientation.coeff(2,1);
+  double pelvis_Zy = pelvis_orientation.coeff(1,2);
 
-  double pelvis_Xz = pelvis_orientation.coeff(0,2);
-  double pelvis_Yz = pelvis_orientation.coeff(1,2);
+  double pelvis_Xz = pelvis_orientation.coeff(2,0);
+  double pelvis_Yz = pelvis_orientation.coeff(2,1);
   double pelvis_Zz = pelvis_orientation.coeff(2,2);
 
   // Set Kinematics Tree
-  rleg_chain_.addSegment(KDL::Segment("base",
+  rleg_chain.addSegment(KDL::Segment("base",
                                       KDL::Joint(KDL::Joint::None),
-                                      KDL::Frame(KDL::Rotation(pelvis_Xx, pelvis_Yx,pelvis_Zx, pelvis_Xy, pelvis_Yy, pelvis_Zy, pelvis_Xz, pelvis_Yz, pelvis_Zz), KDL::Vector(pelvis_x , pelvis_y , pelvis_z)),
+                                      KDL::Frame(KDL::Rotation(pelvis_Xx, pelvis_Yx, pelvis_Zx,
+                                                               pelvis_Xy, pelvis_Yy, pelvis_Zy,
+                                                               pelvis_Xz, pelvis_Yz, pelvis_Zz),
+                                                 KDL::Vector(pelvis_x , pelvis_y , pelvis_z)),
                                       KDL::RigidBodyInertia(0.0,
                                                             KDL::Vector(0.0, 0.0, 0.0),
                                                             KDL::RotationalInertia(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
                                                             )
                                       )
                          );
-  rleg_chain_.addSegment(KDL::Segment("pelvis",
+  rleg_chain.addSegment(KDL::Segment("pelvis",
                                       KDL::Joint(KDL::Joint::None),
                                       KDL::Frame(KDL::Vector(0.000 , -0.093 , -0.018)),
                                       KDL::RigidBodyInertia(6.869,
@@ -54,7 +56,7 @@ void Thormang3Kinematics::initialize(Eigen::VectorXd pelvis_position, Eigen::Mat
                                                             )
                                       )
                          );
-  rleg_chain_.addSegment(KDL::Segment("r_leg_hip_y",
+  rleg_chain.addSegment(KDL::Segment("r_leg_hip_y",
                                       KDL::Joint("minus_RotZ", KDL::Vector(0,0,0), KDL::Vector(0,0,-1), KDL::Joint::RotAxis),
                                       KDL::Frame(KDL::Vector(0.057 , 0.000 , -0.075)),
                                       KDL::RigidBodyInertia(0.243,
@@ -63,7 +65,7 @@ void Thormang3Kinematics::initialize(Eigen::VectorXd pelvis_position, Eigen::Mat
                                                             )
                                       )
                          );
-  rleg_chain_.addSegment(KDL::Segment("r_leg_hip_r",
+  rleg_chain.addSegment(KDL::Segment("r_leg_hip_r",
                                       KDL::Joint("minus_RotX", KDL::Vector(0,0,0), KDL::Vector(-1,0,0), KDL::Joint::RotAxis),
                                       KDL::Frame(KDL::Vector(-0.057 , -0.033 , 0.000)),
                                       KDL::RigidBodyInertia(1.045,
@@ -72,7 +74,7 @@ void Thormang3Kinematics::initialize(Eigen::VectorXd pelvis_position, Eigen::Mat
                                                             )
                                       )
                          );
-  rleg_chain_.addSegment(KDL::Segment("r_leg_hip_p",
+  rleg_chain.addSegment(KDL::Segment("r_leg_hip_p",
                                       KDL::Joint("minus_RotY", KDL::Vector(0,0,0), KDL::Vector(0,-1,0), KDL::Joint::RotAxis),
                                       KDL::Frame(KDL::Vector(0.000 , -0.060 , -0.300)),
                                       KDL::RigidBodyInertia(3.095,
@@ -81,7 +83,7 @@ void Thormang3Kinematics::initialize(Eigen::VectorXd pelvis_position, Eigen::Mat
                                                             )
                                       )
                          );
-  rleg_chain_.addSegment(KDL::Segment("r_leg_kn_p",
+  rleg_chain.addSegment(KDL::Segment("r_leg_kn_p",
                                       KDL::Joint("minus_RotY", KDL::Vector(0,0,0), KDL::Vector(0,-1,0), KDL::Joint::RotAxis),
                                       KDL::Frame(KDL::Vector(0.000 , 0.060 , -0.300)),
                                       KDL::RigidBodyInertia(2.401,
@@ -90,7 +92,7 @@ void Thormang3Kinematics::initialize(Eigen::VectorXd pelvis_position, Eigen::Mat
                                                             )
                                       )
                          );
-  rleg_chain_.addSegment(KDL::Segment("r_leg_an_p",
+  rleg_chain.addSegment(KDL::Segment("r_leg_an_p",
                                       KDL::Joint(KDL::Joint::RotY),
                                       KDL::Frame(KDL::Vector(0.057 , 0.033 , 0.000)),
                                       KDL::RigidBodyInertia(1.045,
@@ -99,7 +101,7 @@ void Thormang3Kinematics::initialize(Eigen::VectorXd pelvis_position, Eigen::Mat
                                                             )
                                       )
                          );
-  rleg_chain_.addSegment(KDL::Segment("r_leg_an_r",
+  rleg_chain.addSegment(KDL::Segment("r_leg_an_r",
                                       KDL::Joint(KDL::Joint::RotX),
                                       KDL::Frame(KDL::Vector(-0.057 , 0.000 , -0.092)),
                                       KDL::RigidBodyInertia(0.223,
@@ -108,7 +110,7 @@ void Thormang3Kinematics::initialize(Eigen::VectorXd pelvis_position, Eigen::Mat
                                                             )
                                       )
                          );
-  rleg_chain_.addSegment(KDL::Segment("r_leg_ft",
+  rleg_chain.addSegment(KDL::Segment("r_leg_ft",
                                       KDL::Joint(KDL::Joint::None),
                                       KDL::Frame(KDL::Vector(0.0 , 0.0 , -0.0294)),
                                       KDL::RigidBodyInertia(1.689,
@@ -117,7 +119,7 @@ void Thormang3Kinematics::initialize(Eigen::VectorXd pelvis_position, Eigen::Mat
                                                             )
                                       )
                          );
-  rleg_chain_.addSegment(KDL::Segment("r_leg_end",
+  rleg_chain.addSegment(KDL::Segment("r_leg_end",
                                       KDL::Joint(KDL::Joint::None),
                                       KDL::Frame(KDL::Vector(0.0 , 0.0 , 0.0)),
                                       KDL::RigidBodyInertia(0.0,
@@ -127,16 +129,19 @@ void Thormang3Kinematics::initialize(Eigen::VectorXd pelvis_position, Eigen::Mat
                                       )
                          );
 
-  lleg_chain_.addSegment(KDL::Segment("base",
+  lleg_chain.addSegment(KDL::Segment("base",
                                       KDL::Joint(KDL::Joint::None),
-                                      KDL::Frame(KDL::Vector(pelvis_x , pelvis_y , pelvis_z)),
+                                      KDL::Frame(KDL::Rotation(pelvis_Xx, pelvis_Yx, pelvis_Zx,
+                                                               pelvis_Xy, pelvis_Yy, pelvis_Zy,
+                                                               pelvis_Xz, pelvis_Yz, pelvis_Zz),
+                                                 KDL::Vector(pelvis_x , pelvis_y , pelvis_z)),
                                       KDL::RigidBodyInertia(0.0,
                                                             KDL::Vector(0.0, 0.0, 0.0),
                                                             KDL::RotationalInertia(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
                                                             )
                                       )
                          );
-  lleg_chain_.addSegment(KDL::Segment("pelvis",
+  lleg_chain.addSegment(KDL::Segment("pelvis",
                                       KDL::Joint(KDL::Joint::None),
                                       KDL::Frame(KDL::Vector(0.000 , 0.093 , -0.018)),
                                       KDL::RigidBodyInertia(6.869,
@@ -145,7 +150,7 @@ void Thormang3Kinematics::initialize(Eigen::VectorXd pelvis_position, Eigen::Mat
                                                             )
                                       )
                          );
-  lleg_chain_.addSegment(KDL::Segment("l_leg_hip_y",
+  lleg_chain.addSegment(KDL::Segment("l_leg_hip_y",
                                       KDL::Joint("minus_RotZ", KDL::Vector(0,0,0), KDL::Vector(0,0,-1), KDL::Joint::RotAxis),
                                       KDL::Frame(KDL::Vector(0.057 , 0.000 , -0.075)),
                                       KDL::RigidBodyInertia(0.243,
@@ -154,7 +159,7 @@ void Thormang3Kinematics::initialize(Eigen::VectorXd pelvis_position, Eigen::Mat
                                                             )
                                       )
                          );
-  lleg_chain_.addSegment(KDL::Segment("l_leg_hip_r",
+  lleg_chain.addSegment(KDL::Segment("l_leg_hip_r",
                                       KDL::Joint("minus_RotX", KDL::Vector(0,0,0), KDL::Vector(-1,0,0), KDL::Joint::RotAxis),
                                       KDL::Frame(KDL::Vector(-0.057 , 0.033 , 0.000)),
                                       KDL::RigidBodyInertia(1.045,
@@ -163,7 +168,7 @@ void Thormang3Kinematics::initialize(Eigen::VectorXd pelvis_position, Eigen::Mat
                                                             )
                                       )
                          );
-  lleg_chain_.addSegment(KDL::Segment("l_leg_hip_p",
+  lleg_chain.addSegment(KDL::Segment("l_leg_hip_p",
                                       KDL::Joint(KDL::Joint::RotY),
                                       KDL::Frame(KDL::Vector(0.000 , 0.060 , -0.300)),
                                       KDL::RigidBodyInertia(3.095,
@@ -172,7 +177,7 @@ void Thormang3Kinematics::initialize(Eigen::VectorXd pelvis_position, Eigen::Mat
                                                             )
                                       )
                          );
-  lleg_chain_.addSegment(KDL::Segment("l_leg_kn_p",
+  lleg_chain.addSegment(KDL::Segment("l_leg_kn_p",
                                       KDL::Joint(KDL::Joint::RotY),
                                       KDL::Frame(KDL::Vector(0.000 , -0.060 , -0.300)),
                                       KDL::RigidBodyInertia(2.401,
@@ -181,7 +186,7 @@ void Thormang3Kinematics::initialize(Eigen::VectorXd pelvis_position, Eigen::Mat
                                                             )
                                       )
                          );
-  lleg_chain_.addSegment(KDL::Segment("l_leg_an_p",
+  lleg_chain.addSegment(KDL::Segment("l_leg_an_p",
                                       KDL::Joint("minus_RotY", KDL::Vector(0,0,0), KDL::Vector(0,-1,0), KDL::Joint::RotAxis),
                                       KDL::Frame(KDL::Vector(0.057 , -0.033 , 0.000)),
                                       KDL::RigidBodyInertia(1.045,
@@ -190,7 +195,7 @@ void Thormang3Kinematics::initialize(Eigen::VectorXd pelvis_position, Eigen::Mat
                                                             )
                                       )
                          );
-  lleg_chain_.addSegment(KDL::Segment("l_leg_an_r",
+  lleg_chain.addSegment(KDL::Segment("l_leg_an_r",
                                       KDL::Joint(KDL::Joint::RotX),
                                       KDL::Frame(KDL::Vector(-0.057 , 0.000 , -0.092)),
                                       KDL::RigidBodyInertia(0.223,
@@ -199,7 +204,7 @@ void Thormang3Kinematics::initialize(Eigen::VectorXd pelvis_position, Eigen::Mat
                                                             )
                                       )
                          );
-  lleg_chain_.addSegment(KDL::Segment("l_leg_ft",
+  lleg_chain.addSegment(KDL::Segment("l_leg_ft",
                                       KDL::Joint(KDL::Joint::None),
                                       KDL::Frame(KDL::Vector(0.0 , 0.0 , -0.0294)),
                                       KDL::RigidBodyInertia(1.689,
@@ -208,7 +213,7 @@ void Thormang3Kinematics::initialize(Eigen::VectorXd pelvis_position, Eigen::Mat
                                                             )
                                       )
                          );
-  lleg_chain_.addSegment(KDL::Segment("l_leg_end",
+  lleg_chain.addSegment(KDL::Segment("l_leg_end",
                                       KDL::Joint(KDL::Joint::None),
                                       KDL::Frame(KDL::Vector(0.0 , 0.0 , 0.0)),
                                       KDL::RigidBodyInertia(0.0,
@@ -235,23 +240,25 @@ void Thormang3Kinematics::initialize(Eigen::VectorXd pelvis_position, Eigen::Mat
   }
 
   /* KDL Solver Initialization */
-  rleg_dyn_param_ = new KDL::ChainDynParam(rleg_chain_, KDL::Vector(0.0, 0.0, -9.81)); // kinematics & dynamics parameter
+  rleg_dyn_param_ = new KDL::ChainDynParam(rleg_chain, KDL::Vector(0.0, 0.0, -9.81)); // kinematics & dynamics parameter
 //  rleg_jacobian_solver_ = new KDL::ChainJntToJacSolver(rleg_chain_); // jabocian solver
-  rleg_fk_solver_ = new KDL::ChainFkSolverPos_recursive(rleg_chain_); // forward kinematics solver
+  rleg_fk_solver_ = new KDL::ChainFkSolverPos_recursive(rleg_chain); // forward kinematics solver
 
   // inverse kinematics solver
-  rleg_ik_vel_solver_ = new KDL::ChainIkSolverVel_pinv(rleg_chain_);
-  rleg_ik_pos_solver_ = new KDL::ChainIkSolverPos_NR_JL(rleg_chain_, min_joint_position_limit, max_joint_position_limit,
+  rleg_ik_vel_solver_ = new KDL::ChainIkSolverVel_pinv(rleg_chain);
+  rleg_ik_pos_solver_ = new KDL::ChainIkSolverPos_NR_JL(rleg_chain,
+                                                        min_joint_position_limit, max_joint_position_limit,
                                                         *rleg_fk_solver_,
                                                         *rleg_ik_vel_solver_);
 
-  lleg_dyn_param_ = new KDL::ChainDynParam(lleg_chain_, KDL::Vector(0.0, 0.0, -9.81)); // kinematics & dynamics parameter
+  lleg_dyn_param_ = new KDL::ChainDynParam(lleg_chain, KDL::Vector(0.0, 0.0, -9.81)); // kinematics & dynamics parameter
 //  lleg_jacobian_solver_ = new KDL::ChainJntToJacSolver(lleg_chain_); // jabocian solver
-  lleg_fk_solver_ = new KDL::ChainFkSolverPos_recursive(lleg_chain_); // forward kinematics solver
+  lleg_fk_solver_ = new KDL::ChainFkSolverPos_recursive(lleg_chain); // forward kinematics solver
 
   // inverse kinematics solver
-  lleg_ik_vel_solver_ = new KDL::ChainIkSolverVel_pinv(lleg_chain_);
-  lleg_ik_pos_solver_ = new KDL::ChainIkSolverPos_NR_JL(lleg_chain_, min_joint_position_limit, max_joint_position_limit,
+  lleg_ik_vel_solver_ = new KDL::ChainIkSolverVel_pinv(lleg_chain);
+  lleg_ik_pos_solver_ = new KDL::ChainIkSolverPos_NR_JL(lleg_chain,
+                                                        min_joint_position_limit, max_joint_position_limit,
                                                         *lleg_fk_solver_,
                                                         *lleg_ik_vel_solver_);
 }

@@ -226,39 +226,39 @@ WholebodyModule::WholebodyModule()
 
   thormang3_kdl_->initialize(body_position, body_orientation);
 
-  Eigen::VectorXd rleg_joint_position;
-  rleg_joint_position.resize(6);
+//  Eigen::VectorXd rleg_joint_position;
+//  rleg_joint_position.resize(6);
 
-  rleg_joint_position(0) = 0.0;
-  rleg_joint_position(1) = 0.0;
-  rleg_joint_position(2) = 30.0 * DEGREE2RADIAN;
-  rleg_joint_position(3) = -60.0 * DEGREE2RADIAN;
-  rleg_joint_position(4) = -30.0 * DEGREE2RADIAN;
-  rleg_joint_position(5) = 0.0;
+//  rleg_joint_position(0) = 0.0;
+//  rleg_joint_position(1) = 0.0;
+//  rleg_joint_position(2) = 30.0 * DEGREE2RADIAN;
+//  rleg_joint_position(3) = -60.0 * DEGREE2RADIAN;
+//  rleg_joint_position(4) = -30.0 * DEGREE2RADIAN;
+//  rleg_joint_position(5) = 0.0;
 
-  Eigen::VectorXd lleg_joint_position;
-  lleg_joint_position.resize(6);
+//  Eigen::VectorXd lleg_joint_position;
+//  lleg_joint_position.resize(6);
 
-  lleg_joint_position(0) = 0.0;
-  lleg_joint_position(1) = 0.0;
-  lleg_joint_position(2) = -30.0 * DEGREE2RADIAN;
-  lleg_joint_position(3) = 60.0 * DEGREE2RADIAN;
-  lleg_joint_position(4) = 30.0 * DEGREE2RADIAN;
-  lleg_joint_position(5) = 0.0;
+//  lleg_joint_position(0) = 0.0;
+//  lleg_joint_position(1) = 0.0;
+//  lleg_joint_position(2) = -30.0 * DEGREE2RADIAN;
+//  lleg_joint_position(3) = 60.0 * DEGREE2RADIAN;
+//  lleg_joint_position(4) = 30.0 * DEGREE2RADIAN;
+//  lleg_joint_position(5) = 0.0;
 
-  ROS_INFO("2");
-  thormang3_kdl_->setJointPosition(rleg_joint_position, lleg_joint_position);
+//  ROS_INFO("2");
+//  thormang3_kdl_->setJointPosition(rleg_joint_position, lleg_joint_position);
 
-  std::vector<double_t> rleg_position, rleg_orientation;
-  rleg_position.resize(3,0.0);
-  rleg_orientation.resize(4,0.0);
+//  std::vector<double_t> rleg_position, rleg_orientation;
+//  rleg_position.resize(3,0.0);
+//  rleg_orientation.resize(4,0.0);
 
-  std::vector<double_t> lleg_position, lleg_orientation;
-  lleg_position.resize(3,0.0);
-  lleg_orientation.resize(4,0.0);
+//  std::vector<double_t> lleg_position, lleg_orientation;
+//  lleg_position.resize(3,0.0);
+//  lleg_orientation.resize(4,0.0);
 
-  thormang3_kdl_->solveForwardKinematics(rleg_position, rleg_orientation,
-                                         lleg_position, lleg_orientation);
+//  thormang3_kdl_->solveForwardKinematics(rleg_position, rleg_orientation,
+//                                         lleg_position, lleg_orientation);
 }
 
 WholebodyModule::~WholebodyModule()
@@ -1584,7 +1584,7 @@ void WholebodyModule::process(std::map<std::string, robotis_framework::Dynamixel
 
   ros::Duration time_duration = ros::Time::now() - begin;
 
-//  if (time_duration.toSec() > 0.003)
+  if (time_duration.toSec() > 0.003)
     ROS_INFO("[Wholebody Module] Calc Time: %f", time_duration.toSec());
 
   for (int i=0; i<number_of_joints_; i++)
