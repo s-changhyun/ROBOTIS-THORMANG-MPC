@@ -21,7 +21,7 @@ public:
   WholebodyControl(std::string control_group,
                    double init_time, double fin_time,
                    std::vector<double_t> init_joint_pos, std::vector<double_t> init_joint_vel, std::vector<double_t> init_joint_accel,
-                   std::vector<double_t> goal_task_pos, std::vector<double_t> goal_task_orien);
+                   geometry_msgs::Pose goal_task_pose);
   virtual ~WholebodyControl();
 
   void initialize(std::vector<double_t> init_body_pos, std::vector<double_t> init_body_rot);

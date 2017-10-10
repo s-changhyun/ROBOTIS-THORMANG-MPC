@@ -4,7 +4,7 @@
 WholebodyControl::WholebodyControl(std::string control_group,
                                    double init_time, double fin_time,
                                    std::vector<double_t> init_joint_pos, std::vector<double_t> init_joint_vel, std::vector<double_t> init_joint_accel,
-                                   std::vector<double_t> goal_task_pos, std::vector<double_t> goal_task_orien)
+                                   geometry_msgs::Pose goal_task_pose)
 {
   control_group_ = control_group;
 
@@ -15,8 +15,13 @@ WholebodyControl::WholebodyControl(std::string control_group,
   init_joint_vel_ = init_joint_vel;
   init_joint_accel_ = init_joint_accel;
 
-  goal_task_pos_ = goal_task_pos;
-  Eigen::Quaterniond quaternion(goal_task_orien[3],goal_task_orien[0],goal_task_orien[1],goal_task_orien[2]);
+  goal_task_pos_.resize(3, 0.0);
+  goal_task_pos_[0] = goal_task_pose.position.x;
+  goal_task_pos_[1] = goal_task_pose.position.y;
+  goal_task_pos_[2] = goal_task_pose.position.z;
+
+  Eigen::Quaterniond quaternion(goal_task_pose.orientation.w,goal_task_pose.orientation.x,
+                                goal_task_pose.orientation.y,goal_task_pose.orientation.z);
   goal_task_quaternion_ = quaternion;
 
   goal_task_vel_.resize(3, 0.0);

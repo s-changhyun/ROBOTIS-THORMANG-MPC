@@ -201,12 +201,16 @@ private:
   std::vector<double_t> des_body_pos_,  des_body_vel_,  des_body_accel_,  des_body_Q_;
 
   // Walking Control
+  double body_offset_x_, body_offset_y_;
   std::vector<double_t> x_lipm_, y_lipm_;
 
   thormang3_wholebody_module_msgs::FootStepCommand foot_step_command_;
   thormang3_wholebody_module_msgs::PreviewRequest preview_request_;
   thormang3_wholebody_module_msgs::PreviewResponse preview_response_;
   thormang3_wholebody_module_msgs::WalkingParam walking_param_;
+
+  // Wholebody Control
+  geometry_msgs::Pose wholebody_goal_msg_;
 
   // Balance Control
   BALANCE_TYPE balance_type_;

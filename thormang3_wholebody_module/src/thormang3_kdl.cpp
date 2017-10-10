@@ -220,12 +220,12 @@ void Thormang3Kinematics::initialize(std::vector<double_t> pelvis_position, std:
 
   // Set Joint Limits
   std::vector<double> min_position_limit, max_position_limit;
-  min_position_limit.push_back(-90.0);  max_position_limit.push_back(90.0); // r_leg_hip_y
-  min_position_limit.push_back(-90.0);	max_position_limit.push_back(90.0); // r_leg_hip_r
-  min_position_limit.push_back(-90.0);  max_position_limit.push_back(90.0); // r_leg_hip_p
-  min_position_limit.push_back(-90.0);	max_position_limit.push_back(90.0); // r_leg_kn_p
-  min_position_limit.push_back(-90.0);	max_position_limit.push_back(90.0); // r_leg_an_p
-  min_position_limit.push_back(-90.0);	max_position_limit.push_back(90.0); // r_leg_an_r
+  min_position_limit.push_back(-120.0); max_position_limit.push_back(120.0); // r_leg_hip_y
+  min_position_limit.push_back(-120.0);	max_position_limit.push_back(120.0); // r_leg_hip_r
+  min_position_limit.push_back(-120.0); max_position_limit.push_back(120.0); // r_leg_hip_p
+  min_position_limit.push_back(-150.0);	max_position_limit.push_back(150.0); // r_leg_kn_p
+  min_position_limit.push_back(-120.0);	max_position_limit.push_back(120.0); // r_leg_an_p
+  min_position_limit.push_back(-120.0);	max_position_limit.push_back(120.0); // r_leg_an_r
 
   KDL::JntArray min_joint_position_limit(LEG_JOINT_NUM), max_joint_position_limit(LEG_JOINT_NUM);
   for (int index=0; index<LEG_JOINT_NUM; index++)
