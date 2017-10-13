@@ -718,7 +718,6 @@ void BalanceControlUsingPDController::process(int *balance_error, Eigen::MatrixX
   double left_foot_torque_roll_filtered  = left_foot_torque_roll_lpf_.getFilteredOutput(current_left_tx_Nm_);
   double left_foot_torque_pitch_filtered = left_foot_torque_pitch_lpf_.getFilteredOutput(current_left_ty_Nm_);
 
-
   // gyro
   foot_roll_adjustment_by_gyro_roll_   = -0.1*gyro_enable_*foot_roll_gyro_ctrl_.getFeedBack(roll_gyro_filtered);
   foot_pitch_adjustment_by_gyro_pitch_ = -0.1*gyro_enable_*foot_pitch_gyro_ctrl_.getFeedBack(pitch_gyro_filtered);
@@ -727,7 +726,8 @@ void BalanceControlUsingPDController::process(int *balance_error, Eigen::MatrixX
   foot_roll_adjustment_by_orientation_roll_   = -1.0*orientation_enable_ * foot_roll_angle_ctrl_.getFeedBack(roll_angle_filtered);
   foot_pitch_adjustment_by_orientation_pitch_ = -1.0*orientation_enable_ * foot_pitch_angle_ctrl_.getFeedBack(pitch_angle_filtered);
 
-  Eigen::MatrixXd mat_orientation_adjustment_by_imu = robotis_framework::getRotation4d(foot_roll_adjustment_by_gyro_roll_ + foot_roll_adjustment_by_orientation_roll_, foot_pitch_adjustment_by_gyro_pitch_ + foot_pitch_adjustment_by_orientation_pitch_, 0.0);
+  Eigen::MatrixXd mat_orientation_adjustment_by_imu =
+      robotis_framework::getRotation4d(foot_roll_adjustment_by_gyro_roll_ + foot_roll_adjustment_by_orientation_roll_, foot_pitch_adjustment_by_gyro_pitch_ + foot_pitch_adjustment_by_orientation_pitch_, 0.0);
   Eigen::MatrixXd mat_r_xy, mat_l_xy;
   mat_r_xy.resize(4,1); mat_l_xy.resize(4,1);
   mat_r_xy.coeffRef(0,0) = desired_robot_to_right_foot_.coeff(0,3) - 0.5*(desired_robot_to_right_foot_.coeff(0,3) + desired_robot_to_left_foot_.coeff(0,3));
@@ -859,9 +859,9 @@ void BalanceControlUsingPDController::setDesiredCOBOrientation(double cob_orient
 }
 
 void BalanceControlUsingPDController::setDesiredFootForceTorque(double r_force_x_N,      double r_force_y_N,       double r_force_z_N,
-                                               double r_torque_roll_Nm, double r_torque_pitch_Nm, double r_torque_yaw_Nm,
-                                               double l_force_x_N,      double l_force_y_N,       double l_force_z_N,
-                                               double l_torque_roll_Nm, double l_torque_pitch_Nm, double l_torque_yaw_Nm)
+                                                                double r_torque_roll_Nm, double r_torque_pitch_Nm, double r_torque_yaw_Nm,
+                                                                double l_force_x_N,      double l_force_y_N,       double l_force_z_N,
+                                                                double l_torque_roll_Nm, double l_torque_pitch_Nm, double l_torque_yaw_Nm)
 {
   right_foot_force_x_ctrl_.desired_      = r_force_x_N;
   right_foot_force_y_ctrl_.desired_      = r_force_y_N;
@@ -890,9 +890,9 @@ void BalanceControlUsingPDController::setCurrentOrientationSensorOutput(double c
 }
 
 void BalanceControlUsingPDController::setCurrentFootForceTorqueSensorOutput(double r_force_x_N,      double r_force_y_N,       double r_force_z_N,
-                                                           double r_torque_roll_Nm, double r_torque_pitch_Nm, double r_torque_yaw_Nm,
-                                                           double l_force_x_N,      double l_force_y_N,       double l_force_z_N,
-                                                           double l_torque_roll_Nm, double l_torque_pitch_Nm, double l_torque_yaw_Nm)
+                                                                            double r_torque_roll_Nm, double r_torque_pitch_Nm, double r_torque_yaw_Nm,
+                                                                            double l_force_x_N,      double l_force_y_N,       double l_force_z_N,
+                                                                            double l_torque_roll_Nm, double l_torque_pitch_Nm, double l_torque_yaw_Nm)
 {
   current_right_fx_N_  = r_force_x_N;
   current_right_fy_N_  = r_force_y_N;
@@ -911,9 +911,9 @@ void BalanceControlUsingPDController::setCurrentFootForceTorqueSensorOutput(doub
 
 // set maximum adjustment
 void BalanceControlUsingPDController::setMaximumAdjustment(double cob_x_max_adjustment_m,  double cob_y_max_adjustment_m,  double cob_z_max_adjustment_m,
-                                          double cob_roll_max_adjustment_rad, double cob_pitch_max_adjustment_rad, double cob_yaw_max_adjustment_rad,
-                                          double foot_x_max_adjustment_m, double foot_y_max_adjustment_m, double foot_z_max_adjustment_m,
-                                          double foot_roll_max_adjustment_rad, double foot_pitch_max_adjustment_rad, double foot_yaw_max_adjustment_rad)
+                                                           double cob_roll_max_adjustment_rad, double cob_pitch_max_adjustment_rad, double cob_yaw_max_adjustment_rad,
+                                                           double foot_x_max_adjustment_m, double foot_y_max_adjustment_m, double foot_z_max_adjustment_m,
+                                                           double foot_roll_max_adjustment_rad, double foot_pitch_max_adjustment_rad, double foot_yaw_max_adjustment_rad)
 {
   cob_x_adjustment_abs_max_m_        = cob_x_max_adjustment_m;
   cob_y_adjustment_abs_max_m_        = cob_y_max_adjustment_m;

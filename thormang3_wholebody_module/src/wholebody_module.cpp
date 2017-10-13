@@ -170,7 +170,7 @@ WholebodyModule::WholebodyModule()
   // walking parameter default
   walking_param_.dsp_ratio        = 0.2;
   walking_param_.lipm_height      = 0.7;
-  walking_param_.foot_height_max  = 0.07;
+  walking_param_.foot_height_max  = 0.1;
   walking_param_.zmp_offset_x     = 0.0;
   walking_param_.zmp_offset_y     = 0.0;
 
@@ -564,8 +564,8 @@ void WholebodyModule::setResetBodyCallback(const std_msgs::Bool::ConstPtr& msg)
 {
   if (msg->data == true)
   {
-    body_offset_x_ = 0.0;
-    body_offset_y_ = 0.0;
+//    body_offset_x_ = 0.0;
+//    body_offset_y_ = 0.0;
 
     resetBodyPose();
   }
@@ -596,6 +596,7 @@ void WholebodyModule::goalJointPoseCallback(const thormang3_wholebody_module_msg
     joint_control_initialize_ = false;
     control_type_ = JOINT_CONTROL;
     balance_type_ = OFF;
+    desired_balance_gain_ratio_[0] = 0.0;
   }
   else
     ROS_WARN("[WARN] Control type is different!");
@@ -690,82 +691,82 @@ void WholebodyModule::goalKinematicsPoseCallback(const thormang3_wholebody_modul
 
 void WholebodyModule::initWholebodyControl()
 {
-//  if (wholebody_initialize_ == true)
-//    return;
+  if (wholebody_initialize_ == true)
+    return;
 
-//  wholebody_initialize_ = true;
+  wholebody_initialize_ = true;
 
-//  double ini_time = 0.0;
-//  double mov_time = mov_time_;
+  double ini_time = 0.0;
+  double mov_time = mov_time_;
 
-//  mov_step_ = 0;
-//  mov_size_ = (int) (mov_time / control_cycle_sec_) + 1;
+  mov_step_ = 0;
+  mov_size_ = (int) (mov_time / control_cycle_sec_) + 1;
 
-//  wholebody_control_ =
-//      new WholebodyControl(wholegbody_control_group_,
-//                           ini_time, mov_time,
-//                           des_joint_pos_, des_joint_vel_, des_joint_accel_,
-//                           wholebody_goal_msg_);
+  wholebody_control_ =
+      new WholebodyControl(wholegbody_control_group_,
+                           ini_time, mov_time,
+                           des_joint_pos_, des_joint_vel_, des_joint_accel_,
+                           wholebody_goal_msg_);
 
-//  if (is_moving_ == true)
-//  {
+  if (is_moving_ == true)
+  {
 //    ROS_INFO("[UPDATE] Wholebody Control");
 //    wholebody_control_->update(desired_body_position_, desired_body_orientation_,
 //                               desired_task_position_, desired_task_velocity_, desired_task_acceleration_);
-//  }
-//  else
-//  {
-//    ROS_INFO("[START] Wholebody Control");
+  }
+  else
+  {
+    ROS_INFO("[START] Wholebody Control");
 
-//    wholebody_control_->initialize(des_body_pos_, des_body_Q_);
-//    is_moving_ = true;
-//  }
+    wholebody_control_->initialize(des_body_pos_, des_body_Q_);
+    is_moving_ = true;
+  }
 }
 
 void WholebodyModule::calcWholebodyControl()
 {
-//  if (is_moving_ == true)
-//  {
-//    double cur_time = (double) mov_step_ * control_cycle_sec_;
-//    if (wholebody_control_->set(cur_time) == true)
-//    {
-////      queue_mutex_.lock();
-////      desired_joint_position_ = wholebody_control_->getJointPosition(cur_time);
-////      queue_mutex_.unlock();
+  if (is_moving_ == true)
+  {
+    double cur_time = (double) mov_step_ * control_cycle_sec_;
+    if (wholebody_control_->set(cur_time) == true)
+    {
+//      queue_mutex_.lock();
+//      desired_joint_position_ = wholebody_control_->getJointPosition(cur_time);
+//      queue_mutex_.unlock();
 
-//      if (wholegbody_control_group_ == "body")
-//      {
-//        des_body_pos_ = wholebody_control_->getTaskPosition(cur_time);
-//        des_body_Q_ = wholebody_control_->getOrientation(cur_time);
-//      }
-//    }
-//    else
-//    {
-//      is_moving_ = false;
-//      wholebody_control_->finalize();
+      if (wholegbody_control_group_ == "body")
+      {
+        des_body_pos_ = wholebody_control_->getTaskPosition(cur_time);
+        des_body_Q_ = wholebody_control_->getOrientation(cur_time);
+      }
+    }
+    else
+    {
+      is_moving_ = false;
+      wholebody_control_->finalize();
 
-//      control_type_ = NONE;
+      control_type_ = NONE;
 
-//      ROS_WARN("[FAIL] Wholebody Control");
-//    }
+      ROS_WARN("[FAIL] Wholebody Control");
+    }
 
-//    if (mov_step_ == mov_size_-1)
-//    {
-//      mov_step_ = 0;
-//      is_moving_ = false;
-//      wholebody_control_->finalize();
+    if (mov_step_ == mov_size_-1)
+    {
+      mov_step_ = 0;
+      is_moving_ = false;
+      wholebody_control_->finalize();
 
-////      body_offset_x_ = des_body_pos_[0];
-////      body_offset_y_ = des_body_pos_[1];
-////      resetBodyPose();
+      body_offset_x_ = des_body_pos_[0];
+      body_offset_y_ = des_body_pos_[1];
+      resetBodyPose();
 
-//      control_type_ = NONE;
+      control_type_ = NONE;
 
-//      ROS_INFO("[END] Wholebody Control");
-//    }
-//    else
-//      mov_step_++;
-//  }
+      ROS_INFO("[END] Wholebody Control");
+    }
+    else
+      mov_step_++;
+  }
 }
 
 void WholebodyModule::footStepCommandCallback(const thormang3_wholebody_module_msgs::FootStepCommand& msg)
@@ -911,7 +912,7 @@ void WholebodyModule::calcWalkingControl()
       {
         is_moving_ = false;
         walking_control_->finalize();
-        resetBodyPose();
+//        resetBodyPose();
 
         control_type_ = NONE;
       }
@@ -1030,6 +1031,8 @@ bool WholebodyModule::setBalanceControl()
   balance_control_.setOrientationBalanceEnable(true);
   balance_control_.setForceTorqueBalanceEnable(true);
 
+  balance_control_.setCOBManualAdjustment(body_offset_x_, body_offset_y_, 0.0);
+
   setBalanceControlGain();
   setTargetForceTorque();
 
@@ -1037,7 +1040,7 @@ bool WholebodyModule::setBalanceControl()
 
   // Body Pose
   Eigen::MatrixXd des_body_pos = Eigen::MatrixXd::Zero(3,1);
-  des_body_pos.coeffRef(0,0) = des_body_pos_[0]; // + body_offset_x_;
+  des_body_pos.coeffRef(0,0) = des_body_pos_[0];
   des_body_pos.coeffRef(1,0) = des_body_pos_[1];
   des_body_pos.coeffRef(2,0) = des_body_pos_[2];
 

@@ -37,7 +37,7 @@ public:
   Thormang3Kinematics();
   virtual ~Thormang3Kinematics();
 
-  void initialize(std::vector<double_t> pelvis_position, std::vector<double_t> pelvis_orientation);
+//  void initialize(std::vector<double_t> pelvis_position, std::vector<double_t> pelvis_orientation);
   void initialize(Eigen::MatrixXd pelvis_position, Eigen::MatrixXd pelvis_orientation);
   void setJointPosition(Eigen::VectorXd rleg_joint_position, Eigen::VectorXd lleg_joint_position);
   void solveForwardKinematics(std::vector<double_t> &rleg_position, std::vector<double_t> &rleg_orientation,

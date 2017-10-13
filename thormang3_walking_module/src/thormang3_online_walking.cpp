@@ -910,6 +910,9 @@ void THORMANG3OnlineWalking::calcRefZMP()
       }
     }
   }
+
+
+  ROS_INFO("reference_zmp_x_: %f , reference_zmp_y_: %f", reference_zmp_x_(ref_zmp_idx, 0) , reference_zmp_y_(ref_zmp_idx, 0));
 }
 
 void THORMANG3OnlineWalking::calcDesiredPose()

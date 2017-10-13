@@ -79,7 +79,7 @@ protected:
 
   robotis_framework::MinimumJerk *body_trajectory_;
   robotis_framework::MinimumJerkViaPoint *r_foot_tra_;
-  robotis_framework::MinimumJerkViaPoint *left_foot_trajectory_;
+  robotis_framework::MinimumJerkViaPoint *l_foot_tra_;
 
   double init_time_, fin_time_;
   double control_cycle_;
