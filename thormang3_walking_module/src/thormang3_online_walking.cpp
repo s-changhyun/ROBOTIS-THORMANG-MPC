@@ -1386,6 +1386,8 @@ void THORMANG3OnlineWalking::process()
     mat_robot_to_rfoot_ = mat_robot_to_g_*mat_g_to_rfoot_;
     mat_robot_to_lfoot_ = mat_robot_to_g_*mat_g_to_lfoot_;
 
+//    PRINT_MAT(mat_robot_to_g_);
+//    PRINT_MAT(mat_g_to_rfoot_);
 
     //Stabilizer Start
     //Balancing Algorithm
@@ -1428,8 +1430,17 @@ void THORMANG3OnlineWalking::process()
     mat_right_force  = mat_robot_to_rfoot_*mat_rfoot_to_rft_*mat_right_force;
     mat_right_torque = mat_robot_to_rfoot_*mat_rfoot_to_rft_*mat_right_torque;
 
+//    PRINT_MAT(mat_robot_to_rfoot_);
+
     mat_left_force  = mat_robot_to_lfoot_*mat_lfoot_to_lft_*mat_left_force;
     mat_left_torque = mat_robot_to_lfoot_*mat_lfoot_to_lft_*mat_left_torque;
+
+//    ROS_INFO("=======================");
+
+//    PRINT_MAT(mat_right_force);
+//    PRINT_MAT(mat_left_force);
+
+//    ROS_INFO("=======================");
 
     imu_data_mutex_lock_.lock();
     double gyro_roll_rad_per_sec  = current_gyro_roll_rad_per_sec_;

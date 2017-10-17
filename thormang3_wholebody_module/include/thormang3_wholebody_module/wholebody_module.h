@@ -143,6 +143,8 @@ private:
   void initBalanceControl();
   void calcBalanceControl();
 
+  void calcRobotPose();
+
   void setTargetForceTorque();
   void setBalanceControlGain();
   bool setBalanceControl();
@@ -175,12 +177,14 @@ private:
   bool wholebody_initialize_;
   bool walking_initialize_;
   bool balance_control_initialize_;
+  bool body_offset_initialize_;
 
   int walking_leg_, walking_phase_;
   int walking_size_, walking_step_;
 
   robotis_framework::MinimumJerk *joint_tra_;
   robotis_framework::MinimumJerk *balance_tra_;
+  robotis_framework::MinimumJerk *body_offset_tra_;
 
   size_t number_of_joints_;
   std::vector<std::string> joint_name_;
@@ -221,8 +225,15 @@ private:
   BalanceControlUsingPDController balance_control_;
   BalancePDController joint_feedback_[MAX_JOINT_ID];
 
-  std::vector<double_t> desired_balance_gain_ratio_;
+  std::vector<double_t> des_balance_gain_ratio_;
   std::vector<double_t> goal_balance_gain_ratio_;
+
+  // Body Offset
+  std::vector<double_t> des_body_offset_;
+  std::vector<double_t> goal_body_offset_;
+
+  bool  is_offset_updating_;
+  int   body_offset_step_, body_offset_size_;
 
   // Balance Gain
   double foot_roll_gyro_p_gain_;
@@ -274,6 +285,9 @@ private:
   double balance_r_foot_torque_x_;
   double balance_r_foot_torque_y_;
   double balance_r_foot_torque_z_;
+
+  Eigen::MatrixXd g_to_r_leg_, g_to_l_leg_;
+
 
   // Sensor msgs
   sensor_msgs::Imu imu_data_msg_;

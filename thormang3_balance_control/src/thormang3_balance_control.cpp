@@ -844,6 +844,10 @@ void BalanceControlUsingPDController::setDesiredPose(const Eigen::MatrixXd &robo
   desired_robot_to_cob_        = robot_to_cob;
   desired_robot_to_right_foot_ = robot_to_right_foot;
   desired_robot_to_left_foot_  = robot_to_left_foot;
+
+//  PRINT_MAT(robot_to_cob);
+//  PRINT_MAT(robot_to_right_foot);
+//  PRINT_MAT(robot_to_left_foot);
 }
 
 void BalanceControlUsingPDController::setDesiredCOBGyro(double gyro_roll, double gyro_pitch)\
@@ -935,6 +939,8 @@ void BalanceControlUsingPDController::setCOBManualAdjustment(double cob_x_adjust
   cob_x_manual_adjustment_m_ = cob_x_adjustment_m;
   cob_y_manual_adjustment_m_ = cob_y_adjustment_m;
   cob_z_manual_adjustment_m_ = cob_z_adjustment_m;
+
+//  ROS_INFO("cob x: %f , y: %f, z: %f", cob_x_manual_adjustment_m_, cob_y_manual_adjustment_m_, cob_z_manual_adjustment_m_);
 }
 
 double BalanceControlUsingPDController::getCOBManualAdjustmentX()

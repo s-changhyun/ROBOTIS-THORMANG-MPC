@@ -56,6 +56,8 @@ public:
   void calcPreviewParam(thormang3_wholebody_module_msgs::PreviewResponse msg);
   void calcPreviewControl(double time, int step);
 
+  void calcAllRefZMP();
+
   double calcRefZMPx(int step);
   double calcRefZMPy(int step);
 
@@ -119,6 +121,9 @@ protected:
   double ref_zmp_x_, ref_zmp_y_;
   double preview_sum_zmp_x_, preview_sum_zmp_y_;
   double zmp_offset_x_, zmp_offset_y_;
+
+  Eigen::MatrixXd goal_r_foot_pos_buffer_, goal_l_foot_pos_buffer_;
+  Eigen::MatrixXd ref_zmp_buffer_;
 
   // Pose Information
   double init_body_yaw_angle_;

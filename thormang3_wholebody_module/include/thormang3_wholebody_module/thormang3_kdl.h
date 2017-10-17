@@ -41,7 +41,9 @@ public:
   void initialize(Eigen::MatrixXd pelvis_position, Eigen::MatrixXd pelvis_orientation);
   void setJointPosition(Eigen::VectorXd rleg_joint_position, Eigen::VectorXd lleg_joint_position);
   void solveForwardKinematics(std::vector<double_t> &rleg_position, std::vector<double_t> &rleg_orientation,
-                              std::vector<double_t> &lleg_position, std::vector<double_t> &lleg_orientation);
+                              std::vector<double_t> &lleg_position, std::vector<double_t> &lleg_orientation,
+                              std::vector<double_t> &rleg_ft_position, std::vector<double_t> &rleg_ft_orientation,
+                              std::vector<double_t> &lleg_ft_position, std::vector<double_t> &lleg_ft_orientation);
   bool solveInverseKinematics(std::vector<double_t> &rleg_output,
                               Eigen::MatrixXd rleg_target_position, Eigen::Quaterniond rleg_target_orientation,
                               std::vector<double_t> &lleg_output,
@@ -63,8 +65,13 @@ protected:
   KDL::ChainIkSolverVel_pinv *lleg_ik_vel_solver_;
   KDL::ChainIkSolverPos_NR_JL *lleg_ik_pos_solver_;
 
+  KDL::ChainFkSolverPos_recursive *rleg_ft_fk_solver_;
+  KDL::ChainFkSolverPos_recursive *lleg_ft_fk_solver_;
+
   Eigen::VectorXd rleg_joint_position_, lleg_joint_position_;
   geometry_msgs::Pose rleg_pose_, lleg_pose_;
+  geometry_msgs::Pose rleg_ft_pose_, lleg_ft_pose_;
+
 
 
 
