@@ -1309,36 +1309,20 @@ bool WholebodyModule::setBalanceControl()
 //      robotis_framework::getTransitionXYZ(l_foot_ft_data_msg_.torque.x, l_foot_ft_data_msg_.torque.y, l_foot_ft_data_msg_.torque.z);
 
   Eigen::MatrixXd robot_to_r_foot_force =
-      robot_to_r_foot.block(0,0,3,3) *
+      robot_to_r_foot.block(0,0,3,3) * robotis_framework::getRotationX(M_PI) *
       robotis_framework::getTransitionXYZ(r_foot_ft_data_msg_.force.x, r_foot_ft_data_msg_.force.y, r_foot_ft_data_msg_.force.z);
 
   Eigen::MatrixXd robot_to_r_foot_torque =
-      robot_to_r_foot.block(0,0,3,3) *
+      robot_to_r_foot.block(0,0,3,3) * robotis_framework::getRotationX(M_PI) *
       robotis_framework::getTransitionXYZ(r_foot_ft_data_msg_.torque.x, r_foot_ft_data_msg_.torque.y, r_foot_ft_data_msg_.torque.z);
 
   Eigen::MatrixXd robot_to_l_foot_force =
-      robot_to_l_foot.block(0,0,3,3) *
+      robot_to_l_foot.block(0,0,3,3) * robotis_framework::getRotationX(M_PI) *
       robotis_framework::getTransitionXYZ(l_foot_ft_data_msg_.force.x, l_foot_ft_data_msg_.force.y, l_foot_ft_data_msg_.force.z);
 
   Eigen::MatrixXd robot_to_l_foot_torque =
-      robot_to_l_foot.block(0,0,3,3) *
+      robot_to_l_foot.block(0,0,3,3) * robotis_framework::getRotationX(M_PI) *
       robotis_framework::getTransitionXYZ(l_foot_ft_data_msg_.torque.x, l_foot_ft_data_msg_.torque.y, l_foot_ft_data_msg_.torque.z);
-
-//  Eigen::MatrixXd robot_to_r_foot_force =
-//      robot_to_r_foot.block(0,0,3,3) * robotis_framework::getRotationX(M_PI) *
-//      robotis_framework::getTransitionXYZ(r_foot_ft_data_msg_.force.x, r_foot_ft_data_msg_.force.y, r_foot_ft_data_msg_.force.z);
-
-//  Eigen::MatrixXd robot_to_r_foot_torque =
-//      robot_to_r_foot.block(0,0,3,3) * robotis_framework::getRotationX(M_PI) *
-//      robotis_framework::getTransitionXYZ(r_foot_ft_data_msg_.torque.x, r_foot_ft_data_msg_.torque.y, r_foot_ft_data_msg_.torque.z);
-
-//  Eigen::MatrixXd robot_to_l_foot_force =
-//      robot_to_l_foot.block(0,0,3,3) * robotis_framework::getRotationX(M_PI) *
-//      robotis_framework::getTransitionXYZ(l_foot_ft_data_msg_.force.x, l_foot_ft_data_msg_.force.y, l_foot_ft_data_msg_.force.z);
-
-//  Eigen::MatrixXd robot_to_l_foot_torque =
-//      robot_to_l_foot.block(0,0,3,3) * robotis_framework::getRotationX(M_PI) *
-//      robotis_framework::getTransitionXYZ(l_foot_ft_data_msg_.torque.x, l_foot_ft_data_msg_.torque.y, l_foot_ft_data_msg_.torque.z);
 
   balance_control_.setCurrentOrientationSensorOutput(imu_rpy.coeff(0,0), imu_rpy.coeff(1,0));
 
