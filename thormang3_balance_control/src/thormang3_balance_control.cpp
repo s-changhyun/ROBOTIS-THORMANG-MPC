@@ -617,15 +617,15 @@ BalanceControlUsingPDController::BalanceControlUsingPDController()
   cob_x_adjustment_abs_max_m_ = 0.05;
   cob_y_adjustment_abs_max_m_ = 0.05;
   cob_z_adjustment_abs_max_m_ = 0.05;
-  cob_roll_adjustment_abs_max_rad_  = 15.0*DEGREE2RADIAN;
-  cob_pitch_adjustment_abs_max_rad_ = 15.0*DEGREE2RADIAN;
-  cob_yaw_adjustment_abs_max_rad_   = 15.0*DEGREE2RADIAN;
-  foot_x_adjustment_abs_max_m_ = 0.05;
-  foot_y_adjustment_abs_max_m_ = 0.05;
-  foot_z_adjustment_abs_max_m_ = 0.05;
-  foot_roll_adjustment_abs_max_rad_  = 15.0*DEGREE2RADIAN;
-  foot_pitch_adjustment_abs_max_rad_ = 15.0*DEGREE2RADIAN;
-  foot_yaw_adjustment_abs_max_rad_   = 15.0*DEGREE2RADIAN;
+  cob_roll_adjustment_abs_max_rad_  = 30.0*DEGREE2RADIAN;
+  cob_pitch_adjustment_abs_max_rad_ = 30.0*DEGREE2RADIAN;
+  cob_yaw_adjustment_abs_max_rad_   = 30.0*DEGREE2RADIAN;
+  foot_x_adjustment_abs_max_m_ = 0.1;
+  foot_y_adjustment_abs_max_m_ = 0.1;
+  foot_z_adjustment_abs_max_m_ = 0.1;
+  foot_roll_adjustment_abs_max_rad_  = 30.0*DEGREE2RADIAN;
+  foot_pitch_adjustment_abs_max_rad_ = 30.0*DEGREE2RADIAN;
+  foot_yaw_adjustment_abs_max_rad_   = 30.0*DEGREE2RADIAN;
 
   mat_robot_to_cob_modified_        = Eigen::MatrixXd::Identity(4,4);
   mat_robot_to_right_foot_modified_ = Eigen::MatrixXd::Identity(4,4);
