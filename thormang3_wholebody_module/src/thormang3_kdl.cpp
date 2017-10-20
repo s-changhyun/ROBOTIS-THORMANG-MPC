@@ -349,7 +349,8 @@ void Thormang3Kinematics::initialize(Eigen::MatrixXd pelvis_position, Eigen::Mat
                         );
   rleg_chain.addSegment(KDL::Segment("r_leg_an_r",
                                      KDL::Joint(KDL::Joint::RotX),
-                                     KDL::Frame(KDL::Vector(-0.057 , 0.000 , -0.087)),
+                                     KDL::Frame(KDL::Vector(-0.057 , 0.000 , -0.092)),
+//                                     KDL::Frame(KDL::Vector(-0.057 , 0.000 , -0.087)),
                                      KDL::RigidBodyInertia(0.223,
                                                            KDL::Vector(0.0, 0.0, 0.0),
                                                            KDL::RotationalInertia(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
@@ -358,7 +359,8 @@ void Thormang3Kinematics::initialize(Eigen::MatrixXd pelvis_position, Eigen::Mat
                         );
   rleg_chain.addSegment(KDL::Segment("r_leg_ft",
                                      KDL::Joint(KDL::Joint::None),
-                                     KDL::Frame(KDL::Vector(0.0 , 0.0 , -0.0275)),
+                                     KDL::Frame(KDL::Vector(0.0 , 0.0 , -0.0294)),
+//                                     KDL::Frame(KDL::Vector(0.0 , 0.0 , -0.0275)),
                                      KDL::RigidBodyInertia(1.689,
                                                            KDL::Vector(0.0, 0.0, 0.0),
                                                            KDL::RotationalInertia(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
@@ -444,7 +446,8 @@ void Thormang3Kinematics::initialize(Eigen::MatrixXd pelvis_position, Eigen::Mat
                         );
   lleg_chain.addSegment(KDL::Segment("l_leg_an_r",
                                      KDL::Joint(KDL::Joint::RotX),
-                                     KDL::Frame(KDL::Vector(-0.057 , 0.000 , -0.087)),
+                                     KDL::Frame(KDL::Vector(-0.057 , 0.000 , -0.092)),
+//                                     KDL::Frame(KDL::Vector(-0.057 , 0.000 , -0.087)),
                                      KDL::RigidBodyInertia(0.223,
                                                            KDL::Vector(0.0, 0.0, 0.0),
                                                            KDL::RotationalInertia(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
@@ -453,7 +456,8 @@ void Thormang3Kinematics::initialize(Eigen::MatrixXd pelvis_position, Eigen::Mat
                         );
   lleg_chain.addSegment(KDL::Segment("l_leg_ft",
                                      KDL::Joint(KDL::Joint::None),
-                                     KDL::Frame(KDL::Vector(0.0 , 0.0 , -0.0275)),
+                                     KDL::Frame(KDL::Vector(0.0 , 0.0 , -0.0294)),
+//                                     KDL::Frame(KDL::Vector(0.0 , 0.0 , -0.0275)),
                                      KDL::RigidBodyInertia(1.689,
                                                            KDL::Vector(0.0, 0.0, 0.0),
                                                            KDL::RotationalInertia(0.0, 0.0, 0.0, 0.0, 0.0, 0.0)

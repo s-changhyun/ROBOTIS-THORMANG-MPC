@@ -273,7 +273,7 @@ void WholebodyModule::resetBodyPose()
 {
   des_body_pos_[0] = 0.0; //body_offset_x_;
   des_body_pos_[1] = 0.0; //body_offset_y_;
-  des_body_pos_[2] = 0.8075 - 0.0803848;
+  des_body_pos_[2] = 0.8075 - 0.0803848 + 0.0069; //0.8075 - 0.0803848;
 
   des_body_Q_[0] = 0.0;
   des_body_Q_[1] = 0.0;
@@ -1075,8 +1075,8 @@ void WholebodyModule::calcRobotPose()
   g_to_l_leg.coeffRef(1,3) = l_leg_pos[1];
   g_to_l_leg.coeffRef(2,3) = l_leg_pos[2];
 
-//  PRINT_MAT(g_to_r_leg);
-//  PRINT_MAT(g_to_l_leg);
+  PRINT_MAT(g_to_r_leg);
+  PRINT_MAT(g_to_l_leg);
 
   Eigen::Quaterniond curr_r_leg_ft_Q(r_leg_ft_Q[3],r_leg_ft_Q[0],r_leg_ft_Q[1],r_leg_ft_Q[2]);
   Eigen::MatrixXd curr_r_leg_ft_rot = robotis_framework::convertQuaternionToRotation(curr_r_leg_ft_Q);
@@ -1096,8 +1096,8 @@ void WholebodyModule::calcRobotPose()
   g_to_l_leg_ft.coeffRef(1,3) = l_leg_ft_pos[1];
   g_to_l_leg_ft.coeffRef(2,3) = l_leg_ft_pos[2];
 
-//  PRINT_MAT(g_to_r_leg_ft);
-//  PRINT_MAT(g_to_l_leg_ft);
+  PRINT_MAT(g_to_r_leg_ft);
+  PRINT_MAT(g_to_l_leg_ft);
 
 //  des_r_leg_pos_ = r_leg_pos;
 //  des_l_leg_pos_ = l_leg_pos;
