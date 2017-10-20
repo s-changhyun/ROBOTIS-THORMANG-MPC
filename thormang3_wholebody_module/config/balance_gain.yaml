@@ -1,9 +1,9 @@
 ########## Gain ########
 # by gyro
-foot_roll_gyro_p_gain : 0.3
+foot_roll_gyro_p_gain : 0.5
 foot_roll_gyro_d_gain : 0.0
 
-foot_pitch_gyro_p_gain : 0.3
+foot_pitch_gyro_p_gain : 0.5
 foot_pitch_gyro_d_gain : 0.0
 
 # by imu

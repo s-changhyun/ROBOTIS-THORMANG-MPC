@@ -14,6 +14,8 @@ find_package(catkin REQUIRED COMPONENTS
   scilab_optimization
 )
 
+find_package(Eigen3 REQUIRED)
+
 ################################################################################
 # Declare ROS messages, services and actions
 ################################################################################
@@ -31,6 +33,7 @@ catkin_package(
   std_msgs
   sensor_msgs
   geometry_msgs
+  DEPENDS EIGEN3
 )
 
 ################################################################################
@@ -38,6 +41,7 @@ catkin_package(
 ################################################################################
 include_directories(
   ${catkin_INCLUDE_DIRS}
+  ${EIGEN3_INCLUDE_DIR}
 )
 
 add_executable(thormang3_optimization

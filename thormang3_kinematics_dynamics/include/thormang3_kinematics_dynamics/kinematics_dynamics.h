@@ -73,7 +73,6 @@ public:
   void calcJointsCenterOfMass(int joint_id);
 
   void calcForwardKinematics(int joint_ID);
-  void calcForwardKinematicsLowerBody(int joint_id);
 
   Eigen::MatrixXd calcJacobian(std::vector<int> idx);
   Eigen::MatrixXd calcJacobianCOM(std::vector<int> idx);
@@ -90,15 +89,9 @@ public:
   bool calcInverseKinematicsForRightLeg(double *out, double x, double y, double z, double roll, double pitch, double yaw);
   bool calcInverseKinematicsForLeftLeg(double *out, double x, double y, double z, double roll, double pitch, double yaw);
 
-  bool calcInverseKinematicsWOFK(int from, int to, Eigen::MatrixXd tar_position, Eigen::MatrixXd tar_orientation, int max_iter, double ik_err);
-
   Eigen::MatrixXd calcPreviewParam(double preview_time, double control_cycle,
                                    double lipm_height,
                                    Eigen::MatrixXd K, Eigen::MatrixXd P);
-
-  bool calcInverseKinematicsDual(int from_1, int to_1, Eigen::MatrixXd tar_position_1, Eigen::MatrixXd tar_orientation_1,
-                                 int from_2, int to_2, Eigen::MatrixXd tar_position_2, Eigen::MatrixXd tar_orientation_2,
-                                 int max_iter, double ik_err);
 
   LinkData *thormang3_link_data_ [ ALL_JOINT_ID + 1 ];
 

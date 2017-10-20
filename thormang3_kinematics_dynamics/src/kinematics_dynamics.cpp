@@ -94,7 +94,7 @@ KinematicsDynamics::KinematicsDynamics(TreeSelect tree)
     thormang3_link_data_[40]->sibling_            =  -1;
     thormang3_link_data_[40]->child_              =  43;
     thormang3_link_data_[40]->mass_               =  0.0;
-    thormang3_link_data_[40]->relative_position_  =  robotis_framework::getTransitionXYZ( 0.0 , 0.0 , 0.734 ); // 0.0 , 0.0 , 0.801
+    thormang3_link_data_[40]->relative_position_  =  robotis_framework::getTransitionXYZ( 0.0 , 0.0 , 0.723 ); // 0.0 , 0.0 , 0.801
     thormang3_link_data_[40]->joint_axis_         =  robotis_framework::getTransitionXYZ( 0.0 , 0.0 , 0.0 );
     thormang3_link_data_[40]->center_of_mass_     =  robotis_framework::getTransitionXYZ( 0.0 , 0.0 , 0.0 );
     thormang3_link_data_[40]->joint_limit_max_    =  100.0;
@@ -543,8 +543,7 @@ KinematicsDynamics::KinematicsDynamics(TreeSelect tree)
     thormang3_link_data_[37]->sibling_            =  -1;
     thormang3_link_data_[37]->child_              =  45;
     thormang3_link_data_[37]->mass_               =  1.689;
-//    thormang3_link_data_[37]->relative_position_  =  robotis_framework::getTransitionXYZ( -0.057 , 0.000 , -0.087 );
-    thormang3_link_data_[37]->relative_position_  =  robotis_framework::getTransitionXYZ( -0.057 , 0.000 , -0.092 );
+    thormang3_link_data_[37]->relative_position_  =  robotis_framework::getTransitionXYZ( -0.057 , 0.000 , -0.087 );
     thormang3_link_data_[37]->joint_axis_         =  robotis_framework::getTransitionXYZ( 0.0 , 0.0 , 0.0 );
     thormang3_link_data_[37]->center_of_mass_     =  robotis_framework::getTransitionXYZ( 0.000 , -0.009 , -0.013 );
     thormang3_link_data_[37]->joint_limit_max_    =  100.0;
@@ -557,8 +556,7 @@ KinematicsDynamics::KinematicsDynamics(TreeSelect tree)
     thormang3_link_data_[45]->sibling_            =  -1;
     thormang3_link_data_[45]->child_              =  -1;
     thormang3_link_data_[45]->mass_               =  0.0;
-//    thormang3_link_data_[45]->relative_position_  =  robotis_framework::getTransitionXYZ( 0.0 , 0.0 , -0.0275 );
-    thormang3_link_data_[45]->relative_position_  =  robotis_framework::getTransitionXYZ( 0.0 , 0.0 , -0.0294 );
+    thormang3_link_data_[45]->relative_position_  =  robotis_framework::getTransitionXYZ( 0.0 , 0.0 , -0.0275 );
     thormang3_link_data_[45]->joint_axis_         =  robotis_framework::getTransitionXYZ( 0.0 , 0.0 , 0.0 );
     thormang3_link_data_[45]->center_of_mass_     =  robotis_framework::getTransitionXYZ( 0.0 , 0.0 , 0.0 );
     thormang3_link_data_[45]->joint_limit_max_    =  100.0;
@@ -651,8 +649,7 @@ KinematicsDynamics::KinematicsDynamics(TreeSelect tree)
     thormang3_link_data_[36]->sibling_            =  -1;
     thormang3_link_data_[36]->child_              =  46;
     thormang3_link_data_[36]->mass_               =  1.689;
-//    thormang3_link_data_[36]->relative_position_  =  robotis_framework::getTransitionXYZ( -0.057 , 0.000 , -0.087 );
-    thormang3_link_data_[36]->relative_position_  =  robotis_framework::getTransitionXYZ( -0.057 , 0.000 , -0.092 );
+    thormang3_link_data_[36]->relative_position_  =  robotis_framework::getTransitionXYZ( -0.057 , 0.000 , -0.087 );
     thormang3_link_data_[36]->joint_axis_         =  robotis_framework::getTransitionXYZ( 0.0 , 0.0 , 0.0 );
     thormang3_link_data_[36]->center_of_mass_     =  robotis_framework::getTransitionXYZ( 0.000 , 0.009 , -0.013 );
     thormang3_link_data_[36]->joint_limit_max_    =  100.0;
@@ -665,8 +662,7 @@ KinematicsDynamics::KinematicsDynamics(TreeSelect tree)
     thormang3_link_data_[46]->sibling_            =  -1;
     thormang3_link_data_[46]->child_              =  -1;
     thormang3_link_data_[46]->mass_               =  0.0;
-//    thormang3_link_data_[46]->relative_position_  =  robotis_framework::getTransitionXYZ( 0.0 , 0.0 , -0.0275 );
-    thormang3_link_data_[46]->relative_position_  =  robotis_framework::getTransitionXYZ( 0.0 , 0.0 , -0.0294 );
+    thormang3_link_data_[46]->relative_position_  =  robotis_framework::getTransitionXYZ( 0.0 , 0.0 , -0.0275 );
     thormang3_link_data_[46]->joint_axis_         =  robotis_framework::getTransitionXYZ( 0.0 , 0.0 , 0.0 );
     thormang3_link_data_[46]->center_of_mass_     =  robotis_framework::getTransitionXYZ( 0.0 , 0.0 , 0.0 );
     thormang3_link_data_[46]->joint_limit_max_    =  100.0;
@@ -809,40 +805,6 @@ void KinematicsDynamics::calcForwardKinematics(int joint_id)
   calcForwardKinematics(thormang3_link_data_[joint_id]->child_);
 }
 
-void KinematicsDynamics::calcForwardKinematicsLowerBody(int joint_id)
-{
-  if (joint_id == -1)
-    return;
-
-  if (joint_id == 28)
-    return;
-
-  if (joint_id == 0)
-  {
-    thormang3_link_data_[0]->position_ = Eigen::MatrixXd::Zero(3,1);
-    thormang3_link_data_[0]->orientation_ =
-        robotis_framework::calcRodrigues( robotis_framework::calcHatto( thormang3_link_data_[0]->joint_axis_ ), thormang3_link_data_[ 0 ]->joint_angle_ );
-  }
-
-  if ( joint_id != 0 )
-  {
-    int parent = thormang3_link_data_[joint_id]->parent_;
-
-    thormang3_link_data_[joint_id]->position_ =
-        thormang3_link_data_[parent]->orientation_ * thormang3_link_data_[joint_id]->relative_position_ + thormang3_link_data_[parent]->position_;
-    thormang3_link_data_[ joint_id ]->orientation_ =
-        thormang3_link_data_[ parent ]->orientation_ *
-        robotis_framework::calcRodrigues(robotis_framework::calcHatto(thormang3_link_data_[joint_id]->joint_axis_), thormang3_link_data_[joint_id]->joint_angle_);
-
-    //    thormang3_link_data_[joint_id]->transformation_.block<3,1>(0,3) = thormang3_link_data_[joint_id]->position_;
-    //    thormang3_link_data_[joint_id]->transformation_.block<3,3>(0,0) = thormang3_link_data_[joint_id]->orientation_;
-  }
-
-  calcForwardKinematicsLowerBody(thormang3_link_data_[joint_id]->sibling_);
-  calcForwardKinematicsLowerBody(thormang3_link_data_[joint_id]->child_);
-}
-
-
 Eigen::MatrixXd KinematicsDynamics::calcJacobian(std::vector<int> idx)
 {
   int idx_size = idx.size();
@@ -964,13 +926,12 @@ bool KinematicsDynamics::calcInverseKinematics(int to, Eigen::MatrixXd tar_posit
     return false;
 }
 
-bool KinematicsDynamics::calcInverseKinematics
-(int from, int to, Eigen::MatrixXd tar_position, Eigen::MatrixXd tar_orientation, int max_iter, double ik_err)
+bool KinematicsDynamics::calcInverseKinematics(int from, int to, Eigen::MatrixXd tar_position, Eigen::MatrixXd tar_orientation, int max_iter, double ik_err)
 {
   bool ik_success = false;
   bool limit_success = false;
 
-//  calcForwardKinematics(0);
+  //  calcForwardKinematics(0);
 
   std::vector<int> idx = findRoute(from, to);
 
@@ -1029,8 +990,7 @@ bool KinematicsDynamics::calcInverseKinematics
     return false;
 }
 
-bool KinematicsDynamics::calcInverseKinematics
-(int to, Eigen::MatrixXd tar_position, Eigen::MatrixXd tar_orientation, int max_iter, double ik_err , Eigen::MatrixXd weight)
+bool KinematicsDynamics::calcInverseKinematics(int to, Eigen::MatrixXd tar_position, Eigen::MatrixXd tar_orientation, int max_iter, double ik_err , Eigen::MatrixXd weight)
 {
   bool ik_success = false;
   bool limit_success = false;
@@ -1114,8 +1074,7 @@ bool KinematicsDynamics::calcInverseKinematics
     return false;
 }
 
-bool KinematicsDynamics::calcInverseKinematics
-(int from, int to, Eigen::MatrixXd tar_position, Eigen::MatrixXd tar_orientation, int max_iter, double ik_err, Eigen::MatrixXd weight)
+bool KinematicsDynamics::calcInverseKinematics(int from, int to, Eigen::MatrixXd tar_position, Eigen::MatrixXd tar_orientation, int max_iter, double ik_err, Eigen::MatrixXd weight)
 {
   bool ik_success = false;
   bool limit_success = false;
@@ -1312,71 +1271,6 @@ bool KinematicsDynamics::calcInverseKinematicsForLeftLeg(double *out, double x, 
     return false;
 }
 
-bool KinematicsDynamics::calcInverseKinematicsWOFK
-(int from, int to, Eigen::MatrixXd tar_position, Eigen::MatrixXd tar_orientation, int max_iter, double ik_err)
-{
-  bool ik_success = false;
-  bool limit_success = false;
-
-//  calcForwardKinematics(0);
-
-  std::vector<int> idx = findRoute(from, to);
-
-  for (int iter=0; iter<max_iter; iter++)
-  {
-    Eigen::MatrixXd jacobian = calcJacobian(idx);
-
-    Eigen::MatrixXd curr_position = thormang3_link_data_[to]->position_;
-    Eigen::MatrixXd curr_orientation = thormang3_link_data_[to]->orientation_;
-
-    Eigen::MatrixXd err = calcVWerr(tar_position, curr_position, tar_orientation, curr_orientation);
-
-    if (err.norm()<ik_err)
-    {
-      ik_success = true;
-      break;
-    }
-    else
-      ik_success = false;
-
-    Eigen::MatrixXd jacobian_trans = jacobian * jacobian.transpose();
-    Eigen::MatrixXd jacobian_inv = jacobian.transpose() * jacobian_trans.inverse();
-
-    Eigen::MatrixXd delta_angle = jacobian_inv * err ;
-
-    for (int id=0; id<idx.size(); id++)
-    {
-      int joint_num = idx[id];
-      thormang3_link_data_[joint_num]->joint_angle_ +=delta_angle.coeff(id);
-    }
-
-    calcForwardKinematics(0);
-  }
-
-  for ( int id = 0; id < idx.size(); id++ )
-  {
-    int joint_num      =   idx[ id ];
-
-    if ( thormang3_link_data_[ joint_num ]->joint_angle_ >= thormang3_link_data_[ joint_num ]->joint_limit_max_ )
-    {
-      limit_success = false;
-      break;
-    }
-    else if ( thormang3_link_data_[ joint_num ]->joint_angle_ <= thormang3_link_data_[ joint_num ]->joint_limit_min_ )
-    {
-      limit_success = false;
-      break;
-    }
-    else
-      limit_success = true;
-  }
-
-  if (ik_success == true && limit_success == true)
-    return true;
-  else
-    return false;
-}
-
 Eigen::MatrixXd KinematicsDynamics::calcPreviewParam(double preview_time, double control_cycle,
                                                      double lipm_height,
                                                      Eigen::MatrixXd K, Eigen::MatrixXd P)
@@ -1444,92 +1338,6 @@ Eigen::MatrixXd KinematicsDynamics::calcPreviewParam(double preview_time, double
   }
 
   return f_;
-}
-
-bool KinematicsDynamics::calcInverseKinematicsDual
-(int from_1, int to_1, Eigen::MatrixXd tar_position_1, Eigen::MatrixXd tar_orientation_1,
- int from_2, int to_2, Eigen::MatrixXd tar_position_2, Eigen::MatrixXd tar_orientation_2,
- int max_iter, double ik_err)
-{
-  bool ik_success = false;
-//  bool limit_success = false;
-
-//  calcForwardKinematics(0);
-
-  std::vector<int> idx_1 = findRoute(from_1, to_1);
-  std::vector<int> idx_2 = findRoute(from_2, to_2);
-
-  for (int iter=0; iter<max_iter; iter++)
-  {
-    Eigen::MatrixXd jacobian_1 = calcJacobian(idx_1);
-    Eigen::MatrixXd jacobian_2 = calcJacobian(idx_2);
-
-    Eigen::MatrixXd curr_position_1 = thormang3_link_data_[to_1]->position_;
-    Eigen::MatrixXd curr_orientation_1 = thormang3_link_data_[to_1]->orientation_;
-
-    Eigen::MatrixXd curr_position_2 = thormang3_link_data_[to_2]->position_;
-    Eigen::MatrixXd curr_orientation_2 = thormang3_link_data_[to_2]->orientation_;
-
-    Eigen::MatrixXd err_1 = calcVWerr(tar_position_1, curr_position_1, tar_orientation_1, curr_orientation_1);
-    Eigen::MatrixXd err_2 = calcVWerr(tar_position_2, curr_position_2, tar_orientation_2, curr_orientation_2);
-
-    if (err_1.norm()<ik_err && err_2.norm()<ik_err)
-    {
-      ik_success = true;
-      break;
-    }
-    else
-      ik_success = false;
-
-    Eigen::MatrixXd jacobian_trans_1 = jacobian_1 * jacobian_1.transpose();
-    Eigen::MatrixXd jacobian_inv_1 = jacobian_1.transpose() * jacobian_trans_1.inverse();
-
-    Eigen::MatrixXd delta_angle_1 = jacobian_inv_1 * err_1 ;
-
-    for (int id=0; id<idx_1.size(); id++)
-    {
-      int joint_num = idx_1[id];
-      thormang3_link_data_[joint_num]->joint_angle_ +=delta_angle_1.coeff(id);
-    }
-
-    Eigen::MatrixXd jacobian_trans_2 = jacobian_2 * jacobian_2.transpose();
-    Eigen::MatrixXd jacobian_inv_2 = jacobian_2.transpose() * jacobian_trans_2.inverse();
-
-    Eigen::MatrixXd delta_angle_2 = jacobian_inv_2 * err_2 ;
-
-    for (int id=0; id<idx_2.size(); id++)
-    {
-      int joint_num = idx_2[id];
-      thormang3_link_data_[joint_num]->joint_angle_ +=delta_angle_2.coeff(id);
-    }
-
-    calcForwardKinematicsLowerBody(0);
-  }
-
-//  for ( int id = 0; id < idx_1.size(); id++ )
-//  {
-//    int joint_num      =   idx_1[ id ];
-
-//    if ( thormang3_link_data_[ joint_num ]->joint_angle_ >= thormang3_link_data_[ joint_num ]->joint_limit_max_ )
-//    {
-//      limit_success = false;
-//      break;
-//    }
-//    else if ( thormang3_link_data_[ joint_num ]->joint_angle_ <= thormang3_link_data_[ joint_num ]->joint_limit_min_ )
-//    {
-//      limit_success = false;
-//      break;
-//    }
-//    else
-//      limit_success = true;
-//  }
-
-//  if (ik_success == true && limit_success == true)
-//    return true;
-//  else
-//    return false;
-
-  return ik_success;
 }
 
 }

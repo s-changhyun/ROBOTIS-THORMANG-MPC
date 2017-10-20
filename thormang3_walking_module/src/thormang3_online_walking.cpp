@@ -910,6 +910,9 @@ void THORMANG3OnlineWalking::calcRefZMP()
       }
     }
   }
+
+
+  ROS_INFO("reference_zmp_x_: %f , reference_zmp_y_: %f", reference_zmp_x_(ref_zmp_idx, 0) , reference_zmp_y_(ref_zmp_idx, 0));
 }
 
 void THORMANG3OnlineWalking::calcDesiredPose()
@@ -1383,6 +1386,8 @@ void THORMANG3OnlineWalking::process()
     mat_robot_to_rfoot_ = mat_robot_to_g_*mat_g_to_rfoot_;
     mat_robot_to_lfoot_ = mat_robot_to_g_*mat_g_to_lfoot_;
 
+//    PRINT_MAT(mat_robot_to_g_);
+//    PRINT_MAT(mat_g_to_rfoot_);
 
     //Stabilizer Start
     //Balancing Algorithm
@@ -1425,8 +1430,13 @@ void THORMANG3OnlineWalking::process()
     mat_right_force  = mat_robot_to_rfoot_*mat_rfoot_to_rft_*mat_right_force;
     mat_right_torque = mat_robot_to_rfoot_*mat_rfoot_to_rft_*mat_right_torque;
 
+//    PRINT_MAT(mat_robot_to_rfoot_);
+
     mat_left_force  = mat_robot_to_lfoot_*mat_lfoot_to_lft_*mat_left_force;
     mat_left_torque = mat_robot_to_lfoot_*mat_lfoot_to_lft_*mat_left_torque;
+
+    PRINT_MAT(mat_right_force);
+    PRINT_MAT(mat_left_force);
 
     imu_data_mutex_lock_.lock();
     double gyro_roll_rad_per_sec  = current_gyro_roll_rad_per_sec_;
@@ -1443,8 +1453,6 @@ void THORMANG3OnlineWalking::process()
                                                         mat_left_force.coeff(0,0),   mat_left_force.coeff(1,0),   mat_left_force.coeff(2,0),
                                                         mat_left_torque.coeff(0,0),  mat_left_torque.coeff(1,0),  mat_left_torque.coeff(2,0));
 
-    ROS_INFO("mat_right_force x: %f, y: %f, z: %f", mat_right_force.coeff(0,0), mat_right_force.coeff(1,0), mat_right_force.coeff(2,0));
-    ROS_INFO("mat_left_force x: %f, y: %f, z: %f", mat_left_force.coeff(0,0), mat_left_force.coeff(1,0), mat_left_force.coeff(2,0));
 
     double r_target_fx_N = 0;
     double l_target_fx_N = 0;
@@ -1606,9 +1614,6 @@ void THORMANG3OnlineWalking::process()
                                             l_target_fx_N*1.0, l_target_fy_N*1.0, l_target_fz_N, 0, 0, 0);
     balance_ctrl_.setDesiredPose(mat_robot_to_cob_, mat_robot_to_rfoot_, mat_robot_to_lfoot_);
 
-//    ROS_INFO("r_target_fx_N: %f, r_target_fy_N: %f, r_target_fz_N: %f", r_target_fx_N, r_target_fy_N, r_target_fz_N);
-//    ROS_INFO("l_target_fx_N: %f, l_target_fy_N: %f, l_target_fz_N: %f", l_target_fx_N, l_target_fy_N, l_target_fz_N);
-
     balance_ctrl_.process(&balance_error_, &mat_robot_to_cob_modified_, &mat_robot_to_rf_modified_, &mat_robot_to_lf_modified_);
     mat_cob_to_robot_modified_ = robotis_framework::getInverseTransformation(mat_robot_to_cob_modified_);
     //Stabilizer End
@@ -1637,6 +1642,7 @@ void THORMANG3OnlineWalking::process()
       printf("IK not Solved EPL : %f %f %f %f %f %f\n", lhip_to_lfoot_pose_.x, lhip_to_lfoot_pose_.y, lhip_to_lfoot_pose_.z, lhip_to_lfoot_pose_.roll, lhip_to_lfoot_pose_.pitch, lhip_to_lfoot_pose_.yaw);
       return;
     }
+
 
     r_shoulder_out_angle_rad_ = r_shoulder_dir_*(mat_robot_to_rfoot_.coeff(0, 3) - mat_robot_to_lfoot_.coeff(0, 3))*shouler_swing_gain_ + r_init_shoulder_angle_rad_;
     l_shoulder_out_angle_rad_ = l_shoulder_dir_*(mat_robot_to_lfoot_.coeff(0, 3) - mat_robot_to_rfoot_.coeff(0, 3))*shouler_swing_gain_ + l_init_shoulder_angle_rad_;
