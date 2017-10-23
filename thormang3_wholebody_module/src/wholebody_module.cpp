@@ -503,8 +503,11 @@ void WholebodyModule::leftFootForceTorqueOutputCallback(const geometry_msgs::Wre
   torque.coeffRef(1,0) = msg->wrench.torque.y;
   torque.coeffRef(2,0) = msg->wrench.torque.z;
 
-  Eigen::MatrixXd force_new = robotis_framework::getRotationX(M_PI)*robotis_framework::getRotationZ(-0.5*M_PI)*force;
-  Eigen::MatrixXd torque_new = robotis_framework::getRotationX(M_PI)*robotis_framework::getRotationZ(-0.5*M_PI)*torque;
+//  Eigen::MatrixXd force_new = robotis_framework::getRotationX(M_PI)*robotis_framework::getRotationZ(-0.5*M_PI)*force;
+//  Eigen::MatrixXd torque_new = robotis_framework::getRotationX(M_PI)*robotis_framework::getRotationZ(-0.5*M_PI)*torque;
+
+  Eigen::MatrixXd force_new = robotis_framework::getRotationZ(0.5*M_PI)*force;
+  Eigen::MatrixXd torque_new = robotis_framework::getRotationZ(0.5*M_PI)*torque;
 
   double l_foot_fx_N  = force_new.coeff(0,0);
   double l_foot_fy_N  = force_new.coeff(1,0);
@@ -540,8 +543,11 @@ void WholebodyModule::rightFootForceTorqueOutputCallback(const geometry_msgs::Wr
   torque.coeffRef(1,0) = msg->wrench.torque.y;
   torque.coeffRef(2,0) = msg->wrench.torque.z;
 
-  Eigen::MatrixXd force_new = robotis_framework::getRotationX(M_PI)*robotis_framework::getRotationZ(-0.5*M_PI)*force;
-  Eigen::MatrixXd torque_new = robotis_framework::getRotationX(M_PI)*robotis_framework::getRotationZ(-0.5*M_PI)*torque;
+//  Eigen::MatrixXd force_new = robotis_framework::getRotationX(M_PI)*robotis_framework::getRotationZ(-0.5*M_PI)*force;
+//  Eigen::MatrixXd torque_new = robotis_framework::getRotationX(M_PI)*robotis_framework::getRotationZ(-0.5*M_PI)*torque;
+
+  Eigen::MatrixXd force_new = robotis_framework::getRotationZ(0.5*M_PI)*force;
+  Eigen::MatrixXd torque_new = robotis_framework::getRotationZ(0.5*M_PI)*torque;
 
   double r_foot_fx_N  = force_new.coeff(0,0);
   double r_foot_fy_N  = force_new.coeff(1,0);
@@ -929,7 +935,7 @@ void WholebodyModule::calcWalkingControl()
     double cur_time = (double) mov_step_ * control_cycle_sec_;
     bool calc_result = walking_control_->set(cur_time, walking_step_);
 
-//    ROS_INFO("mov_step_: %d", mov_step_);
+    ROS_INFO("cur_time: %f", cur_time);
 
     if(calc_result == true)
     {
@@ -962,7 +968,7 @@ void WholebodyModule::calcWalkingControl()
       walking_control_->getLIPM(x_lipm_, y_lipm_);
 
 //      ROS_INFO("x_lipm_ pos: %f , vel: %f , accel: %f", x_lipm_[0], x_lipm_[1], x_lipm_[2]);
-    //  ROS_INFO("y_lipm_ pos: %f , vel: %f , accel: %f", y_lipm_[0], y_lipm_[1], y_lipm_[2]);
+//      ROS_INFO("y_lipm_ pos: %f , vel: %f , accel: %f", y_lipm_[0], y_lipm_[1], y_lipm_[2]);
 
       walking_control_->getWalkingState(walking_leg_, walking_phase_);
     }
@@ -979,7 +985,7 @@ void WholebodyModule::calcWalkingControl()
 
     if (mov_step_ == mov_size_-1)
     {
-//      ROS_INFO("[END] Walking Control (%d/%d)", walking_step_+1, walking_size_);
+      ROS_INFO("[END] Walking Control (%d/%d)", walking_step_+1, walking_size_);
 
       mov_step_ = 0;
       walking_control_->next();
@@ -995,7 +1001,7 @@ void WholebodyModule::calcWalkingControl()
       else
       {
         walking_step_++;
-//        ROS_INFO("[START] Walking Control (%d/%d)", walking_step_+1, walking_size_);
+        ROS_INFO("[START] Walking Control (%d/%d)", walking_step_+1, walking_size_);
       }
     }
     else
@@ -1308,20 +1314,36 @@ bool WholebodyModule::setBalanceControl()
 //      g_to_l_foot_rot * robotis_framework::getRotationX(M_PI) *
 //      robotis_framework::getTransitionXYZ(l_foot_ft_data_msg_.torque.x, l_foot_ft_data_msg_.torque.y, l_foot_ft_data_msg_.torque.z);
 
+//  Eigen::MatrixXd robot_to_r_foot_force =
+//      robot_to_r_foot.block(0,0,3,3) * robotis_framework::getRotationX(M_PI) *
+//      robotis_framework::getTransitionXYZ(r_foot_ft_data_msg_.force.x, r_foot_ft_data_msg_.force.y, r_foot_ft_data_msg_.force.z);
+
+//  Eigen::MatrixXd robot_to_r_foot_torque =
+//      robot_to_r_foot.block(0,0,3,3) * robotis_framework::getRotationX(M_PI) *
+//      robotis_framework::getTransitionXYZ(r_foot_ft_data_msg_.torque.x, r_foot_ft_data_msg_.torque.y, r_foot_ft_data_msg_.torque.z);
+
+//  Eigen::MatrixXd robot_to_l_foot_force =
+//      robot_to_l_foot.block(0,0,3,3) * robotis_framework::getRotationX(M_PI) *
+//      robotis_framework::getTransitionXYZ(l_foot_ft_data_msg_.force.x, l_foot_ft_data_msg_.force.y, l_foot_ft_data_msg_.force.z);
+
+//  Eigen::MatrixXd robot_to_l_foot_torque =
+//      robot_to_l_foot.block(0,0,3,3) * robotis_framework::getRotationX(M_PI) *
+//      robotis_framework::getTransitionXYZ(l_foot_ft_data_msg_.torque.x, l_foot_ft_data_msg_.torque.y, l_foot_ft_data_msg_.torque.z);
+
   Eigen::MatrixXd robot_to_r_foot_force =
-      robot_to_r_foot.block(0,0,3,3) * robotis_framework::getRotationX(M_PI) *
+      robot_to_r_foot.block(0,0,3,3) *
       robotis_framework::getTransitionXYZ(r_foot_ft_data_msg_.force.x, r_foot_ft_data_msg_.force.y, r_foot_ft_data_msg_.force.z);
 
   Eigen::MatrixXd robot_to_r_foot_torque =
-      robot_to_r_foot.block(0,0,3,3) * robotis_framework::getRotationX(M_PI) *
+      robot_to_r_foot.block(0,0,3,3) *
       robotis_framework::getTransitionXYZ(r_foot_ft_data_msg_.torque.x, r_foot_ft_data_msg_.torque.y, r_foot_ft_data_msg_.torque.z);
 
   Eigen::MatrixXd robot_to_l_foot_force =
-      robot_to_l_foot.block(0,0,3,3) * robotis_framework::getRotationX(M_PI) *
+      robot_to_l_foot.block(0,0,3,3) *
       robotis_framework::getTransitionXYZ(l_foot_ft_data_msg_.force.x, l_foot_ft_data_msg_.force.y, l_foot_ft_data_msg_.force.z);
 
   Eigen::MatrixXd robot_to_l_foot_torque =
-      robot_to_l_foot.block(0,0,3,3) * robotis_framework::getRotationX(M_PI) *
+      robot_to_l_foot.block(0,0,3,3) *
       robotis_framework::getTransitionXYZ(l_foot_ft_data_msg_.torque.x, l_foot_ft_data_msg_.torque.y, l_foot_ft_data_msg_.torque.z);
 
   balance_control_.setCurrentOrientationSensorOutput(imu_rpy.coeff(0,0), imu_rpy.coeff(1,0));
