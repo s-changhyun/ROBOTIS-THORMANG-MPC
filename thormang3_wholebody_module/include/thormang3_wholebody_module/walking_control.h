@@ -56,7 +56,7 @@ public:
   void calcPreviewParam(thormang3_wholebody_module_msgs::PreviewResponse msg);
   void calcPreviewControl(double time, int step);
 
-  void calcAllRefZMP();
+  void calcGoalFootPose();
 
   double calcRefZMPx(int step);
   double calcRefZMPy(int step);

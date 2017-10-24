@@ -249,18 +249,18 @@ void WalkingControl::calcFootStepParam()
 
   int walking_start_leg;
   if (foot_step_command_.start_leg == "left_leg")
-    walking_start_leg = RIGHT_LEG;
-  else if (foot_step_command_.start_leg == "right_leg")
     walking_start_leg = LEFT_LEG;
+  else if (foot_step_command_.start_leg == "right_leg")
+    walking_start_leg = RIGHT_LEG;
 
   if (foot_step_command_.command == "right")
-    walking_start_leg = LEFT_LEG;
+    walking_start_leg = RIGHT_LEG;
   else if (foot_step_command_.command == "left")
-    walking_start_leg = RIGHT_LEG;
-  else if (foot_step_command_.command == "turn_right")
     walking_start_leg = LEFT_LEG;
-  else if (foot_step_command_.command == "turn_left")
+  else if (foot_step_command_.command == "turn_right")
     walking_start_leg = RIGHT_LEG;
+  else if (foot_step_command_.command == "turn_left")
+    walking_start_leg = LEFT_LEG;
 
   int walking_leg = walking_start_leg;
   double foot_angle = init_body_yaw_angle_;
@@ -328,6 +328,7 @@ void WalkingControl::calcFootStepParam()
       theta *= 0.0;
 
     if (i == 0 ||
+        i == 1 ||
         i == foot_step_size_-1)
     {
       msg.x = 0.0;
@@ -349,7 +350,8 @@ void WalkingControl::calcFootStepParam()
     foot_step_param_.data.push_back(msg);
   }
 
-  calcAllRefZMP();
+  calcGoalFootPose();
+
 //  ROS_INFO("--");
 //  for (int i=0; i<foot_step_size_; i++)
 //  {
@@ -402,7 +404,7 @@ void WalkingControl::calcFootTrajectory(int step)
     via_l_foot_pos[1] = 0.5*(init_l_foot_pos_[1] + goal_l_foot_pos_[1]);
     via_l_foot_pos[2] = foot_tra_max_z_;
 
-    if (step == 0)
+    if (step == 0 || step == 1)
       via_l_foot_pos[2] = 0.0;
 
     if (step == foot_step_size_-1)
@@ -448,7 +450,7 @@ void WalkingControl::calcFootTrajectory(int step)
     via_r_foot_pos[1] = 0.5*(init_r_foot_pos_[1] + goal_r_foot_pos_[1]);
     via_r_foot_pos[2] = foot_tra_max_z_;
 
-    if (step == 0)
+    if (step == 0 || step == 1)
       via_r_foot_pos[2] = 0.0;
 
     if (step == foot_step_size_-1)
@@ -501,7 +503,7 @@ void WalkingControl::calcFootStepPose(double time, int step)
 
 void WalkingControl::calcRefZMP(int step)
 {
-  if (step == 0)
+  if (step == 0 || step == 1)
   {
     ref_zmp_x_ = 0.5*(goal_r_foot_pos_[0] + goal_l_foot_pos_[0]); // + zmp_offset_x_;
     ref_zmp_y_ = 0.5*(goal_r_foot_pos_[1] + goal_l_foot_pos_[1]);
@@ -528,7 +530,7 @@ void WalkingControl::calcRefZMP(int step)
 //  ROS_INFO("ref zmp x: %f, y: %f", ref_zmp_x_, ref_zmp_y_);
 }
 
-void WalkingControl::calcAllRefZMP()
+void WalkingControl::calcGoalFootPose()
 {
   goal_r_foot_pos_buffer_ = Eigen::MatrixXd::Zero(foot_step_size_,2);
   goal_l_foot_pos_buffer_ = Eigen::MatrixXd::Zero(foot_step_size_,2);
@@ -581,28 +583,13 @@ void WalkingControl::calcAllRefZMP()
     init_r_foot_pos = goal_r_foot_pos;
     init_l_foot_pos = goal_l_foot_pos;
   }
-
-//  PRINT_MAT(goal_r_foot_pos_buffer_);
-//  PRINT_MAT(goal_l_foot_pos_buffer_);
-
-//  int all_time = int(fin_time_ * control_cycle_);
-////  ROS_INFO("alltime: %d", all_time);
-//  all_time *= foot_step_size_;
-////  ROS_INFO("alltime: %d", all_time);
-
-//  for (int i=0; i<all_time; i++)
-//  {
-
-
-
-//  }
 }
 
 double WalkingControl::calcRefZMPx(int step)
 {
   double ref_zmp_x;
 
-  if (step == 0)
+  if (step == 0 || step == 1)
   {
     ref_zmp_x = 0.5 * (goal_r_foot_pos_buffer_.coeff(step,0) + goal_l_foot_pos_buffer_.coeff(step,0)); // + zmp_offset_x_;
   }
@@ -625,7 +612,7 @@ double WalkingControl::calcRefZMPy(int step)
 {
   double ref_zmp_y;
 
-  if (step == 0)
+  if (step == 0 || step == 1)
   {
     ref_zmp_y = 0.5 * (goal_r_foot_pos_buffer_.coeff(step,1) + goal_l_foot_pos_buffer_.coeff(step,1));
   }
@@ -765,8 +752,8 @@ void WalkingControl::calcPreviewControl(double time, int step)
   des_body_pos_[0] = x_lipm_.coeff(0,0);
   des_body_pos_[1] = y_lipm_.coeff(0,0);
 
-//  ROS_INFO("x_lipm 1: %f, 2: %f, 3:%f", x_lipm_.coeff(0,0), x_lipm_.coeff(1,0), x_lipm_.coeff(2,0));
-//  ROS_INFO("y_lipm 1: %f, 2: %f, 3:%f", y_lipm_.coeff(0,0), y_lipm_.coeff(1,0), y_lipm_.coeff(2,0));
+//  ROS_INFO("x_lipm pos: %f, vel: %f, accel:%f", x_lipm_.coeff(0,0), x_lipm_.coeff(1,0), x_lipm_.coeff(2,0));
+//  ROS_INFO("y_lipm pos: %f, vel: %f, accel:%f", y_lipm_.coeff(0,0), y_lipm_.coeff(1,0), y_lipm_.coeff(2,0));
 
 //  ROS_INFO("time: %f, desired_body_pos_ x: %f , y: %f", time, des_body_pos_[0], des_body_pos_[1]);
 }
