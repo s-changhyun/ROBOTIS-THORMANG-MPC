@@ -251,7 +251,12 @@ void OnlineWalkingModule::queueThread()
   ros::ServiceServer remove_existing_step_data = ros_node.advertiseService("/robotis/walking/remove_existing_step_data", &OnlineWalkingModule::removeExistingStepDataServiceCallback, this);
 
   /* sensor topic subscribe */
-  ros::Subscriber imu_data_sub      = ros_node.subscribe("/robotis/sensor/imu/imu",              3, &OnlineWalkingModule::imuDataOutputCallback,        this);
+  ros::Subscriber imu_data_sub  = ros_node.subscribe("/robotis/sensor/imu/imu", 3,
+                                                     &OnlineWalkingModule::imuDataOutputCallback, this);
+  ros::Subscriber l_foot_ft_sub = ros_node.subscribe("/robotis/sensor/l_foot_ft", 3,
+                                                     &OnlineWalkingModule::leftFootForceTorqueOutputCallback, this);
+  ros::Subscriber r_foot_ft_sub = ros_node.subscribe("/robotis/sensor/r_foot_ft", 3,
+                                                     &OnlineWalkingModule::rightFootForceTorqueOutputCallback, this);
 
   ros::WallDuration duration(control_cycle_msec_ / 1000.0);
   if(ros::param::get("gazebo", gazebo_) == false)
@@ -328,6 +333,66 @@ void OnlineWalkingModule::publishDoneMsg(std::string msg)
   done_msg.data = msg;
 
   done_msg_pub_.publish(done_msg);
+}
+
+void OnlineWalkingModule::leftFootForceTorqueOutputCallback(const geometry_msgs::WrenchStamped::ConstPtr &msg)
+{
+  Eigen::MatrixXd force = Eigen::MatrixXd::Zero(3,1);
+  force.coeffRef(0,0) = msg->wrench.force.x;
+  force.coeffRef(1,0) = msg->wrench.force.y;
+  force.coeffRef(2,0) = msg->wrench.force.z;
+
+  Eigen::MatrixXd torque = Eigen::MatrixXd::Zero(3,1);
+  torque.coeffRef(0,0) = msg->wrench.torque.x;
+  torque.coeffRef(1,0) = msg->wrench.torque.y;
+  torque.coeffRef(2,0) = msg->wrench.torque.z;
+
+  Eigen::MatrixXd force_new = robotis_framework::getRotationX(M_PI)*robotis_framework::getRotationZ(-0.5*M_PI)*force;
+  Eigen::MatrixXd torque_new = robotis_framework::getRotationX(M_PI)*robotis_framework::getRotationZ(-0.5*M_PI)*torque;
+
+  double l_foot_fx_N  = force_new.coeff(0,0);
+  double l_foot_fy_N  = force_new.coeff(1,0);
+  double l_foot_fz_N  = force_new.coeff(2,0);
+  double l_foot_Tx_Nm = torque_new.coeff(0,0);
+  double l_foot_Ty_Nm = torque_new.coeff(1,0);
+  double l_foot_Tz_Nm = torque_new.coeff(2,0);
+
+  l_foot_fx_N_ = robotis_framework::sign(l_foot_fx_N) * fmin( fabs(l_foot_fx_N), 2000.0);
+  l_foot_fy_N_ = robotis_framework::sign(l_foot_fy_N) * fmin( fabs(l_foot_fy_N), 2000.0);
+  l_foot_fz_N_ = robotis_framework::sign(l_foot_fz_N) * fmin( fabs(l_foot_fz_N), 2000.0);
+  l_foot_Tx_Nm_ = robotis_framework::sign(l_foot_Tx_Nm) * fmin(fabs(l_foot_Tx_Nm), 300.0);
+  l_foot_Ty_Nm_ = robotis_framework::sign(l_foot_Ty_Nm) * fmin(fabs(l_foot_Ty_Nm), 300.0);
+  l_foot_Tz_Nm_ = robotis_framework::sign(l_foot_Tz_Nm) * fmin(fabs(l_foot_Tz_Nm), 300.0);
+}
+
+void OnlineWalkingModule::rightFootForceTorqueOutputCallback(const geometry_msgs::WrenchStamped::ConstPtr &msg)
+{
+  Eigen::MatrixXd force = Eigen::MatrixXd::Zero(3,1);
+  force.coeffRef(0,0) = msg->wrench.force.x;
+  force.coeffRef(1,0) = msg->wrench.force.y;
+  force.coeffRef(2,0) = msg->wrench.force.z;
+
+  Eigen::MatrixXd torque = Eigen::MatrixXd::Zero(3,1);
+  torque.coeffRef(0,0) = msg->wrench.torque.x;
+  torque.coeffRef(1,0) = msg->wrench.torque.y;
+  torque.coeffRef(2,0) = msg->wrench.torque.z;
+
+  Eigen::MatrixXd force_new = robotis_framework::getRotationX(M_PI)*robotis_framework::getRotationZ(-0.5*M_PI)*force;
+  Eigen::MatrixXd torque_new = robotis_framework::getRotationX(M_PI)*robotis_framework::getRotationZ(-0.5*M_PI)*torque;
+
+  double r_foot_fx_N  = force_new.coeff(0,0);
+  double r_foot_fy_N  = force_new.coeff(1,0);
+  double r_foot_fz_N  = force_new.coeff(2,0);
+  double r_foot_Tx_Nm = torque_new.coeff(0,0);
+  double r_foot_Ty_Nm = torque_new.coeff(1,0);
+  double r_foot_Tz_Nm = torque_new.coeff(2,0);
+
+  r_foot_fx_N_ = robotis_framework::sign(r_foot_fx_N) * fmin( fabs(r_foot_fx_N), 2000.0);
+  r_foot_fy_N_ = robotis_framework::sign(r_foot_fy_N) * fmin( fabs(r_foot_fy_N), 2000.0);
+  r_foot_fz_N_ = robotis_framework::sign(r_foot_fz_N) * fmin( fabs(r_foot_fz_N), 2000.0);
+  r_foot_Tx_Nm_ = robotis_framework::sign(r_foot_Tx_Nm) *fmin(fabs(r_foot_Tx_Nm), 300.0);
+  r_foot_Ty_Nm_ = robotis_framework::sign(r_foot_Ty_Nm) *fmin(fabs(r_foot_Ty_Nm), 300.0);
+  r_foot_Tz_Nm_ = robotis_framework::sign(r_foot_Tz_Nm) *fmin(fabs(r_foot_Tz_Nm), 300.0);
 }
 
 int OnlineWalkingModule::convertStepDataMsgToStepData(thormang3_walking_module_msgs::StepData& src, robotis_framework::StepData& des)
@@ -1184,21 +1249,19 @@ void OnlineWalkingModule::process(std::map<std::string, robotis_framework::Dynam
 //  l_foot_Ty_Nm_ = sensors["l_foot_ty_scaled_Nm"];
 //  l_foot_Tz_Nm_ = sensors["l_foot_tz_scaled_Nm"];
 
+//  r_foot_fx_N_ = robotis_framework::sign(r_foot_fx_N_) * fmin( fabs(r_foot_fx_N_), 2000.0);
+//  r_foot_fy_N_ = robotis_framework::sign(r_foot_fy_N_) * fmin( fabs(r_foot_fy_N_), 2000.0);
+//  r_foot_fz_N_ = robotis_framework::sign(r_foot_fz_N_) * fmin( fabs(r_foot_fz_N_), 2000.0);
+//  r_foot_Tx_Nm_ = robotis_framework::sign(r_foot_Tx_Nm_) *fmin(fabs(r_foot_Tx_Nm_), 300.0);
+//  r_foot_Ty_Nm_ = robotis_framework::sign(r_foot_Ty_Nm_) *fmin(fabs(r_foot_Ty_Nm_), 300.0);
+//  r_foot_Tz_Nm_ = robotis_framework::sign(r_foot_Tz_Nm_) *fmin(fabs(r_foot_Tz_Nm_), 300.0);
 
-  r_foot_fx_N_ = robotis_framework::sign(r_foot_fx_N_) * fmin( fabs(r_foot_fx_N_), 2000.0);
-  r_foot_fy_N_ = robotis_framework::sign(r_foot_fy_N_) * fmin( fabs(r_foot_fy_N_), 2000.0);
-  r_foot_fz_N_ = robotis_framework::sign(r_foot_fz_N_) * fmin( fabs(r_foot_fz_N_), 2000.0);
-  r_foot_Tx_Nm_ = robotis_framework::sign(r_foot_Tx_Nm_) *fmin(fabs(r_foot_Tx_Nm_), 300.0);
-  r_foot_Ty_Nm_ = robotis_framework::sign(r_foot_Ty_Nm_) *fmin(fabs(r_foot_Ty_Nm_), 300.0);
-  r_foot_Tz_Nm_ = robotis_framework::sign(r_foot_Tz_Nm_) *fmin(fabs(r_foot_Tz_Nm_), 300.0);
-
-  l_foot_fx_N_ = robotis_framework::sign(l_foot_fx_N_) * fmin( fabs(l_foot_fx_N_), 2000.0);
-  l_foot_fy_N_ = robotis_framework::sign(l_foot_fy_N_) * fmin( fabs(l_foot_fy_N_), 2000.0);
-  l_foot_fz_N_ = robotis_framework::sign(l_foot_fz_N_) * fmin( fabs(l_foot_fz_N_), 2000.0);
-  l_foot_Tx_Nm_ = robotis_framework::sign(l_foot_Tx_Nm_) *fmin(fabs(l_foot_Tx_Nm_), 300.0);
-  l_foot_Ty_Nm_ = robotis_framework::sign(l_foot_Ty_Nm_) *fmin(fabs(l_foot_Ty_Nm_), 300.0);
-  l_foot_Tz_Nm_ = robotis_framework::sign(l_foot_Tz_Nm_) *fmin(fabs(l_foot_Tz_Nm_), 300.0);
-
+//  l_foot_fx_N_ = robotis_framework::sign(l_foot_fx_N_) * fmin( fabs(l_foot_fx_N_), 2000.0);
+//  l_foot_fy_N_ = robotis_framework::sign(l_foot_fy_N_) * fmin( fabs(l_foot_fy_N_), 2000.0);
+//  l_foot_fz_N_ = robotis_framework::sign(l_foot_fz_N_) * fmin( fabs(l_foot_fz_N_), 2000.0);
+//  l_foot_Tx_Nm_ = robotis_framework::sign(l_foot_Tx_Nm_) *fmin(fabs(l_foot_Tx_Nm_), 300.0);
+//  l_foot_Ty_Nm_ = robotis_framework::sign(l_foot_Ty_Nm_) *fmin(fabs(l_foot_Ty_Nm_), 300.0);
+//  l_foot_Tz_Nm_ = robotis_framework::sign(l_foot_Tz_Nm_) *fmin(fabs(l_foot_Tz_Nm_), 300.0);
 
   if(balance_update_with_loop_ == true)
   {

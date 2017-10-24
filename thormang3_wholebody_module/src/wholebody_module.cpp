@@ -503,36 +503,16 @@ void WholebodyModule::leftFootForceTorqueOutputCallback(const geometry_msgs::Wre
   torque.coeffRef(1,0) = msg->wrench.torque.y;
   torque.coeffRef(2,0) = msg->wrench.torque.z;
 
-  //  Eigen::MatrixXd force_new = robotis_framework::getRotationX(M_PI)*robotis_framework::getRotationZ(-0.5*M_PI)*force;
-  //  Eigen::MatrixXd torque_new = robotis_framework::getRotationX(M_PI)*robotis_framework::getRotationZ(-0.5*M_PI)*torque;
+  Eigen::MatrixXd force_new = robotis_framework::getRotationX(M_PI)*robotis_framework::getRotationZ(-0.5*M_PI)*force;
+  Eigen::MatrixXd torque_new = robotis_framework::getRotationX(M_PI)*robotis_framework::getRotationZ(-0.5*M_PI)*torque;
 
-  //  Eigen::MatrixXd rotation = robotis_framework::getRotationZ(0.5*M_PI);
-  //  Eigen::Quaterniond quaternion = robotis_framework::convertRotationToQuaternion(rotation);
+  double l_foot_fx_N  = force_new.coeff(0,0);
+  double l_foot_fy_N  = force_new.coeff(1,0);
+  double l_foot_fz_N  = force_new.coeff(2,0);
+  double l_foot_Tx_Nm = torque_new.coeff(0,0);
+  double l_foot_Ty_Nm = torque_new.coeff(1,0);
+  double l_foot_Tz_Nm = torque_new.coeff(2,0);
 
-  //  PRINT_MAT(rotation);
-  //  ROS_INFO("quaternion x: %f , y: %f , z: %f , w: %f", quaternion.x(), quaternion.y(), quaternion.z(), quaternion.w());
-
-  //  double w = -1.0 * quaternion.w();
-  //  double z = -1.0 * quaternion.z();
-
-  //  Eigen::Quaterniond quaternion_new(w, quaternion.x(), quaternion.y(), z);
-  //  Eigen::MatrixXd rotation_new = robotis_framework::convertQuaternionToRotation(quaternion_new);
-
-  //  PRINT_MAT(rotation_new);
-  //  ROS_INFO("quaternion_new x: %f , y: %f , z: %f , w: %f", quaternion_new.x(), quaternion_new.y(), quaternion_new.z(), quaternion_new.w());
-
-  //  Eigen::MatrixXd force_new = robotis_framework::getRotationZ(0.5*M_PI)*force;
-  //  Eigen::MatrixXd torque_new = rotation_new*torque;
-
-  //  Eigen::MatrixXd force_new = force;
-  //  Eigen::MatrixXd torque_new = torque;
-
-  double l_foot_fx_N  = force.coeff(0,0);
-  double l_foot_fy_N  = force.coeff(1,0);
-  double l_foot_fz_N  = force.coeff(2,0);
-  double l_foot_Tx_Nm = torque.coeff(0,0);
-  double l_foot_Ty_Nm = torque.coeff(1,0);
-  double l_foot_Tz_Nm = torque.coeff(2,0);
 
   l_foot_fx_N = robotis_framework::sign(l_foot_fx_N) * fmin( fabs(l_foot_fx_N), 2000.0);
   l_foot_fy_N = robotis_framework::sign(l_foot_fy_N) * fmin( fabs(l_foot_fy_N), 2000.0);
@@ -561,36 +541,15 @@ void WholebodyModule::rightFootForceTorqueOutputCallback(const geometry_msgs::Wr
   torque.coeffRef(1,0) = msg->wrench.torque.y;
   torque.coeffRef(2,0) = msg->wrench.torque.z;
 
-  //  Eigen::MatrixXd force_new = robotis_framework::getRotationX(M_PI)*robotis_framework::getRotationZ(-0.5*M_PI)*force;
-  //  Eigen::MatrixXd torque_new = robotis_framework::getRotationX(M_PI)*robotis_framework::getRotationZ(-0.5*M_PI)*torque;
+  Eigen::MatrixXd force_new = robotis_framework::getRotationX(M_PI)*robotis_framework::getRotationZ(-0.5*M_PI)*force;
+  Eigen::MatrixXd torque_new = robotis_framework::getRotationX(M_PI)*robotis_framework::getRotationZ(-0.5*M_PI)*torque;
 
-  //  Eigen::MatrixXd rotation = robotis_framework::getRotationZ(0.5*M_PI);
-  //  Eigen::Quaterniond quaternion = robotis_framework::convertRotationToQuaternion(rotation);
-
-  //  PRINT_MAT(rotation);
-  //  ROS_INFO("quaternion x: %f , y: %f , z: %f , w: %f", quaternion.x(), quaternion.y(), quaternion.z(), quaternion.w());
-
-  //  double w = -1.0 * quaternion.w();
-  //  double z = -1.0 * quaternion.z();
-
-  //  Eigen::Quaterniond quaternion_new(w, quaternion.x(), quaternion.y(), z);
-  //  Eigen::MatrixXd rotation_new = robotis_framework::convertQuaternionToRotation(quaternion_new);
-
-  //  PRINT_MAT(rotation_new);
-  //  ROS_INFO("quaternion_new x: %f , y: %f , z: %f , w: %f", quaternion_new.x(), quaternion_new.y(), quaternion_new.z(), quaternion_new.w());
-
-  //  Eigen::MatrixXd force_new = robotis_framework::getRotationZ(0.5*M_PI)*force;
-  //  Eigen::MatrixXd torque_new = rotation_new*torque;
-
-  //  Eigen::MatrixXd force_new = force;
-  //  Eigen::MatrixXd torque_new = torque;
-
-  double r_foot_fx_N  = force.coeff(0,0);
-  double r_foot_fy_N  = force.coeff(1,0);
-  double r_foot_fz_N  = force.coeff(2,0);
-  double r_foot_Tx_Nm = torque.coeff(0,0);
-  double r_foot_Ty_Nm = torque.coeff(1,0);
-  double r_foot_Tz_Nm = torque.coeff(2,0);
+  double r_foot_fx_N  = force_new.coeff(0,0);
+  double r_foot_fy_N  = force_new.coeff(1,0);
+  double r_foot_fz_N  = force_new.coeff(2,0);
+  double r_foot_Tx_Nm = torque_new.coeff(0,0);
+  double r_foot_Ty_Nm = torque_new.coeff(1,0);
+  double r_foot_Tz_Nm = torque_new.coeff(2,0);
 
   r_foot_fx_N = robotis_framework::sign(r_foot_fx_N) * fmin( fabs(r_foot_fx_N), 2000.0);
   r_foot_fy_N = robotis_framework::sign(r_foot_fy_N) * fmin( fabs(r_foot_fy_N), 2000.0);
