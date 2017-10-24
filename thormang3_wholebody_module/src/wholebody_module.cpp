@@ -980,7 +980,7 @@ void WholebodyModule::calcWalkingControl()
 
     if (mov_step_ == mov_size_-1)
     {
-//      ROS_INFO("[END] Walking Control (%d/%d)", walking_step_+1, walking_size_);
+      ROS_INFO("[END] Walking Control (%d/%d)", walking_step_+1, walking_size_);
 
       mov_step_ = 0;
       walking_control_->next();
@@ -996,7 +996,7 @@ void WholebodyModule::calcWalkingControl()
       else
       {
         walking_step_++;
-//        ROS_INFO("[START] Walking Control (%d/%d)", walking_step_+1, walking_size_);
+        ROS_INFO("[START] Walking Control (%d/%d)", walking_step_+1, walking_size_);
       }
     }
     else
