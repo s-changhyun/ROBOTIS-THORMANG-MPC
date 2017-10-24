@@ -1435,8 +1435,8 @@ void THORMANG3OnlineWalking::process()
     mat_left_force  = mat_robot_to_lfoot_*mat_lfoot_to_lft_*mat_left_force;
     mat_left_torque = mat_robot_to_lfoot_*mat_lfoot_to_lft_*mat_left_torque;
 
-    PRINT_MAT(mat_right_force);
-    PRINT_MAT(mat_left_force);
+//    PRINT_MAT(mat_right_force);
+//    PRINT_MAT(mat_left_force);
 
     imu_data_mutex_lock_.lock();
     double gyro_roll_rad_per_sec  = current_gyro_roll_rad_per_sec_;
