@@ -195,7 +195,9 @@ bool WalkingControl::set(double time, int step)
     des_body_Q_ = init_body_Q_.slerp(count, goal_body_Q_);
   }
 
-  if (step == 0 || step == foot_step_size_ -1)
+  if (step == 0 ||
+      step == 1 ||
+      step == foot_step_size_ -1)
     walking_phase_ = DSP;
 
   // right foot
@@ -329,18 +331,12 @@ void WalkingControl::calcFootStepParam()
 
     if (i == 0 ||
         i == 1 ||
+        i == foot_step_size_-2 ||
         i == foot_step_size_-1)
     {
       msg.x = 0.0;
       msg.y = foot_origin_shift_y_;
       theta = 0.0;
-    }
-
-    if (i == foot_step_size_-2)
-    {
-      msg.x = 0.0;
-      msg.y = foot_origin_shift_y_;
-      theta *= 0.0;
     }
 
     foot_angle += theta;
