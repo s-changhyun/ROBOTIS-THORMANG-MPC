@@ -172,7 +172,7 @@ WholebodyModule::WholebodyModule()
   // walking parameter default
   walking_param_.dsp_ratio        = 0.2;
   walking_param_.lipm_height      = 0.7;
-  walking_param_.foot_height_max  = 0.1;
+  walking_param_.foot_height_max  = 0.15;
   walking_param_.zmp_offset_x     = 0.0;
   walking_param_.zmp_offset_y     = 0.0;
 
