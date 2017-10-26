@@ -78,6 +78,9 @@ WalkingControl::WalkingControl(double control_cycle,
     y_lipm_.coeffRef(i,0) = y_lipm[i];
   }
 
+  preview_sum_zmp_x_ = 0.0;
+  preview_sum_zmp_y_ = 0.0;
+
 //  ROS_INFO("x_lipm: %f", x_lipm[0]);
 //  ROS_INFO("y_lipm: %f", y_lipm[0]);
 }
@@ -161,10 +164,10 @@ bool WalkingControl::set(double time, int step)
   calcRefZMP(step);
   calcPreviewControl(time,step);
 
-//  if (walking_leg_ == LEFT_LEG)
-//    ROS_INFO("walking_leg_ : LEFT");
-//  else if (walking_leg_ == RIGHT_LEG)
-//    ROS_INFO("walking_leg_ : RIGHT");
+  //  if (walking_leg_ == LEFT_LEG)
+  //    ROS_INFO("walking_leg_ : LEFT");
+  //  else if (walking_leg_ == RIGHT_LEG)
+  //    ROS_INFO("walking_leg_ : RIGHT");
 
   /* ----- Inverse Kinematics ---- */
   double dsp_length = 0.5*(fin_time_ - init_time_)*dsp_ratio_;
@@ -190,15 +193,21 @@ bool WalkingControl::set(double time, int step)
   }
   else
   {
-    walking_phase_ = SSP;
+    if (step == 0 ||
+        step == 1 ||
+        step == foot_step_size_ -1)
+      walking_phase_ = DSP;
+    else
+      walking_phase_ = SSP;
+
     double count = (time - init_time) / fin_time;
     des_body_Q_ = init_body_Q_.slerp(count, goal_body_Q_);
   }
 
-  if (step == 0 ||
-      step == 1 ||
-      step == foot_step_size_ -1)
-    walking_phase_ = DSP;
+//  if (walking_phase_ == DSP)
+//    ROS_INFO("walking_phase_ : DSP");
+//  else if (walking_phase_ == SSP)
+//    ROS_INFO("walking_phase_ : SSP");
 
   // right foot
   Eigen::MatrixXd des_r_foot_pos = Eigen::MatrixXd::Zero(3,1);
@@ -579,6 +588,9 @@ void WalkingControl::calcGoalFootPose()
     init_r_foot_pos = goal_r_foot_pos;
     init_l_foot_pos = goal_l_foot_pos;
   }
+
+//  PRINT_MAT(goal_r_foot_pos_buffer_);
+//  PRINT_MAT(goal_l_foot_pos_buffer_);
 }
 
 double WalkingControl::calcRefZMPx(int step)
@@ -680,27 +692,26 @@ void WalkingControl::calcPreviewParam(thormang3_wholebody_module_msgs::PreviewRe
   f_ = robot_->calcPreviewParam(preview_time_, control_cycle_,
                                 lipm_height_,
                                 K_, P_);
+
+//  for (int i=0; i<preview_size_; i++)
+//    ROS_INFO("f: %f", f_.coeff(0,i));
 }
 
 void WalkingControl::calcPreviewControl(double time, int step)
 {
-  double time_new;
-  int step_new;
+  int index_new;
 
   preview_sum_zmp_x_ = 0.0;
   preview_sum_zmp_y_ = 0.0;
 
   for (int i=0; i<preview_size_; i++)
   {
-    time_new = time + i*control_cycle_;
+    index_new = time/control_cycle_ + (i+1) - 1;
+    if (index_new < 0)
+      index_new = 0;
 
-    if (time_new > fin_time_)
-    {
-      int num = time_new/fin_time_;
-      step_new = step + num;
-    }
-    else
-      step_new = step;
+    int fin_index = round(fin_time_/control_cycle_) +1;
+    int step_new = step + index_new/fin_index;
 
     double ref_zmp_x = calcRefZMPx(step_new);
     double ref_zmp_y = calcRefZMPy(step_new);
@@ -713,15 +724,6 @@ void WalkingControl::calcPreviewControl(double time, int step)
   }
 
 //  ROS_INFO("preview_sum_zmp x: %f , y: %f", preview_sum_zmp_x_, preview_sum_zmp_y_);
-
-  double cx = c_(0,0)*x_lipm_(0,0) + c_(0,1)*x_lipm_(1,0) + c_(0,2)*x_lipm_(2,0);
-  double cy = c_(0,0)*y_lipm_(0,0) + c_(0,1)*y_lipm_(1,0) + c_(0,2)*y_lipm_(2,0);
-
-  sum_of_cx_ += cx;
-  sum_of_cy_ += cy;
-
-  sum_of_zmp_x_ += ref_zmp_x_;
-  sum_of_zmp_y_ += ref_zmp_y_;
 
   u_x_(0,0) =
       -k_s_*(sum_of_cx_ - sum_of_zmp_x_)
@@ -744,6 +746,15 @@ void WalkingControl::calcPreviewControl(double time, int step)
 
   x_lipm_ = A_*x_lipm_ + b_*u_x_;
   y_lipm_ = A_*y_lipm_ + b_*u_y_;
+
+  double cx = c_(0,0)*x_lipm_(0,0) + c_(0,1)*x_lipm_(1,0) + c_(0,2)*x_lipm_(2,0);
+  double cy = c_(0,0)*y_lipm_(0,0) + c_(0,1)*y_lipm_(1,0) + c_(0,2)*y_lipm_(2,0);
+
+  sum_of_cx_ += cx;
+  sum_of_cy_ += cy;
+
+  sum_of_zmp_x_ += ref_zmp_x_;
+  sum_of_zmp_y_ += ref_zmp_y_;
 
   des_body_pos_[0] = x_lipm_.coeff(0,0);
   des_body_pos_[1] = y_lipm_.coeff(0,0);

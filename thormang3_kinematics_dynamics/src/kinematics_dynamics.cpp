@@ -1276,7 +1276,7 @@ Eigen::MatrixXd KinematicsDynamics::calcPreviewParam(double preview_time, double
                                                      Eigen::MatrixXd K, Eigen::MatrixXd P)
 {
   double t = control_cycle;
-  double preview_size_ = round(preview_time/control_cycle);
+  double preview_size_ = round(preview_time/control_cycle) + 1;
 
   Eigen::MatrixXd A_;
   A_.resize(3,3);
