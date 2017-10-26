@@ -31,7 +31,10 @@
     
     <!-- THORMANG3 Manager -->
     <node name="thormang3_manager" pkg="thormang3_manager" type="thormang3_manager" output="screen"/>
-    
+
+    <!-- Thormang3 Optimization -->
+    <node name="thormang3_optimization" pkg="thormang3_optimization" type="thormang3_optimization" output="screen"/>
+
     <!-- Robot Model & TF -->
     <include file="$(find thormang3_description)/launch/thormang3_mpc.launch"/> 
 </launch>

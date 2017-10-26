@@ -734,16 +734,6 @@ void WalkingControl::calcPreviewControl(double time, int step)
       -(k_x_(0,0)*y_lipm_(0,0) + k_x_(0,1)*y_lipm_(1,0) + k_x_(0,2)*y_lipm_(2,0))
       + preview_sum_zmp_y_;
 
-//  ROS_INFO("1: %f , 2: %f , 3: %f",
-//           sum_of_cx_,
-//           sum_of_zmp_x_,
-//           k_s_);
-
-//  ROS_INFO("1: %f , 2: %f , 3: %f",
-//           -k_s_*(sum_of_cx_ - sum_of_zmp_x_),
-//           -(k_x_(0,0)*x_lipm_(0,0) + k_x_(0,1)*x_lipm_(1,0) + k_x_(0,2)*x_lipm_(2,0)),
-//           preview_sum_zmp_x_);
-
   x_lipm_ = A_*x_lipm_ + b_*u_x_;
   y_lipm_ = A_*y_lipm_ + b_*u_y_;
 
