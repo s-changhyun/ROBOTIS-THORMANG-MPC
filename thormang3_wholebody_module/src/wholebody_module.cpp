@@ -170,11 +170,11 @@ WholebodyModule::WholebodyModule()
   resetBodyPose();
 
   // walking parameter default
-  walking_param_.dsp_ratio        = 0.2;
+  walking_param_.dsp_ratio        = 0.1;
   walking_param_.lipm_height      = 0.7;
-  walking_param_.foot_height_max  = 0.15;
+  walking_param_.foot_height_max  = 0.1;
   walking_param_.zmp_offset_x     = 0.0;
-  walking_param_.zmp_offset_y     = 0.0;
+  walking_param_.zmp_offset_y     = -0.005;
 
   des_balance_gain_ratio_.resize(1, 0.0);
   goal_balance_gain_ratio_.resize(1, 0.0);
@@ -980,7 +980,7 @@ void WholebodyModule::calcWalkingControl()
 
     if (mov_step_ == mov_size_-1)
     {
-//      ROS_INFO("[END] Walking Control (%d/%d)", walking_step_+1, walking_size_);
+      ROS_INFO("[END] Walking Control (%d/%d)", walking_step_+1, walking_size_);
 
       mov_step_ = 0;
       walking_control_->next();
@@ -997,7 +997,7 @@ void WholebodyModule::calcWalkingControl()
       else
       {
         walking_step_++;
-//        ROS_INFO("[START] Walking Control (%d/%d)", walking_step_+1, walking_size_);
+        ROS_INFO("[START] Walking Control (%d/%d)", walking_step_+1, walking_size_);
       }
     }
     else
