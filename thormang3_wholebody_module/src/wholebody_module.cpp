@@ -930,55 +930,43 @@ void WholebodyModule::calcWalkingControl()
   if (is_moving_ == true)
   {
     double cur_time = (double) mov_step_ * control_cycle_sec_;
-    bool calc_result = walking_control_->set(cur_time, walking_step_);
+    walking_control_->set(cur_time, walking_step_);
 
     //    ROS_INFO("cur_time: %f", cur_time);
 
-    if(calc_result == true)
-    {
-      //      queue_mutex_.lock();
+    //      queue_mutex_.lock();
 
-      // Set joint position
-      //      desired_joint_position_ = walking_control_->getJointPosition(walking_step_, cur_time);
-      //      desired_joint_velocity_ = walking_control_->getJointVelocity(walking_step_, cur_time);
-      //      desired_joint_acceleration_ = walking_control_->getJointAcceleration(walking_step_, cur_time);
+    // Set joint position
+    //      desired_joint_position_ = walking_control_->getJointPosition(walking_step_, cur_time);
+    //      desired_joint_velocity_ = walking_control_->getJointVelocity(walking_step_, cur_time);
+    //      desired_joint_acceleration_ = walking_control_->getJointAcceleration(walking_step_, cur_time);
 
-      //      queue_mutex_.unlock();
+    //      queue_mutex_.unlock();
 
-      walking_control_->getWalkingPosition(des_l_leg_pos_,
-                                           des_r_leg_pos_,
-                                           des_body_pos_);
-      //      walking_control_->getWalkingVelocity(desired_left_foot_velocity_,
-      //                                           desired_right_foot_velocity_,
-      //                                           desired_body_velocity_);
-      //      walking_control_->getWalkingAccleration(desired_left_foot_acceleration_,
-      //                                              desired_right_foot_acceleration_,
-      //                                              desired_body_acceleration_);
-      walking_control_->getWalkingOrientation(des_l_leg_Q_,
-                                              des_r_leg_Q_,
-                                              des_body_Q_);
+    walking_control_->getWalkingPosition(des_l_leg_pos_,
+                                         des_r_leg_pos_,
+                                         des_body_pos_);
+    //      walking_control_->getWalkingVelocity(desired_left_foot_velocity_,
+    //                                           desired_right_foot_velocity_,
+    //                                           desired_body_velocity_);
+    //      walking_control_->getWalkingAccleration(desired_left_foot_acceleration_,
+    //                                              desired_right_foot_acceleration_,
+    //                                              desired_body_acceleration_);
+    walking_control_->getWalkingOrientation(des_l_leg_Q_,
+                                            des_r_leg_Q_,
+                                            des_body_Q_);
 
-      //      ROS_INFO("body x: %f, y: %f, z: %f", desired_body_position_[0], desired_body_position_[1], desired_body_position_[2]);
-      //      ROS_INFO("lfoot x: %f, y: %f, z: %f", desired_left_foot_position_[0], desired_left_foot_position_[1], desired_left_foot_position_[2]);
-      //      ROS_INFO("rfoot x: %f, y: %f, z: %f", desired_right_foot_position_[0], desired_right_foot_position_[1], desired_right_foot_position_[2]);
+    //      ROS_INFO("body x: %f, y: %f, z: %f", desired_body_position_[0], desired_body_position_[1], desired_body_position_[2]);
+    //      ROS_INFO("lfoot x: %f, y: %f, z: %f", desired_left_foot_position_[0], desired_left_foot_position_[1], desired_left_foot_position_[2]);
+    //      ROS_INFO("rfoot x: %f, y: %f, z: %f", desired_right_foot_position_[0], desired_right_foot_position_[1], desired_right_foot_position_[2]);
 
-      walking_control_->getLIPM(x_lipm_, y_lipm_);
+    walking_control_->getLIPM(x_lipm_, y_lipm_);
 
-      //      ROS_INFO("x_lipm_ pos: %f , vel: %f , accel: %f", x_lipm_[0], x_lipm_[1], x_lipm_[2]);
-      //      ROS_INFO("y_lipm_ pos: %f , vel: %f , accel: %f", y_lipm_[0], y_lipm_[1], y_lipm_[2]);
+    //      ROS_INFO("x_lipm_ pos: %f , vel: %f , accel: %f", x_lipm_[0], x_lipm_[1], x_lipm_[2]);
+    //      ROS_INFO("y_lipm_ pos: %f , vel: %f , accel: %f", y_lipm_[0], y_lipm_[1], y_lipm_[2]);
 
-      walking_control_->getWalkingState(walking_leg_, walking_phase_);
-    }
-    else
-    {
-      is_moving_ = false;
-      walking_control_->finalize();
+    walking_control_->getWalkingState(walking_leg_, walking_phase_);
 
-      control_type_ = NONE;
-      walking_phase_ = DSP;
-
-      ROS_INFO("[FAIL] Walking Control");
-    }
 
     if (mov_step_ == mov_size_-1)
     {

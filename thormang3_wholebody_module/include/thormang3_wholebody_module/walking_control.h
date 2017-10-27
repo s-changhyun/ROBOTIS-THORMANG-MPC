@@ -45,7 +45,7 @@ public:
                   std::vector<double_t> init_l_foot_pos, std::vector<double_t> init_l_foot_Q);
   void next();
   void finalize();
-  bool set(double time, int step);
+  void set(double time, int step);
 
   double getLipmHeight();
 

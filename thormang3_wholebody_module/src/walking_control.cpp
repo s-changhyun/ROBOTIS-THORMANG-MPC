@@ -155,7 +155,7 @@ void WalkingControl::finalize()
 
 }
 
-bool WalkingControl::set(double time, int step)
+void WalkingControl::set(double time, int step)
 {
   if (time == 0.0)
     calcFootTrajectory(step);
@@ -225,8 +225,6 @@ bool WalkingControl::set(double time, int step)
     des_r_foot_Q_ = init_r_foot_Q_.slerp(count, goal_r_foot_Q_);
   }
 
-  bool ik_rleg_success = true;
-
   // left foot
   Eigen::MatrixXd des_l_foot_pos = Eigen::MatrixXd::Zero(3,1);
   des_l_foot_pos.coeffRef(0,0) = des_l_foot_pos_[0];
@@ -242,15 +240,6 @@ bool WalkingControl::set(double time, int step)
     double count = (time - init_time) / fin_time;
     des_l_foot_Q_ = init_l_foot_Q_.slerp(count, goal_l_foot_Q_);
   }
-
-  bool ik_lleg_success = true;
-
-  if (ik_rleg_success == true && ik_lleg_success == true)
-    ik_success = true;
-  else
-    ik_success = false;
-
-  return ik_success;
 }
 
 void WalkingControl::calcFootStepParam()
