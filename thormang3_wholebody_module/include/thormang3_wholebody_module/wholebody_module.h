@@ -77,6 +77,7 @@ enum CONTROL_TYPE {
   JOINT_CONTROL,
   WHOLEBODY_CONTROL,
   WALKING_CONTROL,
+  OFFSET_CONTROL,
   NONE
 };
 
@@ -95,6 +96,7 @@ public:
   /* ROS Topic Callback Functions */
   void setResetBodyCallback(const std_msgs::Bool::ConstPtr& msg);
   void setWholebodyBalanceMsgCallback(const std_msgs::String::ConstPtr& msg);
+  void setBodyOffsetCallback(const geometry_msgs::Pose::ConstPtr& msg);
 
   void goalJointPoseCallback(const thormang3_wholebody_module_msgs::JointPose &msg);
   void goalKinematicsPoseCallback(const thormang3_wholebody_module_msgs::KinematicsPose& msg);
@@ -138,6 +140,8 @@ private:
   void calcJointControl();
   void initWholebodyControl();
   void calcWholebodyControl();
+  void initOffsetControl();
+  void calcOffsetControl();
   void initWalkingControl();
   void calcWalkingControl();
   void initBalanceControl();

@@ -250,6 +250,8 @@ void WholebodyModule::queueThread()
                                                           &WholebodyModule::walkingParamCallback, this);
   ros::Subscriber wholebody_balance_msg_sub = ros_node.subscribe("/robotis/wholebody_balance_msg", 5,
                                                                  &WholebodyModule::setWholebodyBalanceMsgCallback, this);
+  ros::Subscriber body_offset_msg_sub = ros_node.subscribe("/robotis/wholebody/body_offset", 5,
+                                                           &WholebodyModule::setBodyOffsetCallback, this);
 
   ros::Subscriber imu_data_sub = ros_node.subscribe("/robotis/sensor/imu/imu", 5,
                                                     &WholebodyModule::imuDataCallback, this);
@@ -663,7 +665,7 @@ void WholebodyModule::calcJointControl()
   }
 }
 
-void WholebodyModule::goalKinematicsPoseCallback(const thormang3_wholebody_module_msgs::KinematicsPose& msg)
+void WholebodyModule::setBodyOffsetCallback(const geometry_msgs::Pose::ConstPtr& msg)
 {
   if (enable_ == false)
     return;
@@ -674,42 +676,19 @@ void WholebodyModule::goalKinematicsPoseCallback(const thormang3_wholebody_modul
     return;
   }
 
-  if (control_type_ == NONE || control_type_ == WHOLEBODY_CONTROL)
+  if (control_type_ == NONE || control_type_ == OFFSET_CONTROL)
   {
-    goal_body_offset_[0] = msg.pose.position.x;
-    goal_body_offset_[1] = msg.pose.position.y;
+    goal_body_offset_[0] = msg->position.x;
+    goal_body_offset_[1] = msg->position.y;
 
     body_offset_initialize_ = false;
-    control_type_ = WHOLEBODY_CONTROL;
+    control_type_ = OFFSET_CONTROL;
   }
   else
     ROS_WARN("[WARN] Control type is different!");
-
-  //  body_offset_x_ = msg.pose.position.x;
-  //  body_offset_y_ = msg.pose.position.y;
-
-  //  if (control_type_ == NONE || control_type_ == WHOLEBODY_CONTROL)
-  //  {
-  //    if (is_moving_ == true)
-  //    {
-  //      if (wholegbody_control_group_!=msg.name)
-  //      {
-  //        ROS_WARN("[WARN] Control group is different!");
-  //        return;
-  //      }
-  //    }
-  //    mov_time_ = msg.mov_time;
-  //    wholegbody_control_group_ = msg.name;
-  //    wholebody_goal_msg_ = msg.pose;
-
-  //    wholebody_initialize_ = false;
-  //    control_type_ = WHOLEBODY_CONTROL;
-  //  }
-  //  else
-  //    ROS_WARN("[WARN] Control type is different!");
 }
 
-void WholebodyModule::initWholebodyControl()
+void WholebodyModule::initOffsetControl()
 {
   if (body_offset_initialize_ == true)
     return;
@@ -737,40 +716,9 @@ void WholebodyModule::initWholebodyControl()
     is_moving_ = true;
     ROS_INFO("[START] Body Offset");
   }
-
-  //  if (wholebody_initialize_ == true)
-  //    return;
-
-  //  wholebody_initialize_ = true;
-
-  //  double ini_time = 0.0;
-  //  double mov_time = mov_time_;
-
-  //  mov_step_ = 0;
-  //  mov_size_ = (int) (mov_time / control_cycle_sec_) + 1;
-
-  //  wholebody_control_ =
-  //      new WholebodyControl(wholegbody_control_group_,
-  //                           ini_time, mov_time,
-  //                           des_joint_pos_, des_joint_vel_, des_joint_accel_,
-  //                           wholebody_goal_msg_);
-
-  //  if (is_moving_ == true)
-  //  {
-  ////    ROS_INFO("[UPDATE] Wholebody Control");
-  ////    wholebody_control_->update(desired_body_position_, desired_body_orientation_,
-  ////                               desired_task_position_, desired_task_velocity_, desired_task_acceleration_);
-  //  }
-  //  else
-  //  {
-  //    ROS_INFO("[START] Wholebody Control");
-
-  //    wholebody_control_->initialize(des_body_pos_, des_body_Q_);
-  //    is_moving_ = true;
-  //  }
 }
 
-void WholebodyModule::calcWholebodyControl()
+void WholebodyModule::calcOffsetControl()
 {
   if (is_moving_ == true)
   {
@@ -795,49 +743,103 @@ void WholebodyModule::calcWholebodyControl()
     else
       body_offset_step_++;
   }
+}
 
-  //  if (is_moving_ == true)
-  //  {
-  //    double cur_time = (double) mov_step_ * control_cycle_sec_;
-  //    if (wholebody_control_->set(cur_time) == true)
-  //    {
-  ////      queue_mutex_.lock();
-  ////      desired_joint_position_ = wholebody_control_->getJointPosition(cur_time);
-  ////      queue_mutex_.unlock();
+void WholebodyModule::goalKinematicsPoseCallback(const thormang3_wholebody_module_msgs::KinematicsPose& msg)
+{
+  if (enable_ == false)
+    return;
 
-  //      if (wholegbody_control_group_ == "body")
-  //      {
-  //        des_body_pos_ = wholebody_control_->getTaskPosition(cur_time);
-  //        des_body_Q_ = wholebody_control_->getOrientation(cur_time);
-  //      }
-  //    }
-  //    else
-  //    {
-  //      is_moving_ = false;
-  //      wholebody_control_->finalize();
+  if (balance_type_ == OFF)
+  {
+    ROS_WARN("[WARN] Balance is off!");
+    return;
+  }
 
-  //      control_type_ = NONE;
+  if (control_type_ == NONE || control_type_ == WHOLEBODY_CONTROL)
+  {
+    if (is_moving_ == true)
+    {
+      if (wholegbody_control_group_!=msg.name)
+      {
+        ROS_WARN("[WARN] Control group is different!");
+        return;
+      }
+    }
+    mov_time_ = msg.mov_time;
+    wholegbody_control_group_ = msg.name;
+    wholebody_goal_msg_ = msg.pose;
 
-  //      ROS_WARN("[FAIL] Wholebody Control");
-  //    }
+    wholebody_initialize_ = false;
+    control_type_ = WHOLEBODY_CONTROL;
+  }
+  else
+    ROS_WARN("[WARN] Control type is different!");
+}
 
-  //    if (mov_step_ == mov_size_-1)
-  //    {
-  //      mov_step_ = 0;
-  //      is_moving_ = false;
-  //      wholebody_control_->finalize();
+void WholebodyModule::initWholebodyControl()
+{
+  if (wholebody_initialize_ == true)
+    return;
 
-  //      body_offset_x_ = des_body_pos_[0];
-  //      body_offset_y_ = des_body_pos_[1];
-  //      resetBodyPose();
+  wholebody_initialize_ = true;
 
-  //      control_type_ = NONE;
+  double ini_time = 0.0;
+  double mov_time = mov_time_;
 
-  //      ROS_INFO("[END] Wholebody Control");
-  //    }
-  //    else
-  //      mov_step_++;
-  //  }
+  mov_step_ = 0;
+  mov_size_ = (int) (mov_time / control_cycle_sec_) + 1;
+
+  wholebody_control_ =
+      new WholebodyControl(wholegbody_control_group_,
+                           ini_time, mov_time,
+                           wholebody_goal_msg_);
+
+  if (is_moving_ == true)
+  {
+    //    ROS_INFO("[UPDATE] Wholebody Control");
+    //    wholebody_control_->update(desired_body_position_, desired_body_orientation_,
+    //                               desired_task_position_, desired_task_velocity_, desired_task_acceleration_);
+  }
+  else
+  {
+    ROS_INFO("[START] Wholebody Control");
+
+    wholebody_control_->initialize(des_body_pos_, des_body_Q_,
+                                   des_r_leg_pos_, des_r_leg_Q_,
+                                   des_l_leg_pos_, des_l_leg_Q_);
+    is_moving_ = true;
+  }
+}
+
+void WholebodyModule::calcWholebodyControl()
+{
+  if (is_moving_ == true)
+  {
+    double cur_time = (double) mov_step_ * control_cycle_sec_;
+
+    wholebody_control_->set(cur_time);
+
+    wholebody_control_->getTaskPosition(des_l_leg_pos_,
+                                        des_r_leg_pos_,
+                                        des_body_pos_);
+    wholebody_control_->getTaskOrientation(des_l_leg_Q_,
+                                           des_r_leg_Q_,
+                                           des_body_Q_);
+
+    if (mov_step_ == mov_size_-1)
+    {
+      mov_step_ = 0;
+      is_moving_ = false;
+      wholebody_control_->finalize();
+
+      control_type_ = NONE;
+
+      ROS_INFO("[END] Wholebody Control");
+    }
+    else
+      mov_step_++;
+  }
 }
 
 void WholebodyModule::footStepCommandCallback(const thormang3_wholebody_module_msgs::FootStepCommand& msg)
@@ -1552,6 +1554,11 @@ void WholebodyModule::process(std::map<std::string, robotis_framework::Dynamixel
     if(walking_initialize_ == true)
       calcWalkingControl();
   }
+  else if (control_type_ == OFFSET_CONTROL)
+  {
+    initOffsetControl();
+    calcOffsetControl();
+  }
 
   //  calcRobotPose();
 
@@ -1657,7 +1664,41 @@ bool WholebodyModule::getKinematicsPoseCallback(thormang3_wholebody_module_msgs:
   std::string group_name = req.name;
 
   geometry_msgs::Pose msg;
-  wholebody_control_->getGroupPose(group_name, &msg);
+
+  if (group_name == "body")
+  {
+    msg.position.x = des_body_pos_[0];
+    msg.position.y = des_body_pos_[1];
+    msg.position.z = des_body_pos_[2];
+
+    msg.orientation.x = des_body_Q_[0];
+    msg.orientation.y = des_body_Q_[1];
+    msg.orientation.z = des_body_Q_[2];
+    msg.orientation.w = des_body_Q_[3];
+  }
+  else if (group_name == "left_leg")
+  {
+    msg.position.x = des_l_leg_pos_[0];
+    msg.position.y = des_l_leg_pos_[1];
+    msg.position.z = des_l_leg_pos_[2];
+
+    msg.orientation.x = des_l_leg_Q_[0];
+    msg.orientation.y = des_l_leg_Q_[1];
+    msg.orientation.z = des_l_leg_Q_[2];
+    msg.orientation.w = des_l_leg_Q_[3];
+  }
+  else if (group_name == "right_leg")
+  {
+    msg.position.x = des_r_leg_pos_[0];
+    msg.position.y = des_r_leg_pos_[1];
+    msg.position.z = des_r_leg_pos_[2];
+
+    msg.orientation.x = des_r_leg_Q_[0];
+    msg.orientation.y = des_r_leg_Q_[1];
+    msg.orientation.z = des_r_leg_Q_[2];
+    msg.orientation.w = des_r_leg_Q_[3];
+  }
+
   res.pose.pose = msg;
 
   return true;

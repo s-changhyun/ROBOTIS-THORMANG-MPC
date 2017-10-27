@@ -91,14 +91,14 @@ WalkingControl::~WalkingControl()
 }
 
 void WalkingControl::initialize(thormang3_wholebody_module_msgs::FootStepCommand foot_step_command,
-                                std::vector<double_t> init_body_pos, std::vector<double_t> init_body_rot,
+                                std::vector<double_t> init_body_pos, std::vector<double_t> init_body_Q,
                                 std::vector<double_t> init_r_foot_pos, std::vector<double_t> init_r_foot_Q,
                                 std::vector<double_t> init_l_foot_pos, std::vector<double_t> init_l_foot_Q)
 {
   init_body_pos_ = init_body_pos;
   des_body_pos_ = init_body_pos;
 
-  Eigen::Quaterniond body_Q(init_body_rot[3],init_body_rot[0],init_body_rot[1],init_body_rot[2]);
+  Eigen::Quaterniond body_Q(init_body_Q[3],init_body_Q[0],init_body_Q[1],init_body_Q[2]);
   init_body_Q_ = body_Q;
   des_body_Q_ = body_Q;
 
@@ -117,7 +117,7 @@ void WalkingControl::initialize(thormang3_wholebody_module_msgs::FootStepCommand
 
   Eigen::Quaterniond r_foot_Q(init_r_foot_Q[3],init_r_foot_Q[0],init_r_foot_Q[1],init_r_foot_Q[2]);
   init_r_foot_Q_ = r_foot_Q;
-  desired_r_foot_Q_ = r_foot_Q;
+  des_r_foot_Q_ = r_foot_Q;
 
   // Calculation Foot Step
   foot_step_command_ = foot_step_command;
@@ -216,22 +216,22 @@ bool WalkingControl::set(double time, int step)
   des_r_foot_pos.coeffRef(2,0) = des_r_foot_pos_[2];
 
   if (time < init_time)
-    desired_r_foot_Q_ = init_r_foot_Q_;
+    des_r_foot_Q_ = init_r_foot_Q_;
   else if (time > fin_time)
-    desired_r_foot_Q_ = goal_r_foot_Q_;
+    des_r_foot_Q_ = goal_r_foot_Q_;
   else
   {
     double count = (time - init_time) / fin_time;
-    desired_r_foot_Q_ = init_r_foot_Q_.slerp(count, goal_r_foot_Q_);
+    des_r_foot_Q_ = init_r_foot_Q_.slerp(count, goal_r_foot_Q_);
   }
 
   bool ik_rleg_success = true;
 
   // left foot
-  Eigen::MatrixXd desired_left_foot_pos = Eigen::MatrixXd::Zero(3,1);
-  desired_left_foot_pos.coeffRef(0,0) = des_l_foot_pos_[0];
-  desired_left_foot_pos.coeffRef(1,0) = des_l_foot_pos_[1];
-  desired_left_foot_pos.coeffRef(2,0) = des_l_foot_pos_[2];
+  Eigen::MatrixXd des_l_foot_pos = Eigen::MatrixXd::Zero(3,1);
+  des_l_foot_pos.coeffRef(0,0) = des_l_foot_pos_[0];
+  des_l_foot_pos.coeffRef(1,0) = des_l_foot_pos_[1];
+  des_l_foot_pos.coeffRef(2,0) = des_l_foot_pos_[2];
 
   if (time < init_time)
     des_l_foot_Q_ = init_l_foot_Q_;
@@ -371,7 +371,7 @@ void WalkingControl::calcFootTrajectory(int step)
 {
   Eigen::MatrixXd body_rot = robotis_framework::convertQuaternionToRotation(des_body_Q_);
   Eigen::MatrixXd left_foot_rot = robotis_framework::convertQuaternionToRotation(des_l_foot_Q_);
-  Eigen::MatrixXd r_foot_rot = robotis_framework::convertQuaternionToRotation(desired_r_foot_Q_);
+  Eigen::MatrixXd r_foot_rot = robotis_framework::convertQuaternionToRotation(des_r_foot_Q_);
 
   init_body_Q_ = robotis_framework::convertRotationToQuaternion(body_rot);
   init_l_foot_Q_ = robotis_framework::convertRotationToQuaternion(left_foot_rot);
@@ -799,10 +799,10 @@ void WalkingControl::getWalkingOrientation(std::vector<double_t> &l_foot_Q,
   l_foot_Q[2] = des_l_foot_Q_.z();
   l_foot_Q[3] = des_l_foot_Q_.w();
 
-  r_foot_Q[0] = desired_r_foot_Q_.x();
-  r_foot_Q[1] = desired_r_foot_Q_.y();
-  r_foot_Q[2] = desired_r_foot_Q_.z();
-  r_foot_Q[3] = desired_r_foot_Q_.w();
+  r_foot_Q[0] = des_r_foot_Q_.x();
+  r_foot_Q[1] = des_r_foot_Q_.y();
+  r_foot_Q[2] = des_r_foot_Q_.z();
+  r_foot_Q[3] = des_r_foot_Q_.w();
 
   body_Q[0] = des_body_Q_.x();
   body_Q[1] = des_body_Q_.y();

@@ -40,9 +40,9 @@ public:
   virtual ~WalkingControl();
 
   void initialize(thormang3_wholebody_module_msgs::FootStepCommand foot_step_command,
-                  std::vector<double_t> init_body_pos, std::vector<double_t> init_body_rot,
-                  std::vector<double_t> init_right_foot_pos, std::vector<double_t> init_right_foot_rot,
-                  std::vector<double_t> init_left_foot_pos, std::vector<double_t> init_left_foot_rot);
+                  std::vector<double_t> init_body_pos, std::vector<double_t> init_body_Q,
+                  std::vector<double_t> init_r_foot_pos, std::vector<double_t> init_r_foot_Q,
+                  std::vector<double_t> init_l_foot_pos, std::vector<double_t> init_l_foot_Q);
   void next();
   void finalize();
   bool set(double time, int step);
@@ -141,7 +141,7 @@ protected:
   std::vector<double_t> init_r_foot_pos_, init_r_foot_vel_, init_r_foot_accel_;
   std::vector<double_t> des_r_foot_pos_, des_r_foot_vel_, des_r_foot_accel_;
   std::vector<double_t> goal_r_foot_pos_, goal_r_foot_vel_, goal_r_foot_accel_;
-  Eigen::Quaterniond    init_r_foot_Q_, desired_r_foot_Q_, goal_r_foot_Q_;
+  Eigen::Quaterniond    init_r_foot_Q_, des_r_foot_Q_, goal_r_foot_Q_;
 };
 
 #endif
