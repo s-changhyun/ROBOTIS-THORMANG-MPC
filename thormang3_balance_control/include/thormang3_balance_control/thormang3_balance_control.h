@@ -89,6 +89,21 @@ private:
   double prev_err_;
 };
 
+
+class FeedForwardController
+{
+public:
+  FeedForwardController();
+  ~FeedForwardController();
+
+  double gain_;
+
+  double getFeedForward(double curr_time);
+
+private:
+
+};
+
 class BalanceLowPassFilter
 {
 public:

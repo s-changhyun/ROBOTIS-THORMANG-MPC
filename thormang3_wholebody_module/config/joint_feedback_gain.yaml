@@ -27,7 +27,7 @@ l_leg_hip_p_p_gain : 0.0 #0.35
 l_leg_hip_p_d_gain : 0.0 #0.1
 
 l_leg_kn_p_p_gain  : 0.0 #0.35
-l_leg_kn_p_d_gain  : 0.1
+l_leg_kn_p_d_gain  : 0.0 #0.1
 
 l_leg_an_p_p_gain  : 0.0 #0.2
 l_leg_an_p_d_gain  : 0.0 #0.05

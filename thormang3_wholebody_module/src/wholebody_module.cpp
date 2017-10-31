@@ -144,7 +144,10 @@ WholebodyModule::WholebodyModule()
   goal_joint_pos_.resize(number_of_joints_, 0.0);
 
   des_joint_feedback_.resize(number_of_joints_, 0.0);
+  des_joint_feedforward_.resize(number_of_joints_, 0.0);
   des_joint_pos_to_robot_.resize(number_of_joints_, 0.0);
+
+  joint_feedforward_gain_.resize(number_of_joints_, 0.0);
 
   // body position default
   des_body_pos_.resize(3, 0.0);
@@ -170,7 +173,7 @@ WholebodyModule::WholebodyModule()
   resetBodyPose();
 
   // walking parameter default
-  walking_param_.dsp_ratio        = 0.2;
+  walking_param_.dsp_ratio        = 0.3;
   walking_param_.lipm_height      = 0.7;
   walking_param_.foot_height_max  = 0.1;
   walking_param_.zmp_offset_x     = 0.0;
@@ -207,6 +210,9 @@ WholebodyModule::WholebodyModule()
 
   std::string joint_feedback_gain_path = ros::package::getPath("thormang3_wholebody_module") + "/config/joint_feedback_gain.yaml";
   parseJointFeedbackGainData(joint_feedback_gain_path);
+
+  std::string joint_feedforward_gain_path = ros::package::getPath("thormang3_wholebody_module") + "/config/joint_feedforward_gain.yaml";
+  parseJointFeedforwardGainData(joint_feedforward_gain_path);
 }
 
 WholebodyModule::~WholebodyModule()
@@ -275,7 +281,7 @@ void WholebodyModule::resetBodyPose()
 {
   des_body_pos_[0] = 0.0; //body_offset_x_;
   des_body_pos_[1] = 0.0; //body_offset_y_;
-  des_body_pos_[2] = 0.8075 - 0.0803848 + 0.0069; //0.8075 - 0.0803848;
+  des_body_pos_[2] = 0.7340152;
 
   des_body_Q_[0] = 0.0;
   des_body_Q_[1] = 0.0;
@@ -404,6 +410,35 @@ void WholebodyModule::parseJointFeedbackGainData(const std::string &path)
   joint_feedback_[joint_name_to_id_["l_leg_an_r"]-1].d_gain_  = doc["l_leg_an_r_d_gain"].as<double>();
 }
 
+void WholebodyModule::parseJointFeedforwardGainData(const std::string &path)
+{
+  YAML::Node doc;
+  try
+  {
+    // load yaml
+    doc = YAML::LoadFile(path.c_str());
+  }
+  catch (const std::exception& e)
+  {
+    ROS_ERROR("Fail to load yaml file.");
+    return;
+  }
+
+  joint_feedforward_gain_[joint_name_to_id_["r_leg_hip_y"]-1] = doc["r_leg_hip_y_gain"].as<double>();
+  joint_feedforward_gain_[joint_name_to_id_["r_leg_hip_r"]-1] = doc["r_leg_hip_r_gain"].as<double>();
+  joint_feedforward_gain_[joint_name_to_id_["r_leg_hip_p"]-1] = doc["r_leg_hip_p_gain"].as<double>();
+  joint_feedforward_gain_[joint_name_to_id_["r_leg_kn_p"]-1]  = doc["r_leg_kn_p_gain"].as<double>();
+  joint_feedforward_gain_[joint_name_to_id_["r_leg_an_p"]-1]  = doc["r_leg_an_p_gain"].as<double>();
+  joint_feedforward_gain_[joint_name_to_id_["r_leg_an_r"]-1]  = doc["r_leg_an_r_gain"].as<double>();
+
+  joint_feedforward_gain_[joint_name_to_id_["l_leg_hip_y"]-1] = doc["l_leg_hip_y_gain"].as<double>();
+  joint_feedforward_gain_[joint_name_to_id_["l_leg_hip_r"]-1] = doc["l_leg_hip_r_gain"].as<double>();
+  joint_feedforward_gain_[joint_name_to_id_["l_leg_hip_p"]-1] = doc["l_leg_hip_p_gain"].as<double>();
+  joint_feedforward_gain_[joint_name_to_id_["l_leg_kn_p"]-1]  = doc["l_leg_kn_p_gain"].as<double>();
+  joint_feedforward_gain_[joint_name_to_id_["l_leg_an_p"]-1]  = doc["l_leg_an_p_gain"].as<double>();
+  joint_feedforward_gain_[joint_name_to_id_["l_leg_an_r"]-1]  = doc["l_leg_an_r_gain"].as<double>();
+}
+
 void WholebodyModule::setWholebodyBalanceMsgCallback(const std_msgs::String::ConstPtr& msg)
 {
   if (enable_ == false)
@@ -414,6 +449,9 @@ void WholebodyModule::setWholebodyBalanceMsgCallback(const std_msgs::String::Con
 
   std::string joint_feedback_gain_path = ros::package::getPath("thormang3_wholebody_module") + "/config/joint_feedback_gain.yaml";
   parseJointFeedbackGainData(joint_feedback_gain_path);
+
+  std::string joint_feedforward_gain_path = ros::package::getPath("thormang3_wholebody_module") + "/config/joint_feedforward_gain.yaml";
+  parseJointFeedforwardGainData(joint_feedforward_gain_path);
 
   if (msg->data == "balance_on")
     goal_balance_gain_ratio_[0] = 1.0;
@@ -916,6 +954,8 @@ void WholebodyModule::initWalkingControl()
       walking_control_->calcPreviewParam(preview_response_);
       is_moving_ = true;
 
+      initFeedforwardControl();
+
       ROS_INFO("[START] Walking Control (%d/%d)", walking_step_+1, walking_size_);
     }
 
@@ -993,6 +1033,28 @@ void WholebodyModule::calcWalkingControl()
     else
       mov_step_++;
   }
+}
+
+void WholebodyModule::initFeedforwardControl()
+{
+  // feedforward trajectory
+  std::vector<double_t> zero_vector;
+  zero_vector.resize(1,0.0);
+
+  std::vector<double_t> via_pos;
+  via_pos.resize(3, 0.0);
+  via_pos[0] = 1.0 * DEGREE2RADIAN;
+
+  double init_time = 0.0;
+  double fin_time = foot_step_command_.step_time;
+  double via_time = 0.5 * (init_time + fin_time);
+  double dsp_ratio = walking_param_.dsp_ratio;
+
+  feed_forward_tra_ =
+      new robotis_framework::MinimumJerkViaPoint(init_time, fin_time, via_time, dsp_ratio,
+                                                 zero_vector, zero_vector, zero_vector,
+                                                 zero_vector, zero_vector, zero_vector,
+                                                 via_pos, zero_vector, zero_vector);
 }
 
 void WholebodyModule::calcRobotPose()
@@ -1458,10 +1520,10 @@ bool WholebodyModule::setBalanceControl()
 
 void WholebodyModule::setFeedbackControl()
 {
-  des_joint_pos_to_robot_ = des_joint_pos_;
-
   for (int i=0; i<number_of_joints_; i++)
   {
+    des_joint_pos_to_robot_[i] = des_joint_pos_[i] + des_joint_feedforward_[i];
+
     joint_feedback_[i].desired_ = des_joint_pos_[i];
     des_joint_feedback_[i] = joint_feedback_[i].getFeedBack(curr_joint_pos_[i]);
 
@@ -1469,36 +1531,60 @@ void WholebodyModule::setFeedbackControl()
   }
 }
 
+void WholebodyModule::setFeedforwardControl()
+{
+  double cur_time = (double) mov_step_ * control_cycle_sec_;
+
+  std::vector<double_t> feed_forward_value = feed_forward_tra_->getPosition(cur_time);
+
+  if (walking_phase_ == DSP)
+    feed_forward_value[0] = 0.0;
+
+  std::vector<double_t> support_leg_gain;
+  support_leg_gain.resize(number_of_joints_, 0.0);
+
+  if (walking_leg_ == LEFT_LEG)
+  {
+    support_leg_gain[joint_name_to_id_["r_leg_hip_y"]-1] = 1.0;
+    support_leg_gain[joint_name_to_id_["r_leg_hip_r"]-1] = 1.0;
+    support_leg_gain[joint_name_to_id_["r_leg_hip_p"]-1] = 1.0;
+    support_leg_gain[joint_name_to_id_["r_leg_kn_p"]-1]  = 1.0;
+    support_leg_gain[joint_name_to_id_["r_leg_an_p"]-1]  = 1.0;
+    support_leg_gain[joint_name_to_id_["r_leg_an_r"]-1]  = 1.0;
+
+    support_leg_gain[joint_name_to_id_["l_leg_hip_y"]-1] = 0.0;
+    support_leg_gain[joint_name_to_id_["l_leg_hip_r"]-1] = 0.0;
+    support_leg_gain[joint_name_to_id_["l_leg_hip_p"]-1] = 0.0;
+    support_leg_gain[joint_name_to_id_["l_leg_kn_p"]-1]  = 0.0;
+    support_leg_gain[joint_name_to_id_["l_leg_an_p"]-1]  = 0.0;
+    support_leg_gain[joint_name_to_id_["l_leg_an_r"]-1]  = 0.0;
+  }
+  else if (walking_leg_ == RIGHT_LEG)
+  {
+    support_leg_gain[joint_name_to_id_["r_leg_hip_y"]-1] = 0.0;
+    support_leg_gain[joint_name_to_id_["r_leg_hip_r"]-1] = 0.0;
+    support_leg_gain[joint_name_to_id_["r_leg_hip_p"]-1] = 0.0;
+    support_leg_gain[joint_name_to_id_["r_leg_kn_p"]-1]  = 0.0;
+    support_leg_gain[joint_name_to_id_["r_leg_an_p"]-1]  = 0.0;
+    support_leg_gain[joint_name_to_id_["r_leg_an_r"]-1]  = 0.0;
+
+    support_leg_gain[joint_name_to_id_["l_leg_hip_y"]-1] = 1.0;
+    support_leg_gain[joint_name_to_id_["l_leg_hip_r"]-1] = 1.0;
+    support_leg_gain[joint_name_to_id_["l_leg_hip_p"]-1] = 1.0;
+    support_leg_gain[joint_name_to_id_["l_leg_kn_p"]-1]  = 1.0;
+    support_leg_gain[joint_name_to_id_["l_leg_an_p"]-1]  = 1.0;
+    support_leg_gain[joint_name_to_id_["l_leg_an_r"]-1]  = 1.0;
+  }
+
+  for (int i=0; i<number_of_joints_; i++)
+    des_joint_feedforward_[i] = joint_feedforward_gain_[i] * feed_forward_value[0] * support_leg_gain[i];
+}
+
 void WholebodyModule::process(std::map<std::string, robotis_framework::Dynamixel *> dxls,
                               std::map<std::string, double> sensors)
 {
   if (enable_ == false)
     return;
-
-  // Get Sensor Data
-  //  l_foot_ft_data_msg_.force.x = sensors["l_foot_fx_scaled_N"];
-  //  l_foot_ft_data_msg_.force.y = sensors["l_foot_fy_scaled_N"];
-  //  l_foot_ft_data_msg_.force.z = sensors["l_foot_fz_scaled_N"];
-  //  l_foot_ft_data_msg_.torque.x = sensors["l_foot_tx_scaled_Nm"];
-  //  l_foot_ft_data_msg_.torque.y = sensors["l_foot_ty_scaled_Nm"];
-  //  l_foot_ft_data_msg_.torque.z = sensors["l_foot_tz_scaled_Nm"];
-
-  //  r_foot_ft_data_msg_.force.x = sensors["r_foot_fx_scaled_N"];
-  //  r_foot_ft_data_msg_.force.y = sensors["r_foot_fy_scaled_N"];
-  //  r_foot_ft_data_msg_.force.z = sensors["r_foot_fz_scaled_N"];
-  //  r_foot_ft_data_msg_.torque.x = sensors["r_foot_tx_scaled_Nm"];
-  //  r_foot_ft_data_msg_.torque.y = sensors["r_foot_ty_scaled_Nm"];
-  //  r_foot_ft_data_msg_.torque.z = sensors["r_foot_tz_scaled_Nm"];
-
-  //  Eigen::MatrixXd test1 = Eigen::MatrixXd::Identity(3,3);
-  //  Eigen::Quaterniond test1_Q = robotis_framework::convertRotationToQuaternion(test1);
-
-  //  ROS_INFO("test1_Q x: %f , y: %f , z: %f , w: %f", test1_Q.x(), test1_Q.y(), test1_Q.z(), test1_Q.w());
-
-  //  Eigen::Quaterniond test2_Q(-1.0, 0.0, 0.0, 0.0);
-  //  Eigen::MatrixXd test2 = robotis_framework::convertQuaternionToRotation(test2_Q);
-
-  //  PRINT_MAT(test2);
 
   /*----- write curr position -----*/
   for (std::map<std::string, robotis_framework::DynamixelState *>::iterator state_iter = result_.begin();
@@ -1540,7 +1626,10 @@ void WholebodyModule::process(std::map<std::string, robotis_framework::Dynamixel
   else if (control_type_ == WALKING_CONTROL)
   {
     if(walking_initialize_ == true)
+    {
       calcWalkingControl();
+      setFeedforwardControl();
+    }
   }
   else if (control_type_ == OFFSET_CONTROL)
   {
