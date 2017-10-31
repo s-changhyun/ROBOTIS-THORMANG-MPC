@@ -129,7 +129,7 @@ WholebodyModule::WholebodyModule()
   joint_name_to_id_["l_leg_end"]    = 46;
 
   /* parameter */
-  number_of_joints_ = MAX_JOINT_ID;
+  number_of_joints_ = NUM_OF_JOINTS;
 
   curr_joint_accel_.resize(number_of_joints_, 0.0);
   curr_joint_vel_.resize(number_of_joints_, 0.0);
@@ -1637,7 +1637,7 @@ void WholebodyModule::publishStatusMsg(unsigned int type, std::string msg)
 bool WholebodyModule::getJointPoseCallback(thormang3_wholebody_module_msgs::GetJointPose::Request &req,
                                            thormang3_wholebody_module_msgs::GetJointPose::Response &res)
 {
-  for (int i=0; i<MAX_JOINT_ID; i++)
+  for (int i=0; i<number_of_joints_; i++)
   {
     res.pose.pose.name.push_back(joint_name_[i]);
     res.pose.pose.position.push_back(des_joint_pos_[i]);

@@ -16,7 +16,7 @@
 #include "thormang3_wholebody_module_msgs/FootStepArray.h"
 #include "thormang3_wholebody_module_msgs/PreviewResponse.h"
 
-#include "thormang3_kinematics_dynamics/kinematics_dynamics.h"
+//#include "thormang3_kinematics_dynamics/kinematics_dynamics.h"
 #include "robotis_math/robotis_math.h"
 
 enum WALKING_LEG {
@@ -77,11 +77,12 @@ public:
   void getWalkingState(int &walking_leg, int &walking_phase);
 
 protected:
-  thormang3::KinematicsDynamics *robot_;
+//  thormang3::KinematicsDynamics *robot_;
 
   robotis_framework::MinimumJerk *body_trajectory_;
   robotis_framework::MinimumJerkViaPoint *r_foot_tra_;
   robotis_framework::MinimumJerkViaPoint *l_foot_tra_;
+  robotis_framework::PreviewControl *preview_control_;
 
   double init_time_, fin_time_;
   double control_cycle_;

@@ -56,7 +56,7 @@
 #include "robotis_controller_msgs/JointCtrlModule.h"
 #include "robotis_controller_msgs/StatusMsg.h"
 
-#include "thormang3_kinematics_dynamics/kinematics_dynamics.h"
+//#include "thormang3_kinematics_dynamics/kinematics_dynamics.h"
 #include "thormang3_balance_control/thormang3_balance_control.h"
 
 #include "thormang3_wholebody_module_msgs/JointPose.h"
@@ -72,6 +72,8 @@
 
 namespace thormang3
 {
+
+#define NUM_OF_JOINTS (31)
 
 enum CONTROL_TYPE {
   JOINT_CONTROL,
@@ -227,7 +229,7 @@ private:
   int   balance_step_, balance_size_;
 
   BalanceControlUsingPDController balance_control_;
-  BalancePDController joint_feedback_[MAX_JOINT_ID];
+  BalancePDController joint_feedback_[NUM_OF_JOINTS];
 
   std::vector<double_t> des_balance_gain_ratio_;
   std::vector<double_t> goal_balance_gain_ratio_;
@@ -291,7 +293,6 @@ private:
   double balance_r_foot_torque_z_;
 
   Eigen::MatrixXd g_to_r_leg_, g_to_l_leg_;
-
 
   // Sensor msgs
   sensor_msgs::Imu imu_data_msg_;

@@ -67,7 +67,7 @@ WalkingControl::WalkingControl(double control_cycle,
 
   init_body_yaw_angle_ = 0.0;
 
-  robot_ = new thormang3::KinematicsDynamics(thormang3::WholeBody);
+//  robot_ = new thormang3::KinematicsDynamics(thormang3::WholeBody);
 
   x_lipm_.resize(3,1);
   y_lipm_.resize(3,1);
@@ -678,9 +678,17 @@ void WalkingControl::calcPreviewParam(thormang3_wholebody_module_msgs::PreviewRe
   k_x_.resize(1,3);
   k_x_ << K_.coeff(0,1), K_.coeff(0,2), K_.coeff(0,3);
 
-  f_ = robot_->calcPreviewParam(preview_time_, control_cycle_,
-                                lipm_height_,
-                                K_, P_);
+  preview_control_ = new robotis_framework::PreviewControl();
+
+  f_ = preview_control_->calcPreviewParam(preview_time_, control_cycle_,
+                                          lipm_height_,
+                                          K_, P_);
+
+  delete preview_control_;
+
+//  f_ = robot_->calcPreviewParam(preview_time_, control_cycle_,
+//                                lipm_height_,
+//                                K_, P_);
 
 //  for (int i=0; i<preview_size_; i++)
 //    ROS_INFO("f: %f", f_.coeff(0,i));
