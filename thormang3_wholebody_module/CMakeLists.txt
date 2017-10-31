@@ -43,7 +43,7 @@ include_directories(
   include
   ${catkin_INCLUDE_DIRS}
   ${Eigen_INCLUDE_DIRS}
-  /opt/ros/indigo/include/kdl
+  /opt/ros/kinetic/include/kdl
 )
 
 add_library(thormang3_wholebody_module

@@ -173,11 +173,11 @@ WholebodyModule::WholebodyModule()
   resetBodyPose();
 
   // walking parameter default
-  walking_param_.dsp_ratio        = 0.3;
+  walking_param_.dsp_ratio        = 0.2;
   walking_param_.lipm_height      = 0.7;
-  walking_param_.foot_height_max  = 0.1;
+  walking_param_.foot_height_max  = 0.07;
   walking_param_.zmp_offset_x     = 0.0;
-  walking_param_.zmp_offset_y     = 0.0;
+  walking_param_.zmp_offset_y     = -0.015;
 
   des_balance_gain_ratio_.resize(1, 0.0);
   goal_balance_gain_ratio_.resize(1, 0.0);
