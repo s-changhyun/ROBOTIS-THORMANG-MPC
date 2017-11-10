@@ -43,6 +43,7 @@ WholebodyModule::WholebodyModule()
     joint_control_initialize_(false),
     wholebody_initialize_(false),
     walking_initialize_(false),
+    is_foot_step_2d_(false),
     walking_phase_(DSP),
     body_offset_x_(0.0),
     body_offset_y_(0.0),
@@ -202,8 +203,8 @@ WholebodyModule::WholebodyModule()
   balance_r_foot_torque_z_  = 0.0;
 
   // Body Offset
-  des_body_offset_.resize(2, 0.0);
-  goal_body_offset_.resize(2, 0.0);
+  des_body_offset_.resize(3, 0.0);
+  goal_body_offset_.resize(3, 0.0);
 
   std::string balance_gain_path = ros::package::getPath("thormang3_wholebody_module") + "/config/balance_gain.yaml";
   parseBalanceGainData(balance_gain_path);
@@ -259,6 +260,9 @@ void WholebodyModule::queueThread()
   ros::Subscriber body_offset_msg_sub = ros_node.subscribe("/robotis/wholebody/body_offset", 5,
                                                            &WholebodyModule::setBodyOffsetCallback, this);
 
+  ros::Subscriber footsteps_sub = ros_node.subscribe("/robotis/wholebody/footsteps_2d", 5,
+                                                     &WholebodyModule::footStep2DCallback, this);
+
   ros::Subscriber imu_data_sub = ros_node.subscribe("/robotis/sensor/imu/imu", 5,
                                                     &WholebodyModule::imuDataCallback, this);
   ros::Subscriber l_foot_ft_sub = ros_node.subscribe("/robotis/sensor/l_foot_ft", 3,
@@ -313,8 +317,6 @@ void WholebodyModule::resetBodyPose()
   y_lipm_[0] = des_body_pos_[1];
   y_lipm_[1] = 0.0;
   y_lipm_[2] = 0.0;
-
-  walking_param_.zmp_offset_x = des_body_pos_[0];
 }
 
 void WholebodyModule::parseBalanceGainData(const std::string &path)
@@ -612,6 +614,7 @@ void WholebodyModule::setResetBodyCallback(const std_msgs::Bool::ConstPtr& msg)
   {
     des_body_offset_[0] = 0.0;
     des_body_offset_[1] = 0.0;
+    des_body_offset_[2] = 0.0;
 
     resetBodyPose();
   }
@@ -718,6 +721,7 @@ void WholebodyModule::setBodyOffsetCallback(const geometry_msgs::Pose::ConstPtr&
   {
     goal_body_offset_[0] = msg->position.x;
     goal_body_offset_[1] = msg->position.y;
+    goal_body_offset_[2] = msg->position.z;
 
     body_offset_initialize_ = false;
     control_type_ = OFFSET_CONTROL;
@@ -880,6 +884,113 @@ void WholebodyModule::calcWholebodyControl()
   }
 }
 
+void WholebodyModule::footStep2DCallback(const thormang3_foot_step_generator::Step2DArray& msg)
+{
+  if (enable_ == false)
+    return;
+
+  if (balance_type_ == OFF)
+  {
+    ROS_WARN("[WARN] Balance is off!");
+    return;
+  }
+
+  thormang3_foot_step_generator::Step2DArray foot_step_msg;
+
+  int old_size = msg.footsteps_2d.size();
+  int new_size = old_size + 3;
+
+  thormang3_foot_step_generator::Step2D first_msg;
+  thormang3_foot_step_generator::Step2D second_msg;
+
+  first_msg.moving_foot = msg.footsteps_2d[0].moving_foot - 1;
+  second_msg.moving_foot = first_msg.moving_foot + 1;
+
+  if (first_msg.moving_foot == LEFT_LEG)
+  {
+    first_msg.step2d.x = des_l_leg_pos_[0];
+    first_msg.step2d.y = des_l_leg_pos_[1];
+    first_msg.step2d.theta = 0.0;
+
+    second_msg.step2d.x = des_r_leg_pos_[0];
+    second_msg.step2d.y = des_r_leg_pos_[1];
+    second_msg.step2d.theta = 0.0;
+  }
+  else if (first_msg.moving_foot == RIGHT_LEG)
+  {
+    first_msg.step2d.x = des_r_leg_pos_[0];
+    first_msg.step2d.y = des_r_leg_pos_[1];
+    first_msg.step2d.theta = 0.0;
+
+    second_msg.step2d.x = des_l_leg_pos_[0];
+    second_msg.step2d.y = des_l_leg_pos_[1];
+    second_msg.step2d.theta = 0.0;
+  }
+
+  foot_step_msg.footsteps_2d.push_back(first_msg);
+  foot_step_msg.footsteps_2d.push_back(second_msg);
+
+  if (control_type_ == NONE || control_type_ == WALKING_CONTROL)
+  {
+    for (int i=0; i<old_size; i++)
+    {
+      thormang3_foot_step_generator::Step2D step_msg = msg.footsteps_2d[i];
+      step_msg.moving_foot -= 1;
+
+      foot_step_msg.footsteps_2d.push_back(step_msg);
+
+//      ROS_INFO("===== OLD =====");
+//      ROS_INFO("step: %d", i);
+//      ROS_INFO("foot_step_2d_.footsteps_2d[%d].moving_foot: %d", i, step_msg.moving_foot);
+//      ROS_INFO("foot_step_2d_.footsteps_2d[%d].step2d x: %f", i, step_msg.step2d.x);
+//      ROS_INFO("foot_step_2d_.footsteps_2d[%d].step2d y: %f", i, step_msg.step2d.y);
+//      ROS_INFO("foot_step_2d_.footsteps_2d[%d].step2d theta: %f", i, step_msg.step2d.theta);
+    }
+
+    thormang3_foot_step_generator::Step2D step_msg = msg.footsteps_2d[old_size-1];
+
+    if (step_msg.moving_foot - 1 == LEFT_LEG)
+      first_msg.moving_foot = RIGHT_LEG;
+    else
+      first_msg.moving_foot = LEFT_LEG;
+
+    first_msg.step2d.x      = 0.0;
+    first_msg.step2d.y      = 0.0;
+    first_msg.step2d.theta  = step_msg.step2d.theta;
+
+    foot_step_msg.footsteps_2d.push_back(first_msg);
+
+//    for (int i=0; i<new_size; i++)
+//    {
+//      thormang3_foot_step_generator::Step2D step_msg = foot_step_msg.footsteps_2d[i];
+
+//      ROS_INFO("===== NEW =====");
+//      ROS_INFO("step: %d", i);
+//      ROS_INFO("foot_step_2d_.footsteps_2d[%d].moving_foot: %d", i, step_msg.moving_foot);
+//      ROS_INFO("foot_step_2d_.footsteps_2d[%d].step2d x: %f", i, step_msg.step2d.x);
+//      ROS_INFO("foot_step_2d_.footsteps_2d[%d].step2d y: %f", i, step_msg.step2d.y);
+//      ROS_INFO("foot_step_2d_.footsteps_2d[%d].step2d theta: %f", i, step_msg.step2d.theta);
+//    }
+
+    foot_step_2d_ = foot_step_msg;
+
+    walking_size_ = new_size;
+    mov_time_ = 1.0;
+    is_foot_step_2d_ = true;
+    control_type_ = WALKING_CONTROL;
+
+    if (is_moving_ == false)
+      initWalkingControl();
+    else
+      ROS_WARN("[WARN] Previous task is alive!");
+  }
+  else
+    ROS_WARN("[WARN] Control type is different!");
+
+
+
+}
+
 void WholebodyModule::footStepCommandCallback(const thormang3_wholebody_module_msgs::FootStepCommand& msg)
 {
   if (enable_ == false)
@@ -890,6 +1001,8 @@ void WholebodyModule::footStepCommandCallback(const thormang3_wholebody_module_m
     ROS_WARN("[WARN] Balance is off!");
     return;
   }
+
+  is_foot_step_2d_ = false;
 
   if (control_type_ == NONE || control_type_ == WALKING_CONTROL)
   {
@@ -947,10 +1060,21 @@ void WholebodyModule::initWalkingControl()
     }
     else
     {
-      walking_control_->initialize(foot_step_command_,
-                                   des_body_pos_, des_body_Q_,
-                                   des_r_leg_pos_, des_r_leg_Q_,
-                                   des_l_leg_pos_, des_l_leg_Q_);
+      if (is_foot_step_2d_ == true)
+      {
+        walking_control_->initialize(foot_step_2d_,
+                                     des_body_pos_, des_body_Q_,
+                                     des_r_leg_pos_, des_r_leg_Q_,
+                                     des_l_leg_pos_, des_l_leg_Q_);
+      }
+      else
+      {
+        walking_control_->initialize(foot_step_command_,
+                                     des_body_pos_, des_body_Q_,
+                                     des_r_leg_pos_, des_r_leg_Q_,
+                                     des_l_leg_pos_, des_l_leg_Q_);
+      }
+
       walking_control_->calcPreviewParam(preview_response_);
       is_moving_ = true;
 
@@ -970,9 +1094,9 @@ void WholebodyModule::calcWalkingControl()
   if (is_moving_ == true)
   {
     double cur_time = (double) mov_step_ * control_cycle_sec_;
-    walking_control_->set(cur_time, walking_step_);
+    walking_control_->set(cur_time, walking_step_,is_foot_step_2d_);
 
-    //    ROS_INFO("cur_time: %f", cur_time);
+//    ROS_INFO("cur_time: %f", cur_time);
 
     //      queue_mutex_.lock();
 
@@ -1018,6 +1142,7 @@ void WholebodyModule::calcWalkingControl()
       if (walking_step_ == walking_size_-1)
       {
         is_moving_ = false;
+        is_foot_step_2d_ = false;
         walking_control_->finalize();
         resetBodyPose();
 
@@ -1263,7 +1388,7 @@ bool WholebodyModule::setBalanceControl()
   balance_control_.setOrientationBalanceEnable(true);
   balance_control_.setForceTorqueBalanceEnable(true);
 
-  balance_control_.setCOBManualAdjustment(des_body_offset_[0], des_body_offset_[1], 0.0);
+  balance_control_.setCOBManualAdjustment(des_body_offset_[0], des_body_offset_[1], des_body_offset_[2]);
 
   setBalanceControlGain();
   setTargetForceTorque();
@@ -1516,6 +1641,7 @@ bool WholebodyModule::setBalanceControl()
   }
 
   return ik_success;
+//  return true;
 }
 
 void WholebodyModule::setFeedbackControl()
@@ -1648,6 +1774,7 @@ void WholebodyModule::process(std::map<std::string, robotis_framework::Dynamixel
     {
       is_moving_ = false;
       is_balancing_ = false;
+      is_foot_step_2d_ = false;
 
       balance_type_ = OFF;
       control_type_ = NONE;

@@ -16,7 +16,9 @@
 #include "thormang3_wholebody_module_msgs/FootStepArray.h"
 #include "thormang3_wholebody_module_msgs/PreviewResponse.h"
 
-//#include "thormang3_kinematics_dynamics/kinematics_dynamics.h"
+#include "thormang3_foot_step_generator/Step2D.h"
+#include "thormang3_foot_step_generator/Step2DArray.h"
+
 #include "robotis_math/robotis_math.h"
 
 enum WALKING_LEG {
@@ -43,13 +45,20 @@ public:
                   std::vector<double_t> init_body_pos, std::vector<double_t> init_body_Q,
                   std::vector<double_t> init_r_foot_pos, std::vector<double_t> init_r_foot_Q,
                   std::vector<double_t> init_l_foot_pos, std::vector<double_t> init_l_foot_Q);
+  void initialize(thormang3_foot_step_generator::Step2DArray foot_step_2d,
+                  std::vector<double_t> init_body_pos, std::vector<double_t> init_body_Q,
+                  std::vector<double_t> init_r_foot_pos, std::vector<double_t> init_r_foot_Q,
+                  std::vector<double_t> init_l_foot_pos, std::vector<double_t> init_l_foot_Q);
   void next();
   void finalize();
-  void set(double time, int step);
+  void set(double time, int step, bool foot_step_2d);
 
   double getLipmHeight();
 
   void calcFootStepParam();
+
+  void transformFootStep2D();
+
   void calcFootTrajectory(int step);
   void calcFootStepPose(double time,  int step);
   void calcRefZMP(int step);
@@ -82,6 +91,7 @@ protected:
   robotis_framework::MinimumJerk *body_trajectory_;
   robotis_framework::MinimumJerkViaPoint *r_foot_tra_;
   robotis_framework::MinimumJerkViaPoint *l_foot_tra_;
+
   robotis_framework::PreviewControl *preview_control_;
 
   double init_time_, fin_time_;
@@ -103,6 +113,8 @@ protected:
   thormang3_wholebody_module_msgs::FootStepCommand foot_step_command_;
   thormang3_wholebody_module_msgs::FootStepArray foot_step_param_;
   thormang3_wholebody_module_msgs::PreviewResponse preview_response_;
+
+  thormang3_foot_step_generator::Step2DArray foot_step_2d_;
 
   // Preview Control
   int preview_size_;
