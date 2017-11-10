@@ -635,12 +635,12 @@ void WalkingControl::calcRefZMP(int step)
     if (foot_step_param_.moving_foot[step] == LEFT_LEG)
     {
       ref_zmp_x_ = goal_r_foot_pos_[0]; // + zmp_offset_x_;
-      ref_zmp_y_ = goal_r_foot_pos_[1] + zmp_offset_y_;
+      ref_zmp_y_ = goal_r_foot_pos_[1] - zmp_offset_y_;
     }
     else if (foot_step_param_.moving_foot[step] == RIGHT_LEG)
     {
       ref_zmp_x_ = goal_l_foot_pos_[0]; // + zmp_offset_x_;
-      ref_zmp_y_ = goal_l_foot_pos_[1] - zmp_offset_y_;
+      ref_zmp_y_ = goal_l_foot_pos_[1] + zmp_offset_y_;
     }
   }
 
@@ -747,9 +747,9 @@ double WalkingControl::calcRefZMPy(int step)
   else
   {
     if (foot_step_param_.moving_foot[step] == LEFT_LEG)
-      ref_zmp_y = goal_r_foot_pos_buffer_.coeff(step,1) + zmp_offset_y_;
+      ref_zmp_y = goal_r_foot_pos_buffer_.coeff(step,1) - zmp_offset_y_;
     else if (foot_step_param_.moving_foot[step] == RIGHT_LEG)
-      ref_zmp_y = goal_l_foot_pos_buffer_.coeff(step,1) - zmp_offset_y_;
+      ref_zmp_y = goal_l_foot_pos_buffer_.coeff(step,1) + zmp_offset_y_;
   }
 
   return ref_zmp_y;
