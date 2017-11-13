@@ -440,7 +440,7 @@ void WalkingControl::transformFootStep2D()
     {
       if (msg.moving_foot == LEFT_LEG)
       {
-        ROS_INFO("L");
+//        ROS_INFO("L");
 
         goal_l_foot_pos[0] = msg.step2d.x;
         goal_l_foot_pos[1] = msg.step2d.y;
@@ -449,7 +449,7 @@ void WalkingControl::transformFootStep2D()
       }
       else if(msg.moving_foot == RIGHT_LEG)
       {
-        ROS_INFO("R");
+//        ROS_INFO("R");
 
         goal_r_foot_pos[0] = msg.step2d.x;
         goal_r_foot_pos[1] = msg.step2d.y;
@@ -469,8 +469,8 @@ void WalkingControl::transformFootStep2D()
 
   foot_step_param_ = foot_step_param;
 
-  PRINT_MAT(goal_r_foot_pos_buffer_);
-  PRINT_MAT(goal_l_foot_pos_buffer_);
+//  PRINT_MAT(goal_r_foot_pos_buffer_);
+//  PRINT_MAT(goal_l_foot_pos_buffer_);
 }
 
 void WalkingControl::calcFootTrajectory(int step)
