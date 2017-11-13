@@ -41,6 +41,7 @@
 #include <std_msgs/String.h>
 #include <sensor_msgs/Imu.h>
 #include <geometry_msgs/Pose.h>
+#include <geometry_msgs/PoseStamped.h>
 #include <geometry_msgs/WrenchStamped.h>
 #include <boost/thread.hpp>
 #include <yaml-cpp/yaml.h>
@@ -178,6 +179,7 @@ private:
   ros::Publisher  status_msg_pub_;
   ros::Publisher  movement_done_pub_;
   ros::Publisher  goal_joint_state_pub_;
+  ros::Publisher  pelvis_pose_pub_;
 
   ros::ServiceClient get_preview_matrix_client_;
 

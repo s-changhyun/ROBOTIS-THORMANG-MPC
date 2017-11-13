@@ -232,6 +232,7 @@ void WholebodyModule::initialize(const int control_cycle_msec, robotis_framework
   status_msg_pub_       = ros_node.advertise<robotis_controller_msgs::StatusMsg>("/robotis/status", 1);
   movement_done_pub_    = ros_node.advertise<std_msgs::String>("/robotis/movement_done", 1);
   goal_joint_state_pub_ = ros_node.advertise<sensor_msgs::JointState>("/robotis/wholebody/goal_joint_states", 1);
+  pelvis_pose_pub_      = ros_node.advertise<geometry_msgs::PoseStamped>("/robotis/pelvis_pose_offset", 1);
 
   // Service
   get_preview_matrix_client_ = ros_node.serviceClient<thormang3_wholebody_module_msgs::GetPreviewMatrix>("/robotis/get_preview_matrix", 0);
@@ -1144,7 +1145,7 @@ void WholebodyModule::calcWalkingControl()
         is_moving_ = false;
         is_foot_step_2d_ = false;
         walking_control_->finalize();
-        resetBodyPose();
+//        resetBodyPose();
 
         control_type_ = NONE;
         walking_phase_ = DSP;
@@ -1793,8 +1794,20 @@ void WholebodyModule::process(std::map<std::string, robotis_framework::Dynamixel
   setFeedbackControl();
 
   sensor_msgs::JointState goal_joint_msg;
+  geometry_msgs::PoseStamped pelvis_pose_msg;
 
   goal_joint_msg.header.stamp = ros::Time::now();
+  pelvis_pose_msg.header.stamp = ros::Time::now();
+
+  pelvis_pose_msg.pose.position.x = des_body_pos_[0];
+  pelvis_pose_msg.pose.position.y = des_body_pos_[1];
+  pelvis_pose_msg.pose.position.z = des_body_pos_[2];
+
+  pelvis_pose_msg.pose.orientation.x = des_body_Q_[0];
+  pelvis_pose_msg.pose.orientation.y = des_body_Q_[1];
+  pelvis_pose_msg.pose.orientation.z = des_body_Q_[2];
+  pelvis_pose_msg.pose.orientation.w = des_body_Q_[3];
+
   /*----- set joint data -----*/
   for (std::map<std::string, robotis_framework::DynamixelState *>::iterator state_iter = result_.begin();
        state_iter != result_.end(); state_iter++)
@@ -1807,6 +1820,7 @@ void WholebodyModule::process(std::map<std::string, robotis_framework::Dynamixel
     goal_joint_msg.position.push_back(des_joint_pos_[joint_name_to_id_[joint_name]-1]);
   }
 
+  pelvis_pose_pub_.publish(pelvis_pose_msg);
   goal_joint_state_pub_.publish(goal_joint_msg);
 }
 
