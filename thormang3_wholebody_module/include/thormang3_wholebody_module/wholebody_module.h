@@ -71,8 +71,8 @@
 #include "thormang3_wholebody_module_msgs/GetKinematicsPose.h"
 #include "thormang3_wholebody_module_msgs/GetPreviewMatrix.h"
 
-#include "thormang3_foot_step_generator/Step2D.h"
-#include "thormang3_foot_step_generator/Step2DArray.h"
+#include "thormang3_wholebody_module_msgs/Step2D.h"
+#include "thormang3_wholebody_module_msgs/Step2DArray.h"
 
 namespace thormang3
 {
@@ -109,7 +109,7 @@ public:
   void footStepCommandCallback(const thormang3_wholebody_module_msgs::FootStepCommand& msg);
   void walkingParamCallback(const thormang3_wholebody_module_msgs::WalkingParam& msg);
 
-  void footStep2DCallback(const thormang3_foot_step_generator::Step2DArray& msg);
+  void footStep2DCallback(const thormang3_wholebody_module_msgs::Step2DArray& msg);
 
   void imuDataCallback(const sensor_msgs::Imu::ConstPtr& msg);
   void leftFootForceTorqueOutputCallback(const geometry_msgs::WrenchStamped::ConstPtr &msg);
@@ -232,7 +232,7 @@ private:
   thormang3_wholebody_module_msgs::PreviewResponse preview_response_;
   thormang3_wholebody_module_msgs::WalkingParam walking_param_;
 
-  thormang3_foot_step_generator::Step2DArray foot_step_2d_;
+  thormang3_wholebody_module_msgs::Step2DArray foot_step_2d_;
   bool is_foot_step_2d_;
 
   // Wholebody Control

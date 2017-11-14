@@ -16,8 +16,8 @@
 #include "thormang3_wholebody_module_msgs/FootStepArray.h"
 #include "thormang3_wholebody_module_msgs/PreviewResponse.h"
 
-#include "thormang3_foot_step_generator/Step2D.h"
-#include "thormang3_foot_step_generator/Step2DArray.h"
+#include "thormang3_wholebody_module_msgs/Step2D.h"
+#include "thormang3_wholebody_module_msgs/Step2DArray.h"
 
 #include "robotis_math/robotis_math.h"
 
@@ -45,7 +45,7 @@ public:
                   std::vector<double_t> init_body_pos, std::vector<double_t> init_body_Q,
                   std::vector<double_t> init_r_foot_pos, std::vector<double_t> init_r_foot_Q,
                   std::vector<double_t> init_l_foot_pos, std::vector<double_t> init_l_foot_Q);
-  void initialize(thormang3_foot_step_generator::Step2DArray foot_step_2d,
+  void initialize(thormang3_wholebody_module_msgs::Step2DArray foot_step_2d,
                   std::vector<double_t> init_body_pos, std::vector<double_t> init_body_Q,
                   std::vector<double_t> init_r_foot_pos, std::vector<double_t> init_r_foot_Q,
                   std::vector<double_t> init_l_foot_pos, std::vector<double_t> init_l_foot_Q);
@@ -114,7 +114,7 @@ protected:
   thormang3_wholebody_module_msgs::FootStepArray foot_step_param_;
   thormang3_wholebody_module_msgs::PreviewResponse preview_response_;
 
-  thormang3_foot_step_generator::Step2DArray foot_step_2d_;
+  thormang3_wholebody_module_msgs::Step2DArray foot_step_2d_;
 
   // Preview Control
   int preview_size_;

@@ -134,7 +134,7 @@ void WalkingControl::initialize(thormang3_wholebody_module_msgs::FootStepCommand
   u_y_.fill(0.0);
 }
 
-void WalkingControl::initialize(thormang3_foot_step_generator::Step2DArray foot_step_2d,
+void WalkingControl::initialize(thormang3_wholebody_module_msgs::Step2DArray foot_step_2d,
                                 std::vector<double_t> init_body_pos, std::vector<double_t> init_body_Q,
                                 std::vector<double_t> init_r_foot_pos, std::vector<double_t> init_r_foot_Q,
                                 std::vector<double_t> init_l_foot_pos, std::vector<double_t> init_l_foot_Q)
@@ -424,7 +424,7 @@ void WalkingControl::transformFootStep2D()
 
   for (int step=0; step<foot_step_size_; step++)
   {
-    thormang3_foot_step_generator::Step2D msg = foot_step_2d_.footsteps_2d[step];
+    thormang3_wholebody_module_msgs::Step2D msg = foot_step_2d_.footsteps_2d[step];
 
     foot_step_param.moving_foot.push_back(msg.moving_foot);
     geometry_msgs::Pose2D foot_pose_2d;

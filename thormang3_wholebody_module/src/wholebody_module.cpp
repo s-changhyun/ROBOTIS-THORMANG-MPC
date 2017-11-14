@@ -885,7 +885,7 @@ void WholebodyModule::calcWholebodyControl()
   }
 }
 
-void WholebodyModule::footStep2DCallback(const thormang3_foot_step_generator::Step2DArray& msg)
+void WholebodyModule::footStep2DCallback(const thormang3_wholebody_module_msgs::Step2DArray& msg)
 {
   if (enable_ == false)
     return;
@@ -904,13 +904,13 @@ void WholebodyModule::footStep2DCallback(const thormang3_foot_step_generator::St
   body_T.coeffRef(0,3) = des_body_pos_[0];
   body_T.coeffRef(1,3) = des_body_pos_[1];
 
-  thormang3_foot_step_generator::Step2DArray foot_step_msg;
+  thormang3_wholebody_module_msgs::Step2DArray foot_step_msg;
 
   int old_size = msg.footsteps_2d.size();
   int new_size = old_size + 3;
 
-  thormang3_foot_step_generator::Step2D first_msg;
-  thormang3_foot_step_generator::Step2D second_msg;
+  thormang3_wholebody_module_msgs::Step2D first_msg;
+  thormang3_wholebody_module_msgs::Step2D second_msg;
 
   first_msg.moving_foot = msg.footsteps_2d[0].moving_foot - 1;
   second_msg.moving_foot = first_msg.moving_foot + 1;
@@ -945,7 +945,7 @@ void WholebodyModule::footStep2DCallback(const thormang3_foot_step_generator::St
   {
     for (int i=0; i<old_size; i++)
     {
-      thormang3_foot_step_generator::Step2D step_msg = msg.footsteps_2d[i];      
+      thormang3_wholebody_module_msgs::Step2D step_msg = msg.footsteps_2d[i];
       step_msg.moving_foot -= 1;
 
       Eigen::MatrixXd step_R = robotis_framework::convertRPYToRotation(0.0,0.0,step_msg.step2d.theta);
@@ -979,7 +979,7 @@ void WholebodyModule::footStep2DCallback(const thormang3_foot_step_generator::St
 //      ROS_INFO("foot_step_2d_.footsteps_2d[%d].step2d theta: %f", i, step_msg.step2d.theta);
     }
 
-    thormang3_foot_step_generator::Step2D step_msg = msg.footsteps_2d[old_size-1];
+    thormang3_wholebody_module_msgs::Step2D step_msg = msg.footsteps_2d[old_size-1];
 
     if (step_msg.moving_foot - 1 == LEFT_LEG)
       first_msg.moving_foot = RIGHT_LEG;
@@ -994,7 +994,7 @@ void WholebodyModule::footStep2DCallback(const thormang3_foot_step_generator::St
 
 //    for (int i=0; i<new_size; i++)
 //    {
-//      thormang3_foot_step_generator::Step2D step_msg = foot_step_msg.footsteps_2d[i];
+//      thormang3_wholebody_module_msgs::Step2D step_msg = foot_step_msg.footsteps_2d[i];
 
 //      ROS_INFO("===== NEW =====");
 //      ROS_INFO("step: %d", i);
@@ -1007,7 +1007,7 @@ void WholebodyModule::footStep2DCallback(const thormang3_foot_step_generator::St
     foot_step_2d_ = foot_step_msg;
 
     walking_size_ = new_size;
-    mov_time_ = 1.0;
+    mov_time_ = msg.step_time; //1.0;
     is_foot_step_2d_ = true;
     control_type_ = WALKING_CONTROL;
 
