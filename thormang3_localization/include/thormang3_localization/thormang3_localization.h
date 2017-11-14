@@ -33,33 +33,33 @@ private:
     ros::NodeHandle ros_node_;
 
     //subscriber
-    ros::Subscriber thormang3_pelvis_offset_msg_sub_;
-    ros::Subscriber thormang3_pelvis_base_walking_msg_sub_;
-    ros::Subscriber thormang3_pelvis_reset_msg_sub_;
+    ros::Subscriber pelvis_offset_msg_sub_;
+//    ros::Subscriber pelvis_base_walking_msg_sub_;
+    ros::Subscriber pelvis_reset_msg_sub_;
 
     tf::TransformBroadcaster broadcaster_;
     tf::StampedTransform pelvis_trans_;
 
-    geometry_msgs::PoseStamped thormang3_pelvis_pose_;
-    geometry_msgs::PoseStamped thormang3_pelvis_pose_old_;
-    geometry_msgs::PoseStamped thormang3_pelvis_pose_base_walking_;
-    geometry_msgs::PoseStamped thormang3_pelvis_pose_offset_;
+    geometry_msgs::PoseStamped pelvis_pose_;
+    geometry_msgs::PoseStamped pelvis_pose_old_;
+//    geometry_msgs::PoseStamped pelvis_pose_base_walking_;
+    geometry_msgs::PoseStamped pelvis_pose_offset_;
 
-    geometry_msgs::PoseStamped thormang3_pelvis_pose_base_walking_new_;
-    geometry_msgs::PoseStamped thormang3_pelvis_pose_offset_new_;
+    geometry_msgs::PoseStamped pelvis_pose_base_walking_new_;
+    geometry_msgs::PoseStamped pelvis_pose_offset_new_;
 
     double transform_tolerance_;
     double err_tol_;
 
-    bool is_moving_walking_;
+//    bool is_moving_walking_;
 
     boost::mutex mutex_;
 
 public:
     void initialize();
-    void thormang3PelvisPoseOffsetCallback(const geometry_msgs::PoseStamped::ConstPtr& msg);
-    void thormang3PelvisPoseBaseWalkingCallback(const geometry_msgs::PoseStamped::ConstPtr& msg);
-    void thormang3PelvisPoseResetCallback(const std_msgs::String::ConstPtr& msg);
+    void pelvisPoseOffsetCallback(const geometry_msgs::PoseStamped::ConstPtr& msg);
+//    void pelvisPoseBaseWalkingCallback(const geometry_msgs::PoseStamped::ConstPtr& msg);
+    void pelvisPoseResetCallback(const std_msgs::String::ConstPtr& msg);
     Eigen::MatrixXd calcVWerr(Eigen::MatrixXd tar_position, Eigen::MatrixXd curr_position,
                               Eigen::MatrixXd tar_orientation, Eigen::MatrixXd curr_orientation);
 
@@ -70,7 +70,6 @@ public:
 
     void update();
     void process();
-
 };
 
 }       // namespace
