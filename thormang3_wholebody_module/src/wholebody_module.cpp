@@ -896,6 +896,14 @@ void WholebodyModule::footStep2DCallback(const thormang3_foot_step_generator::St
     return;
   }
 
+  Eigen::Quaterniond body_Q(des_body_Q_[3],des_body_Q_[0],des_body_Q_[1],des_body_Q_[2]);
+  Eigen::MatrixXd body_R = robotis_framework::convertQuaternionToRotation(body_Q);
+  Eigen::MatrixXd body_rpy = robotis_framework::convertQuaternionToRPY(body_Q);
+  Eigen::MatrixXd body_T = Eigen::MatrixXd::Identity(4,4);
+  body_T.block(0,0,3,3) = body_R;
+  body_T.coeffRef(0,3) = des_body_pos_[0];
+  body_T.coeffRef(1,3) = des_body_pos_[1];
+
   thormang3_foot_step_generator::Step2DArray foot_step_msg;
 
   int old_size = msg.footsteps_2d.size();
@@ -911,32 +919,55 @@ void WholebodyModule::footStep2DCallback(const thormang3_foot_step_generator::St
   {
     first_msg.step2d.x = des_l_leg_pos_[0];
     first_msg.step2d.y = des_l_leg_pos_[1];
-    first_msg.step2d.theta = 0.0;
+    first_msg.step2d.theta = body_rpy.coeff(2,0); //0.0;
 
     second_msg.step2d.x = des_r_leg_pos_[0];
     second_msg.step2d.y = des_r_leg_pos_[1];
-    second_msg.step2d.theta = 0.0;
+    second_msg.step2d.theta = body_rpy.coeff(2,0); //0.0;
   }
   else if (first_msg.moving_foot == RIGHT_LEG)
   {
     first_msg.step2d.x = des_r_leg_pos_[0];
     first_msg.step2d.y = des_r_leg_pos_[1];
-    first_msg.step2d.theta = 0.0;
+    first_msg.step2d.theta = body_rpy.coeff(2,0); //0.0;
 
     second_msg.step2d.x = des_l_leg_pos_[0];
     second_msg.step2d.y = des_l_leg_pos_[1];
-    second_msg.step2d.theta = 0.0;
+    second_msg.step2d.theta = body_rpy.coeff(2,0); //0.0;
   }
 
   foot_step_msg.footsteps_2d.push_back(first_msg);
   foot_step_msg.footsteps_2d.push_back(second_msg);
 
+  double step_final_theta;
+
   if (control_type_ == NONE || control_type_ == WALKING_CONTROL)
   {
     for (int i=0; i<old_size; i++)
     {
-      thormang3_foot_step_generator::Step2D step_msg = msg.footsteps_2d[i];
+      thormang3_foot_step_generator::Step2D step_msg = msg.footsteps_2d[i];      
       step_msg.moving_foot -= 1;
+
+      Eigen::MatrixXd step_R = robotis_framework::convertRPYToRotation(0.0,0.0,step_msg.step2d.theta);
+      Eigen::MatrixXd step_T = Eigen::MatrixXd::Identity(4,4);
+      step_T.block(0,0,3,3) = step_R;
+      step_T.coeffRef(0,3) = step_msg.step2d.x;
+      step_T.coeffRef(1,3) = step_msg.step2d.y;
+
+      Eigen::MatrixXd step_T_new = body_T*step_T;
+      Eigen::MatrixXd step_R_new = step_T_new.block(0,0,3,3);
+
+      double step_new_x = step_T_new.coeff(0,3);
+      double step_new_y = step_T_new.coeff(1,3);
+      Eigen::MatrixXd step_new_rpy = robotis_framework::convertRotationToRPY(step_R_new);
+      double step_new_theta = step_new_rpy.coeff(2,0);
+
+      step_msg.step2d.x = step_new_x;
+      step_msg.step2d.y = step_new_y;
+      step_msg.step2d.theta = step_new_theta;
+
+      if (i == old_size-1)
+        step_final_theta = step_new_theta;
 
       foot_step_msg.footsteps_2d.push_back(step_msg);
 
@@ -957,7 +988,7 @@ void WholebodyModule::footStep2DCallback(const thormang3_foot_step_generator::St
 
     first_msg.step2d.x      = 0.0;
     first_msg.step2d.y      = 0.0;
-    first_msg.step2d.theta  = step_msg.step2d.theta;
+    first_msg.step2d.theta  = step_final_theta; //step_msg.step2d.theta;
 
     foot_step_msg.footsteps_2d.push_back(first_msg);
 
@@ -987,9 +1018,6 @@ void WholebodyModule::footStep2DCallback(const thormang3_foot_step_generator::St
   }
   else
     ROS_WARN("[WARN] Control type is different!");
-
-
-
 }
 
 void WholebodyModule::footStepCommandCallback(const thormang3_wholebody_module_msgs::FootStepCommand& msg)
